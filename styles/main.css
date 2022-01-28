@@ -1,3 +1,4 @@
+@import url('./posts.css');
 @font-face {
   font-family: 'Inter var';
   font-style: normal;
@@ -62,4 +63,24 @@ img.next-image {
 
 .nav-line .nav-link {
   color: #69778c;
+}
+
+
+/* Basic Card */
+
+@media screen and (width <= 600px) {
+  .basic-card-list {
+    justify-content: center;
+  }
+}
+
+.basic-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+}
+.basic-card {
+  display: inline-block;
+  margin: 0 24px 24px 0;
 }
