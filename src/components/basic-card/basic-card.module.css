@@ -9,46 +9,6 @@
   color: white;
 }
 
-.spectrumBackground {
-  background:
-      linear-gradient(red, transparent),
-      linear-gradient(to top left, lime, transparent),
-      linear-gradient(to top right, blue, transparent);
-  background-blend-mode: screen;
-}
-
-.bg1 {
-  background:linear-gradient(135deg, #ff878b 0%,#a500d2 100%);
-}
-
-.bgPurple {
-background:linear-gradient(135deg, #ee20d6 0%,#0a2fb6 100%);
-}
-
-.bgRed {
-  background:linear-gradient(135deg, #9b3cb7 0%,#ff386f 100%);
-}
-
-.bgBlue {
-  background:linear-gradient(135deg, #38b7f2 0%,#833cf6 100%);
-}
-
-.bg4 {
-  background: linear-gradient(66.27deg, #CD1225 -10.45%, #885DF5 76.78%);
-}
-
-.bg5 {
-  background:linear-gradient(135deg, #4157d0 0%,#c750bf 100%);
-}
-
-.bg6 {
-  background:linear-gradient(135deg, #3b8be7 0%,#00e9ff 100%);
-}
-
-.bgDarkGreen {
-  background:linear-gradient(135deg, #004a91 0%,#77cc36 100%);
-}
-
 .cardHeader {
   display: flex;
   justify-content: space-between;

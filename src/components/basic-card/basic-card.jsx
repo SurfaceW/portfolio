@@ -16,7 +16,7 @@ function StaticGradiantCard(props) {
   return (
     <div className={[
       styles.cardWrapper,
-      styles[styleType] || styles.spectrumBackground,
+      styleType || styles.spectrumBackground,
       'basic-card'
     ].join(' ')
     }
