@@ -1,8 +1,3 @@
-const withNextra = require('nextra')('nextra-theme-blog', './theme.config.js');
+import * as nextra from 'nextra';
 
-module.exports = {
-  ...withNextra(),
-  images: {
-    "domains": ["cdn.nlark.com"],
-  },
-}
+module.exports = nextra();
