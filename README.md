@@ -1,5 +1,7 @@
 # Portfolio Starter Kit
 
+from: https://github.com/leerob/leerob.io/blob/main/package.json
+
 This portfolio is built with **Next.js** and a library called [Nextra](https://nextra.vercel.app/). It allows you to write Markdown and focus on the _content_ of your portfolio. This starter includes:
 
 - Automatically configured to handle Markdown/MDX
@@ -7,6 +9,10 @@ This portfolio is built with **Next.js** and a library called [Nextra](https://n
 - A beautiful theme included out of the box
 - Easily categorize posts with tags
 - Fast, optimized web font loading
+
+## Upgrade with Next.js 13 version
+
+- next-content-layer: https://github.com/shadcn/next-contentlayer
 
 ## Configuration
 
@@ -32,3 +38,4 @@ yarn create next-app --example blog my-blog
 ```
 
 Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+
