@@ -1,38 +1,23 @@
 import './global.css';
-import clsx from 'clsx';
-import type { Metadata } from 'next';
-// import localFont from 'next/font/local';
-import Sidebar from '@/components/sidebar';
 
-// const graphik = localFont({
-//   src: [
-//     {
-//       path: '../public/fonts/Graphik-Regular.ttf',
-//       weight: '400',
-//       style: 'normal',
-//     },
-//     {
-//       path: '../public/fonts/Graphik-Medium.ttf',
-//       weight: '600',
-//       style: 'bold',
-//     },
-//   ],
-//   variable: '--font-graphik',
-//   display: 'swap',
-// });
+import clsx from 'clsx';
+
+import Sidebar from '@/components/sidebar';
+import type { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://leerob.io'),
+  metadataBase: new URL('https://arno.surfacew.com'),
   title: {
-    default: 'Lee Robinson',
-    template: '%s | Lee Robinson',
+    default: 'Arno',
+    template: '%s | Arno',
   },
-  description: 'Developer, writer, and creator.',
+  description: 'Developer, designer, and creator.',
   openGraph: {
-    title: 'Lee Robinson',
-    description: 'Developer, writer, and creator.',
-    url: 'https://leerob.io',
-    siteName: 'Lee Robinson',
+    title: 'Arno',
+    description: 'Developer, designer, and creator.',
+    url: 'https://arno.surfacew.com',
+    siteName: 'Arno',
     locale: 'en_US',
     type: 'website',
   },
@@ -48,12 +33,12 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: 'Lee Robinson',
+    title: 'Arno',
     card: 'summary_large_image',
   },
   verification: {
-    google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
-    yandex: '14d2e73487fa6c71',
+    // google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
+    // yandex: '14d2e73487fa6c71',
   },
 };
 
@@ -67,7 +52,6 @@ export default function RootLayout({
       lang="en"
       className={clsx(
         'text-black bg-white dark:text-white dark:bg-[#111010]',
-        // graphik.variable
       )}
     >
       <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
@@ -75,6 +59,14 @@ export default function RootLayout({
           <Sidebar />
           {children}
         </main>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-2SWQ9FNXGM"></Script>
+        <Script id="google-analytics" dangerouslySetInnerHTML={{
+          __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-2SWQ9FNXGM');      
+`}}></Script>
       </body>
     </html>
   );

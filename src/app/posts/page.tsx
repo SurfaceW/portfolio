@@ -12,7 +12,7 @@ export default async function BlogPage() {
 
   return (
     <section>
-      <h1 className="font-bold text-2xl mb-8 tracking-tighter">read my blog</h1>
+      <h1 className="font-bold text-2xl mb-8 tracking-tighter">POSTS from ARNO</h1>
       {allBlogs
         .sort((a, b) => {
           if (new Date(a.publishedAt) > new Date(b.publishedAt)) {
@@ -23,12 +23,18 @@ export default async function BlogPage() {
         .map((post: any) => (
           <Link
             key={post.slug}
-            className="flex flex-col space-y-1 mb-4"
+            className="flex flex-col space-y-1 mb-6"
             href={`/posts/${post.slug}`}
           >
-            <div className="w-full flex flex-col">
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
+            <div className="w-full flex flex-col pb-4">
+              <h4 className="text-neutral-900 dark:text-neutral-100 tracking-tight text-lg font-bold hover:text-blue-500">
                 {post.title}
+              </h4>
+              <p className="text-sm pt-2">
+                {post.summary}
+              </p>
+              <p className="text-sm pt-2 text-gray-600">
+                {post.publishedAt}
               </p>
               {/* <ViewCounter
                 allViews={allViews}

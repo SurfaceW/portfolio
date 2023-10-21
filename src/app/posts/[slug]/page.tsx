@@ -77,7 +77,7 @@ function formatDate(date: string) {
   return `${fullDate} (${formattedDate})`;
 }
 
-export default async function Blog({ params }) {
+export default async function BlogPost({ params }) {
   const post = allBlogs.find((post) => post.slug === params.slug);
 
   if (!post) {
