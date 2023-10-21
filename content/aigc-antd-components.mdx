@@ -1,0 +1,305 @@
+---
+title: 'AIGC 系列之 AntDesign 组件生成'
+publishedAt: '2023-07-12'
+summary: "牛刀小试：尝试使用 AntDesign 组件生成器生成一个表单组件。"
+---
+
+## 序
+
+> OpenAI 的确引发了 AIGC 的热潮。作为工程师，我们成为了第一批受益者，无需担心被取代。AIGC 带来的效能提升是显而易见的。在接下来的这一系列文章中，@Arno 将不再讨论如何实现那些普通工程师难以触及的成果，而是聚焦于当前的工作，为工程师日常遇到的场景利用 AI 提升效率提供最佳实践。
+
+
+接着上一篇：[AIGC 应用系列之 —— 单元测试](https://www.yuque.com/surfacew/fe/gckgh3bh2cadxyug) 写完单测之后，我们继续聊一聊如何让 AI 帮我们写业务组件。这块的收益也是非常之高的，且看如何写好 AntDesign 组件
+
+得益于 OpenAI 等 LLM（大语言模型）学习过开源 AntDesign 的组件库，因此我们可以 0 微调、0 上下文准备就能够让 OpenAI 等模型快速编写 AntDesign 组件。
+
+## 🦄 开始之前
+
+在开始准备我们的 Prompt 魔法之前，我想提炼几个原则：
+
+- 考虑到 OpenAI 现在出入参 tokens 限制，**我们尽量让 AI 编写的任务不要太长太复杂**，控制在维护性较好的 500 行以内目前比较合适。
+- 工程师对目标做宏观的拆解，将一个复杂的页面拆解为 N 个子页面，让 AntDesign 组件生成控制在 1 个文件，一个组件，保证生成的代码的「**干净程度**」
+- **AI 生成的任务最好将 PROMPT 地址写入到文件头**，便于下一次的更新和 PROMPT 复用。
+- ...
+
+简而言之，让 AI 生成的代码尽可能控制在一个 PROMPT 一个文件，并且长度可控是目前情况下的最佳范式。
+## 🪄 编写生成 AntDesign 的 Prompt
+
+我们现在先来看一个中后台的经典场景：「假设我们需要制作一个数据表格用于展示机器学习数据集的 CRUD 管理」，如何实现呢？
+
+假设服务端返回了 👇🏻 的数据，用于渲染表格：
+
+```typescript
+export interface ResponseDatasetMeta {
+  code?: string;
+  createdAt?: string;
+  metaInfo?: string;
+  name?: string;
+  owner?: string;
+  tenantId?: string;
+  updatedAt?: string;
+}
+```
+
+为了编写好渲染表格的 PROMPT：
+:::info
+我们可以根据社区中，包括 [Prompt Engineering](https://www.yuque.com/surfacew/daily-learn/ge89d3qn4gctky5d) 等一系列的 Prompt 教程的指导优化 PROMPT 设计。
+:::
+
+这个 Prompt 结构包括了：
+
+- 语言：我们尽量配合 OpenAI 使用英文去描述 Prompt
+   - 一者省 tokens
+   - 二者 OpenAI 更擅长英文
+- 角色：我们将之定义为一个代码生成器
+- 指令：对于指令区域我们要求它做如下的事情，强调如下的指令：
+   - 使用 `AntDesign` 组件库来生成组件
+   - 使用 `Typescript` 作为编码语言
+   - 使用 `ReactHook` 的风格编写代码
+   - 使用 `tsx` 语法生成代码块便于复制粘贴内容
+   - 导出组件的属性接口
+   - 使用 `export const` 导出组件
+   - 由于笔者编写的是 Next.js Client 组件，因此需要再文件头上增加 `use client` 的指令，这里用户不需要可以去掉
+   - 运行环境为 `Node.js`
+   - 只需要生成代码，不需要返回解释
+   - 其它的针对运行特定的代码的补充：比如，只考虑生成 XX 类或者函数的测试代码
+- 输出：指明输出为 `Typescript` 代码
+
+将这个 Prompt 整理出来，我们看一下效果：
+
+```markdown
+Your current role is:A code generator.
+##
+Here are your instructions:
+1. Use AntDesign Component Library to create a component
+2. Use TypeScript
+3. Use React Hook Style
+4. Generate the text start with ```tsx and end with ```
+5. Export defined interface
+6. Do not use `export default` syntax, use `export const` instead
+7. add `'use client';` on the first line of the code
+8. Use tailwind for classname, and do not use classname lib
+Based on the text below work:
+"""
+{{user_defined_task}}
+"""
+##
+ ``` typescript ``` 
+```
+
+我们试着运行一个最简单的任务：`**编写一个 HelloWorld 的按钮，点击后弹出你好世界的文字**`，在运行时里面运行试一试，它在 `OpenAI Turbo 3.5` 的环境下输出的代码可以直接使用，非常惊艳！
+
+```markdown
+Your current role is:A code generator.
+##
+Here are your instructions:
+1. Use AntDesign Component Library to create a component
+2. Use TypeScript
+3. Use React Hook Style
+4. Generate the text start with ```tsx and end with ```
+5. Export defined interface
+6. Do not use `export default` syntax, use `export const` instead
+7. add `'use client';` on the first line of the code
+8. Use tailwind for classname, and do not use classname lib
+Based on the text below work:
+"""
+编写一个 HelloWorld 的按钮，点击后弹出你好世界的文字
+"""
+##
+ ``` typescript ``` 
+```
+
+```tsx
+
+'use client';
+
+import { Button } from 'antd';
+import React, { FC } from 'react';
+
+export interface HelloWorldButtonProps {
+  onClick(): void;
+}
+
+const HelloWorldButton: FC<HelloWorldButtonProps> = ({ onClick }) => {
+  return (
+    <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onClick}>
+      Hello World
+    </Button>
+  );
+};
+
+export const HelloWorldButton;
+```
+
+OK，这个效果还不错，让我们接着将之复杂化变得更有趣 ~
+
+## 📦 表格场景：更复杂地上下文传递
+
+> 对于部分上下文很多的代码，如果不是很好使用自然语言描述应该怎么办呢？
+
+
+这个时候我们可以在已有的 Prompt 结构上，引入上下文的概念，稍微对 Prompt 进行改写优化。
+
+回到之前的基于接口生成表格的构想，我们试着编写如下的 Prompt：
+
+```tsx
+Your current role is:A code generator.
+##
+Here are your instructions:
+1. Use AntDesign Component Library to create a component
+2. Use TypeScript
+3. Use React Hook Style
+4. Generate the text start with ```tsx and end with ```
+5. Export defined interface
+6. Do not use `export default` syntax, use `export const` instead
+7. add `'use client';` on the first line of the code
+8. Use tailwind for classname, and do not use classname lib
+Based on the text below work:
+"""
+Write a DataSet management table with the following fields described by the interface below with the action column 'add' | 'remove' | 'detail'
+"""
+And here is your context:
+"""
+"""
+export interface ResponseDatasetMeta {
+  code?: string;
+  createdAt?: string;
+  metaInfo?: string;
+  name?: string;
+  owner?: string;
+  tenantId?: string;
+  updatedAt?: string;
+}
+"""
+"""
+##
+ ``` typescript ``` 
+```
+
+我们来看看它生成的效果：
+
+```tsx
+'use client';
+
+import { Table, Button } from 'antd';
+import { PlusOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { useState, useMemo } from 'react';
+import classNames from 'classnames';
+
+import { ResponseDatasetMeta } from './types';
+
+export interface DatasetTableProps {
+  datasets: ResponseDatasetMeta[];
+  onAdd: () => void;
+  onRemove: (id: string) => void;
+  onDetail: (id: string) => void;
+}
+
+const DatasetTable = ({ datasets, onAdd, onRemove, onDetail }: DatasetTableProps) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+
+  const columns = useMemo(() => [
+    {
+      title: 'Code',
+      dataIndex: 'code',
+      key: 'code',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Owner',
+      dataIndex: 'owner',
+      key: 'owner',
+    },
+    {
+      title: 'Action',
+      dataIndex: '',
+      key: 'action',
+      render: (text: string, record: ResponseDatasetMeta) => (
+        <>
+          <Button
+            type="link"
+            icon={<EyeOutlined />}
+            className={classNames('text-blue-500', 'hover:text-blue-700')}
+            onClick={() => onDetail(record.code)}
+          />
+          <Button
+            type="link"
+            icon={<DeleteOutlined />}
+            className={classNames('text-red-500', 'hover:text-red-700')}
+            onClick={() => onRemove(record.code)}
+          />
+        </>
+      ),
+    },
+  ], [onDetail, onRemove]);
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (keys: string[]) => {
+      setSelectedRowKeys(keys);
+    },
+  };
+
+  return (
+    <>
+      <div className="flex mb-4">
+        <Button
+          icon={<PlusOutlined />}
+          onClick={onAdd}
+          className="ml-auto"
+        >
+          Add Dataset
+        </Button>
+        <Button
+          icon={<DeleteOutlined />}
+          onClick={() => onRemove(selectedRowKeys.join(','))}
+          disabled={selectedRowKeys.length === 0}
+          className="ml-4"
+        >
+          Remove Selected
+        </Button>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={datasets}
+        rowSelection={rowSelection}
+        rowKey={(record) => record.code || ''}
+      />
+    </>
+  );
+};
+
+export const DatasetTable;
+
+```
+
+非常好！但是似乎少了两个更新日期和创建日期字段，我们可以在会话上下文的基础上继续告诉 OpenAI 去优化，增加会话：`基于上述代码，增加创建和更新日期两个字段`。这个时候 OpenAI 会去优化代码，实现一个复杂 Table 的导入。
+
+## 🌟 关于 Prompt 的持续迭代和优化
+
+随着时间的发展和技术的变更，Prompt 也会如同软件工程迭代那样持续演化，畅想未来无非对于组件生成可以具备更多的上下文输入：
+
+- 比如 PRD 型的输入可以更好地让组件了解上下文
+- 比如加入生成限制，限制 tokens 数量等也是一种策略
+- 比如使用业务数据对模型等进行微调，使用专属模型辅助生成优化
+- ...
+
+总而言之，本文也需要随着 AI 领域的持续发展而快速更新 ~
+
+> 尽目光所及之处，只是不远的前方，即使如此，依然可以看到那里有许多值得去完成的工作在等待我们。 —— Alan Turning, Computing Machinery and Intelligence, 1950
+
+
+与大家共勉 ~
+## 总结
+
+让 AI 一步登天很难，但是人为地自己的目标拆解为子目标然后用 AI 赋能自己去快速完成功能自然不在话下。后续 Everyone 都是 Prompt Engineer，都是「魔法师 🧙🏻」，让我们继续探索自然语言 cast more spells 吧~
+
+系列文章：
+
+[AIGC 应用系列之 —— 单元测试](https://www.yuque.com/surfacew/fe/gckgh3bh2cadxyug)
+
+
