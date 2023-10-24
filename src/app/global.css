@@ -11,6 +11,31 @@ html {
   min-width: 360px;
 }
 
+body {
+  font-family: PingFang SC, 'Menlo', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    Liberation Mono, Courier New, monospace;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+      'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      Liberation Mono, Courier New, monospace;
+  }
+}
+
+@media screen and (min-resolution: 96dpi) {
+  body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Helvetica,
+      Arial, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      Liberation Mono, Courier New, monospace;
+  }
+}
+
 .prose .anchor {
   @apply absolute invisible no-underline;
 
@@ -34,7 +59,7 @@ html {
   content: '#';
 }
 
-.prose *:hover>.anchor {
+.prose *:hover > .anchor {
   @apply visible;
 }
 
@@ -56,7 +81,7 @@ html {
   @apply m-0;
 }
 
-.prose> :first-child {
+.prose > :first-child {
   /* Override removing top margin, causing layout shift */
   margin-top: 1.25em !important;
   margin-bottom: 1.25em !important;
@@ -98,7 +123,7 @@ table {
   white-space: nowrap;
 }
 
-.prose .callout>p {
+.prose .callout > p {
   margin: 0 !important;
 }
 
@@ -112,7 +137,7 @@ table {
   @apply py-1;
 }
 
-[data-rehype-pretty-code-fragment] [data-line-numbers]>.line::before {
+[data-rehype-pretty-code-fragment] [data-line-numbers] > .line::before {
   counter-increment: line;
   content: counter(line);
   display: inline-block;
@@ -138,6 +163,6 @@ table {
   @apply px-4 py-3 font-mono text-xs font-medium border rounded-t-lg text-neutral-200 border-[#333333] bg-[#1c1c1c];
 }
 
-[data-rehype-pretty-code-title]+pre {
+[data-rehype-pretty-code-title] + pre {
   @apply mt-0 rounded-t-none border-t-0;
 }
