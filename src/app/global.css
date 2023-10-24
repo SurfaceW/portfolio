@@ -11,27 +11,25 @@ html {
   min-width: 360px;
 }
 
+/* General FontSize config */
 body {
-  font-family: PingFang SC, 'Menlo', 'Helvetica Neue', Helvetica, Arial,
-    sans-serif;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     Liberation Mono, Courier New, monospace;
 }
 
+/* Mac */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
-      'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       Liberation Mono, Courier New, monospace;
   }
 }
 
+/* Windows */
 @media screen and (min-resolution: 96dpi) {
   body {
-    font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Helvetica,
-      Arial, sans-serif;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    font-family: 'PingFang SC',
+      'Microsoft YaHei', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       Liberation Mono, Courier New, monospace;
   }
 }

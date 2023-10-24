@@ -26,6 +26,7 @@ const computedFields = {
       datePublished: doc.publishedAt,
       dateModified: doc.publishedAt,
       description: doc.summary,
+      tags: doc.tags,
       image: doc.image
         ? `https://leerob.io${doc.image}`
         : `https://leerob.io/og?title=${doc.title}`,

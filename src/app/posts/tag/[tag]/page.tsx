@@ -6,13 +6,11 @@ export const metadata: Metadata = {
   description: 'Read my thoughts on software development, design, and more.',
 };
 
-export default async function PostPageServer({ params }: {
+export default async function PostsListPageByTagServer({ params }: {
   params: {
     tag?: string;
   }
 }) {
-  // const allViews = await getViewsCount();
-
   return (
     <PostListServer params={params} />
   );
