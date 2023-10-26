@@ -20,9 +20,7 @@ export async function generateMetadata({
     image,
     slug,
   } = post;
-  const ogImage = image
-    ? `https://leerob.io${image}`
-    : `https://leerob.io/og?title=${title}`;
+  const ogImage = image;
 
   return {
     title,
@@ -32,7 +30,7 @@ export async function generateMetadata({
       description,
       type: 'article',
       publishedTime,
-      url: `https://leerob.io/blog/${slug}`,
+      url: `https://arno.surfacew.com/posts/${slug}`,
       images: [
         {
           url: ogImage,

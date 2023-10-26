@@ -28,12 +28,12 @@ const computedFields = {
       description: doc.summary,
       tags: doc.tags,
       image: doc.image
-        ? `https://leerob.io${doc.image}`
-        : `https://leerob.io/og?title=${doc.title}`,
-      url: `https://leerob.io/blog/${doc._raw.flattenedPath}`,
+        ? `${doc.image}`
+        : `https://arno.surfacew.com/posts/${doc.title}`,
+      url: `https://arno.surfacew.com/posts/${doc._raw.flattenedPath}`,
       author: {
         '@type': 'Person',
-        name: 'Lee Robinson'
+        name: 'Arno'
       }
     })
   }
