@@ -164,3 +164,11 @@ table {
 [data-rehype-pretty-code-title] + pre {
   @apply mt-0 rounded-t-none border-t-0;
 }
+
+/* Prose override */
+.prose strong {
+  @apply font-extrabold;
+  @apply font-bold;
+  @apply text-blue-600;
+  @apply dark:text-blue-400;
+}
