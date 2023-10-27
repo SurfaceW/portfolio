@@ -7,6 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@vercel/blob": "^0.14.1",
     "@vercel/edge-config": "^0.2.1",
     "clsx": "^2.0.0",
     "contentlayer": "^0.3.4",
@@ -46,7 +47,7 @@
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.3.5",
     "typescript": "5.2.2"
   }
 }
