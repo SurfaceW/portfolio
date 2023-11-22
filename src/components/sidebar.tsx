@@ -16,7 +16,8 @@ const navItems = {
     name: 'IDEA',
   },
   '/posts/rss': {
-    name: 'RSS'
+    name: 'RSS',
+    target: '_blank'
   }
 };
 
@@ -41,6 +42,7 @@ export default function Navbar() {
                   <Link
                     key={path}
                     href={path}
+                    target={navItems[path].target || '_self'}
                     className={clsx(
                       'transition-all hover:text-neutral-800 dark:hover:text-neutral-200 flex align-middle',
                       {

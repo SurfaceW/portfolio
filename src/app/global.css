@@ -14,24 +14,11 @@ html {
 /* General FontSize config */
 body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    Liberation Mono, Courier New, monospace;
+    Liberation Mono, Courier New, 'Microsoft YaHei', 'PingFang SC', monospace;
 }
 
-/* Mac */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  body {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-      Liberation Mono, Courier New, monospace;
-  }
-}
-
-/* Windows */
-@media screen and (min-resolution: 96dpi) {
-  body {
-    font-family: 'PingFang SC',
-      'Microsoft YaHei', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-      Liberation Mono, Courier New, monospace;
-  }
+.prose {
+  max-width: fit-content !important;
 }
 
 .prose .anchor {
@@ -40,7 +27,6 @@ body {
   margin-left: -1em;
   padding-right: 0.5em;
   width: 80%;
-  max-width: 700px;
   cursor: pointer;
 }
 
