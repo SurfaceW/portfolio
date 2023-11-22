@@ -15,6 +15,9 @@ const navItems = {
   '/idea': {
     name: 'IDEA',
   },
+  '/posts/rss': {
+    name: 'RSS'
+  }
 };
 
 export default function Navbar() {

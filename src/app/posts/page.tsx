@@ -14,6 +14,8 @@ export default async function PostPageServer({ params }: {
   // const allViews = await getViewsCount();
 
   return (
-    <PostListServer params={params} />
+    <>
+      <PostListServer params={params} />
+    </>
   );
 }
