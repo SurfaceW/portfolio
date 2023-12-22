@@ -5,78 +5,360 @@ summary: "Boost your productivity with highly effective full-stack development."
 tags: ['Fullstack', 'AI', 'Best Practices']
 ---
 
-## Think and impl. in a full-stack way
+## Think and impl. in a *super-full-stack* way
 
-* Core of FullStack dev.
-  * **Design Conceptual Integration** of product design, ux, native, web, mobile, desktop, cloud, edge, ai, ...🚀.
-  * **Biz and Problem Driven** to solve problem with skills like swiss knife 🇨🇭, driven by your own ideas 🤔.
-  * **Embrace of Elegant and CutEdged Tech.** to make your product more effective, competitive and innovative 🦄.
-    * Prisma
-    * TailwindCSS
-    * React, Next.js
-    * OpenAI / Github Copilot
-    * Turbo-repo / Turbo-pack
-    * Swr / React Query
-    * ...
-* The Three *Musketeers* of the Web in the New Era: `Typescript*` + `React*` + `TailwindCSS*`, use *React way* to achieve *FullStack way*.
-  * **Great Eco-system** of TS(JS / EcmaScript) and NPM. 🌍 -> Arms of Giants
-  * **React core conceptions, patterns and abstractions** in Native, Web, and Server as Components. -> Design Consistency
-  * **Stateless and Serverless** next.js make it in a natural-way to do so, and generate its principles to develop its systems. -> Scalability and Simplicity
+> Google is a super full-stack company, they want **smart creatives** to do **smart things** in a **smart way**.
+
+### Core ideas of *super-full-stack* dev
+
+* **Design Conceptual Integration** of product design, ux, native, web, mobile, desktop, cloud, edge, ai, ...🚀.
+* **Biz and Problem Driven** to solve problem with skills like swiss knife 🇨🇭, driven by your own ideas 🤔.
+* **Embrace of Elegant and Cut-Edged Tech.** to make your product more effective, competitive and innovative 🦄.
+  * Prisma
+  * TailwindCSS
+  * React, Next.js
+  * OpenAI / Github Copilot
+  * Turbo-repo / Turbo-pack
+  * Swr / React Query
+  * ...
+
+### New Three Musketeers of the Web
+
+The Three *Musketeers* of the Web in the New Era: `Typescript*` + `React*` + `TailwindCSS*`, use *React way* to achieve *FullStack way*.
+
+* **Great Eco-system** of TS(JS / EcmaScript) and NPM. 🌍 -> Arms of Giants
+* **React core conceptions, patterns and abstractions** in Native, Web, and Server as Components. -> Design Consistency
+  * ![FullStack with React TechStack](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222115213-B6IBw8Mqqq1U87hVyILDJvAEDPL2Yu.jpg)
+* **Stateless and Serverless** next.js make it in a natural-way to do so, and generate its principles to develop its systems. -> Scalability and Simplicity
+  * Next.js **Edge Runtime** with super fast performance and scalability.
+
+### Geek and Hacker Spirits in Web Dev
+
 * **Geek and Hacker Spirit** to seek high quality and high performance of your product 🌟.
-  * Responsive and Token driven theme Design system
-  * Dark scheme compatible
-  * Rich interactive and animated UI
-  * PWA / SPA / SSR / SSG / ESR / AOT ... combination with flexible design to boost performance
+  * **Responsive** and **Token driven theme** Design system
+  * **Dark Scheme** compatible
+  * **Rich interactive and animated UI** for better UX
+  * **PWA / SPA / SSR / SSG / ESR / AOT / WASM** ... combination with flexible design to boost performance and dev experience.
     * -> Micro Frontend is the past pone now.
     * -> C++ / Rust -> WASM is the performance boost in the future cross-platforms such as tik-token impl.
   * ...
 
 ## One Repo to rule them all
 
-> Benefits of One Repo.
+> Benefits of One Repo to organize multiple apps / packages with super blade in an effective way.
 
-* Dependency Consistency with `pnpm` workspace system.
-  * All shared dependencies are managed by pnpm with single locked version which reduce the risk of dependency conflicts and size of node_modules.
+### Architecture Consistency
+
+**Core architecture share and consistency**: from server -> client with safe unit tests to assure the consistency of the architecture.
+
+* You need *Best Practice* to rule those projects.
+* You can checkout the Figma file to see things to go with here 
+[Figama File of Software Dev Architecture](https://www.figma.com/file/FrKNet4AvYXbY1ikknt1lt/Software-Architecutre-Elements?type=whiteboard&node-id=0%3A1&t=igvMZM5uxvGhlV9E-1)
+
+![Software Dev Architecture](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222121919-V3RNzhZRK1y4ZxPfc3cpS3eIcN13P0.jpg)
+
+### Code Sharing and Reusability
+
+* **Dependency Consistency** with `pnpm` workspace system.
+  * All shared dependencies are managed by pnpm with single locked version which reduce the risk of dependency conflicts and size of `node_modules`.
   * Flatting the dependency tree to reduce the size of node_modules and make it more consistent.
   * Use workspace linkages to share packages among projects
-* Large amount of Code sharing across multiple projects of different platforms.
+* **Large amount of Code sharing** across multiple projects of different platforms.
   * Core data structure share: from db -> server -> client
     * The power of `Prisma` database devOps.
-  * Core architecture share: from server -> client with safe unit tests to assure the consistency of the architecture.
-  * UI components share: from server -> client -> shared components
-  * Business logic share: from client hook, to server services, to shared managers, to shared utils / sdks.
-  * Sample lib share diagram to show the power of one repo with packages.
-* Devops Consistency: flexible CI/CD pipelines with `Aone` / DEF / Devops platforms.
+
+---
+Use **Prisma** for Example:
+
+DB Scheme design:
+
+```prisma
+model KnowledgeSet {
+  id        BigInt   @id @default(autoincrement())
+  cuid      String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  desc      String?  @db.MediumText
+  name      String   @db.VarChar(100)
+  status    Int      @default(0)
+  createdBy String?  @db.VarChar(120)
+  updatedBy String?  @db.VarChar(120)
+  type      Int      @default(0)
+
+  content Json? @db.Json
+
+  app   AIApp  @relation(fields: [appId], references: [id])
+  appId BigInt
+
+  entities KnowledgeEntity[]
+
+  @@index([appId])
+}
+
+model KnowledgeEntity {
+  id        BigInt   @id @default(autoincrement())
+  cuid      String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(100)
+  status    Int      @default(0)
+  createdBy String?  @db.VarChar(120)
+  updatedBy String?  @db.VarChar(120)
+  type      Int      @default(0)
+
+  content Json? @db.Json
+
+  knowledgeSet   KnowledgeSet @relation(fields: [knowledgeSetId], references: [id])
+  knowledgeSetId BigInt
+
+  @@index([knowledgeSetId])
+}
+```
+
+SQL migration system:
+
+* use `prisma migrate` to generate migration files.
+* use `prisma migrate dev` to apply the migration files to your database.
+
+ServerCode:
+
+* easy to handle and use prisma type-generation system
+  * hint for type generation
+  * hint for complex query and modification
+
+```sql
+-- CreateTable
+CREATE TABLE `KnowledgeSet` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `cuid` VARCHAR(191) NOT NULL COMMENT '全局唯一ID',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    `updatedAt` DATETIME(3) NOT NULL COMMENT '更新时间',
+    `desc` MEDIUMTEXT NULL COMMENT '描述',
+    `name` VARCHAR(100) NOT NULL COMMENT '名称',
+    `status` INTEGER NOT NULL DEFAULT 0 COMMENT '状态',
+    `createdBy` VARCHAR(120) NULL COMMENT '创建人',
+    `updatedBy` VARCHAR(120) NULL COMMENT '更新人',
+    `type` INTEGER NOT NULL DEFAULT 0 COMMENT '类型',
+    `content` JSON NULL COMMENT '内容',
+    `appId` BIGINT NOT NULL COMMENT '应用ID',
+
+    UNIQUE INDEX `KnowledgeSet_cuid_key`(`cuid`),
+    INDEX `KnowledgeSet_appId_idx`(`appId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '知识库表';
+
+-- CreateTable
+CREATE TABLE `KnowledgeEntity` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `cuid` VARCHAR(191) NOT NULL COMMENT '全局唯一ID',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    `updatedAt` DATETIME(3) NOT NULL COMMENT '更新时间',
+    `name` VARCHAR(100) NOT NULL COMMENT '名称',
+    `status` INTEGER NOT NULL DEFAULT 0 COMMENT '状态',
+    `createdBy` VARCHAR(120) NULL COMMENT '创建人',
+    `updatedBy` VARCHAR(120) NULL COMMENT '更新人',
+    `type` INTEGER NOT NULL DEFAULT 0 COMMENT '类型',
+    `content` JSON NULL COMMENT '内容',
+    `knowledgeSetId` BIGINT NOT NULL COMMENT '知识库ID',
+
+    UNIQUE INDEX `KnowledgeEntity_cuid_key`(`cuid`),
+    INDEX `KnowledgeEntity_knowledgeSetId_idx`(`knowledgeSetId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '知识库实体表';
+```
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222115842-tcXGNVhiOyuFIlhyBRZNXhhyNaQycn.jpg)
+
+```ts
+async getKnowledgeFromKnowledgeSetCuid(cuid: string, options?: {
+  fetchEntityContent?: boolean;
+  fetchEntities?: boolean;
+}) {
+  return await this.aiStudioDBService.invokePrismaDBQueryWithServiceResult(async () => {
+    return prismaClient.knowledgeSet.findUnique({
+      where: {
+        cuid,
+      },
+      include: {
+        entities: options?.fetchEntities ? (
+          options?.fetchEntityContent ? true : {
+            select: {
+              id: true,
+              cuid: true,
+              name: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true,
+              type: true,
+            }
+          }
+        ) : false,
+      }
+    });
+  });
+}
+```
+
+ClientCode:
+
+* we can directly use the generated types from prisma to make the code more type-safe in the client side.
+
+`prisma.client.d.ts`
+
+```ts
+/**
+ * Model KnowledgeSet
+ * 
+ */
+export type KnowledgeSet = $Result.DefaultSelection<Prisma.$KnowledgeSetPayload>
+```
+
+![Prisma Generated Client Type System](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222121347-IzvWm373buDbyRYUGusJd3jC4BZi82.jpg)
+
+* **UI components share**: from server -> client -> shared components
+  * `/ui/client`
+  * `/ui/server`
+  * `/ui/shared`
+* **Business logic share**: from client hook, to server services, to shared managers, to shared utils / sdks.
+
+> Here is a demo of the mono-repo system with multiple projects to share code and architecture.
+
+![Packages System of MonoRepo](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222114501-Yrfv3JJv4sTRTPwtIP7Z9FF4RsW5lD.jpg)
+
+### DevOps Consistency
+
+* **Devops Consistency**: flexible CI/CD pipelines with `Aone`(Backend Devops platform in Alibaba) / DEF(Front End DevOps platform in Alibaba) .
   * FE projects deploy to CDN with DEF.
   * BE projects deploy to K8S of alibaba with `Aone`.
   * Chrome Extension projects deploy to Chrome Web Store with devtool.
   * SDK is published to NPM with devtool.
-* Architecture consistency: use proper design patterns and architecture guide to make things work perfectly.
-  * see -> `Architecture.md` in demo-repo.
-  * Swagger API doc for third-party API integration and invocations.
-* Super fast debug & tests with both FE / Server at the same time, of the same code base.
-* Turbo Technology Series: what make 17+ repo work together in a single repo.
+* Breach the Limitations of Alibaba `Aone` Cloud env with **Cloud Native** series tech.
+  * `Node.js` 18 is not supported yet, but we can use it in a tricky way.
+  * `Next.js` need to adapt some middlewares to coherent in Internal Cloud env.
+
+
+### Use API Specs
+
+* **Swagger API spec** or similar standards for third-party API integration and invocations.
+  * Make third-party API integration more effective and easy to maintain.
+  * Use swagger sdk generation tools, we can transform the swagger spec to sdk for multiple languages.
+
+![Swagger Generated API SDK client of Typescript](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222122607-7vJz4UUIBlENAz4uk17PD1ksgLUOtP.jpg)
+
+### Debug and Dev locally super cool
+
+* **Best debugging experience from end to end**, super fast debug & tests with both FE / Server at the same time, of the same code base.
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231222122806-HD00zVncL0dsuFmwGJcwbJNsU48uZ8.jpg)
+
+
+### Super Turbo Technology
+
+* **Turbo Technology Series**: what make 17+ repo work together in a single repo.
   * Unified tasks design with pipeline and task dependencies.
   * Incremental task running cache: cooperation with `pnpm` workspace system to reduce your time, such as run unit-tests among all projects.
   * Future possible remote task cache with DevOPS CI / CD process.
   * Next.js engineering with `Turbo-pack`, `Rust`, `swc` to boost the performance of local dev process.
   * ...
-* Breach the Limitations of Alibaba `Aone` Cloud env
-  * `Node.js` 18 is not supported yet, but we can use it in a tricky way.
-  * `Next.js` need to adapt some middleware to make it work in Internal Cloud env.
+
+My project's `turbo.config.json` file for example:
+
+```json
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^db:generate"],
+      "cache": true
+    },
+    "build:test": {
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^db:generate", "^test"]
+    },
+    "start": {
+      "cache": false
+    },
+    "dev": {
+      "cache": true,
+      "dependsOn": ["^db:generate"]
+    },
+    "dev:chat": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": true
+    },
+    "db:push": {
+      "cache": false
+    },
+    "test": {
+      "cache": true
+    },
+    "test:watch": {
+      "cache": false
+    },
+    "lint": {
+      "cache": true
+    }
+  },
+  "globalEnv": ["NODE_ENV", "APP_NAME"]
+}
+```
 
 ## Boost the power of AI
 
 > Make fully use of AI to generate code for u.
 
-* Buy and use Github copilot. 15% ~ 20%
-* Chat with latest AI model to solve problems. 10% ~ 15%
-* AI single bot with POE as code-generator & assistant. 30% ~ 50%
+You can read [AI Driven FrontEnd Development](https://arno.surfacew.com/posts/ai-driven-front-end) another article to know more about AI in the future.
 
-Demo: a simple workflow for AIStudio demands from DevOPS of basic-infra team.
+### Happy Hacking with Github Copilot
 
-Future way of AI?
+* Buy and use **Github Copilot**. 15% ~ 20% code is generated by AI.
+  * Direct completion
+  * Write tests
+  * Explain code
+  * Fix bugs
+  * Chat with code context in your editor
+  * ...
+
+### Chat with latest AI model to solve problems
+
+* Chat with latest AI model(for now is *GPT-4-128K-Turbo*) to solve problems. 10% ~ 15%
+  * Open AI is the best AI model provider for now.
+
+### Create your smart code generation agent in the way you like
+
+* AI single agent with POE as code-generator & assistant. 30% ~ 50%
+  * for example: [Next.js Component Generation Bot](https://poe.com/antdplusnextjs)
+
+
+---
+
+Demo: a simple workflow for AIStudio demands with GPT4 Vision modal go generate the UI code that I want.
+
+---
+
+### Future way of AI?
 
 * Future shape of AI Agent is with RAG, Tools, multiple agent via LLM in AIStudio PromptStudio.
+* Multi-modal AI with multiple agents to generate code.
 
+## Conclusion
 
+> The future is already here — it's just not very evenly distributed. - William Gibson
+
+* Think and act and implement in a *super-full-stack* way. Super individuals ages are approaching.
+* Engineering is still important to control and reduce the complexity of the system. Both in UX(User Experience) way and DX(Developer Experience) way.
+* AI is the future, but we still need to do a lot of things to make it happen.
+
+## Ref
+
+updates:
+
+* 2023-12-22: add more details about the article.
+
+---
+
+* [《2023 了，一起聊一聊 Web 应用研发趋势》](https://www.yuque.com/surfacew/fe/fpng1l0slv5i950i?singleDoc)
