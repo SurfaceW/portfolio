@@ -1,67 +1,205 @@
 ---
-title: 'AI Driven FrontEnd Development [WIP]'
+title: 'AI Driven FrontEnd Development 🌟'
 publishedAt: '2023-11-22'
 summary: "Arno's best practices for AI Driven FrontEnd Development."
 tags: ['Frontend', 'AI', 'Best Practices']
 ---
 
+[中文版本]()
+
 > We can only see a short distance ahead, but we can see plenty there that needs to be done. - Alan Turing
 
-[中文版本]()
 
 ## Unleash the power of AI
 
-> general purpose AI is not yet available
+Open AI GPTs are powerful, but how to unleash its power in our daily dev work need some insights. As a frontend(full-stack) developer, I summarize some best practices for AI Driven FrontEnd Development tips & patterns based on my daily work and research. 
 
-## Github Copilot Patterns
+Hope such experience share can help! And here we go ~ 🚀
 
-* direct completion
-  * tip: multiple choices
-* write tests
-  * chat with `/test`
-* explain code
-  * chat with `/explain`
-* fix bugs
-  * error with extension to trigger fix suggestion of copilot
-* chat with code context in your editor
-  * chat with any code related to your current context of file and code language server
+## Github Copilot
 
+> Use it without any hesitation. 😎
 
-## Code Review Patterns
+![GithubCopilot Feature Patterns](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231122181500-FWoa9c3IMCkjvPb8PF66sszHWzWwy4.jpg)
 
-* code comment / commit msg assistant
-* code review assistant
-* code security concern assistant
+[🤖 Github Copilot](https://copilot.github.com/) have already shown us the power of AI in our daily work. It's a great to work as a pair in the fllowing ways with its paid features:
+
+* **Direct code completion**: when you type code, it will suggest you the code completion according to your context, this is the most useful feature for me, it works so naturally and I can focus on the code logic instead of the code syntax.
+
+:::
+
+Direct code completion can use multiple choices to select the best one, but it's not always the best one, so you need to be careful with it.
+
+![Github Copilot Suggestions Options Image](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231122182258-szgasL5lhsml0zGL6SlrZlHvQVCTu5.jpg)
+
+:::
+
+* **Write tests** with Github Copilot Chat feature, you can use `/test` command to ask Copilot to write tests for you, it's a great way to write tests, but you need to be careful with it, because it's not always the best test cases, you need to review it and modify it to make it better.
+* **Explain code** if you have doubts about the code, you can use `/explain` command to ask Copilot to explain the code for you, feel natural and useful.
+* **Fix bugs and errors** you can fix bug and error especially about typescript errors with single hover on the error and click the `Fix` button.
+
+:::
+
+Show the error hint and fix with Copilot:
+
+![indicate the error](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231122182724-27BhVRt37CNM0WShIZL9JW66OTD68X.jpg)
+
+Fix the error with Copilot:
+
+![fix with copilot](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231122182808-l8haFLWoJKKi2xufthG5l1YgIazCUp.jpg)
+
+> This works out so well for me, especially for typescript errors. AI can find its way ~
+
+:::
+
+* **Chat with your code context**: in your editor, you can chat to the code you selected as context, or to your current file and even code language server APIs, they man be caught by Copilot and used as context to generate code for you.
+
+![Chat with Copilot to generate code suggestions](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231121145829-V8hCEnKhURONJedX8A1v6ug6nRsmaV.jpg)
+
+* **Enterprise Level Features**: may contain more features to integrate with:
+  * **CLI enhancement**: for code commit, command suggestions like `Wrap` did.
+  * **Code and information security**: for code security concerns of Business.
+  * Support embedding and use your own code and documents as context to perform tasks above, so you can **Chat to your documentation and your code-base**, that's quite useful for some conditions when you want to gain more insights from your code-base and documentation.
+  * **Fine-tune** the AI model to fit your business needs.
+
+> If without the enterprise level features, we can implement it via vscode extension to access the related code context and handle it to OpenAI or other API service vendor to generate content we need in a cheaper way.
+
 
 ## Code Generation Patterns
 
-* maintain your own prompt garden in Github
-  * for example: build your own prompt base like expert
-  * show Arno's prompt garden with vscode flow of writing and design prompt in a simple way
-* use multiple modal AI to generate code
-  * example: use GPT to generate code based on the picture of the UI and the description of the UI
+> Before we start, I have to say: **Do use latest and strongest model**, like GPT-4 series to solve your dev problem and upcoming code-generation patterns. Compared with gpt-3.5, it is more reliable, more powerful!
 
-### BOTS as simple agents
+Sometimes when the code context become more complex, we need to describe the requirements in a more structured way to generate code, here are some patterns:
 
-* POE with simple bot like agents
-  * example: next.js ant-design component prompt agent
-* OpenAI GPTs with more complex agents like: tools / functions calls / file-context embedding / ...
+* **Maintain your own prompt garden in Github**: you can edit your prompt with `git` on Github.
+  * my prompt garden is here: [🌟 Arno's Prompts](https://github.com/SurfaceW/arno-prompts), maybe, you can get inspired from it.
 
-### Complex context representation
+![Arno's Prompt Garden Example](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231225230007-HvS79bVQOuubhPGNmULgwB9lyxC5xr.jpg)
+
+
+* use **POE** liked, **Similar bots/ agents Creator** to solve your repeated or domain-context related problems. I used to create lots of dev related bots to help me solve my dev problems:
+  * with simple `system prompt`, we can create bot like simple-agent to work on specific domain tasks.
+  * with some extra files as `Knowledge` to be retrieved as prompt context. 
+  * place your prompt inside your project source code such as `*.prompt.md` files, to give the context of code generation in convenience of future modifications and re-usages, 
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231225225236-YC1qqxjmZMinXEbC5mzF3QFYmHWWKg.jpg)
+
+Let's take my [next.js + antd component generator bot](https://poe.com/antdplusnextjs) for example, its system prompt is quiet simple:
+
+```markdown
+1. use AntDesign Component Library to create a component
+2. use TypeScript version 5
+3. use React Hook Style
+4. generate the text start with ```tsx and end with ```
+5. do not use `export default` syntax, use `export const` instead
+6. add `'use client';` on the first line of the code if user use next.js project
+7. use `Typography` for basic text display
+8.  use `tailwindcss` as class utility for custom style if necessary(better without it unless you need to implement style yourself)
+9.  try to use `<Skeleton />` for loading state in the component render
+10. **do output code without explanation**
+
+
+Here are optional rules:
+
+* if you are generate table component, you should consider table column width, eclipse text, and add some formatters if necessary
+  * if column width is not specified, you should use `auto` width and consider use scroll feature of table if table is too wide
+* use the standard `useSwr` or `useMutation` from swr lib or `@tanstack/react-query` API if user required data fetching
+
+Based on the context given below work:
+
+<TSXCode>
+```
+
+But it works perfectly to generate my project code like:
+
+```tsx
+'use strict';
+import React from 'react';
+import { Descriptions, Skeleton } from 'antd';
+import useSWR from 'swr';
+import { MaasCodeBenchmarkReport } from './your-api-definition-file';
+
+interface PressureTestReportProps {
+  benchmarkId: number;
+}
+
+interface BenchmarkMetrics {
+  avgGpuUsage: string;
+  avgGpuMemUsage: string;
+  avgCpuUsage: string;
+  avgMemUsage: string;
+  avgQPS: string;
+  avgErr: string;
+  avgRT: string;
+}
+
+interface PressureTestReportData {
+  benchmarkMetrics: BenchmarkMetrics;
+  benchmarkLog: string;
+  isGPUError: string;
+  minConsumption: string;
+}
+
+export const PressureTestReport: React.FC<PressureTestReportProps> = ({ benchmarkId }) => {
+  const { data, error } = useSWR(`/admin/maas/benchmark/report/${benchmarkId}`, MaasCodeBenchmarkReport);
+
+  if (error) return <Typography.Text type="danger">Failed to load data!</Typography.Text>;
+  if (!data) return <Skeleton active />;
+
+  const reportData: PressureTestReportData = data.data;
+
+  return (
+    <Descriptions layout="vertical" bordered>
+      <Descriptions.Item label="Average GPU Usage">{reportData.benchmarkMetrics.avgGpuUsage}</Descriptions.Item>
+      <Descriptions.Item label="Average GPU Memory Usage">{reportData.benchmarkMetrics.avgGpuMemUsage}</Descriptions.Item>
+      <Descriptions.Item label="Average CPU Usage">{reportData.benchmarkMetrics.avgCpuUsage}</Descriptions.Item>
+      <Descriptions.Item label="Average Memory Usage">{reportData.benchmarkMetrics.avgMemUsage}</Descriptions.Item>
+      <Descriptions.Item label="Average QPS">{reportData.benchmarkMetrics.avgQPS}</Descriptions.Item>
+      <Descriptions.Item label="Average Error Rate">{reportData.benchmarkMetrics.avgErr}</Descriptions.Item>
+      <Descriptions.Item label="Average Response Time">{reportData.benchmarkMetrics.avgRT}</Descriptions.Item>
+      <Descriptions.Item label="Benchmark Log">{reportData.benchmarkLog}</Descriptions.Item>
+      <Descriptions.Item label="Is GPU Error">{reportData.isGPUError}</Descriptions.Item>
+      <Descriptions.Item label="Minimum Consumption">{reportData.minConsumption}</Descriptions.Item>
+    </Descriptions>
+  );
+};
+```
+
+
+* OpenAI's **multi-modal AI** APIs or similar API like Google's Gemini Vision to generate code with image in a simple way:
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/E20018BC-2ACE-4F6A-B7B4-B060DED28B6A-39466-0000198F1B6926BC-3nr0GARrVTAHm2mJe4XHofiSkNB4hG.jpg)
+
+> Take the manually draw UI image for example, we can use multi-modal AI to generate code for us, with GPT-4-Vision API. 
+
 
 ## Tools and Platforms
 
 
-* Low code integration with API invocation platforms like `v0.dev` pattern components based
-* Prompt to fully generated code and project site based on continuous prompting
-  * multi-modal based
+* Component based code generation platform like [`v0.dev`](https://v0.dev) by Vercel visual pattern components based. 
+  * These components and suitable for RSC(react server component) scenarios, it works perfectly with some simple visual design conditions.
+
+![V0.Dev by Vercel](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231225231514-HlgXK0bXQuA9uGipI2LdlJ7km9oiXb.jpg)
+
+* [OpenAI GPTs](https://openai.com/blog/introducing-gpts) with more complex agents like: tools / functions calls / file-context embedding / ... to make dev experience even better in some specific complex tasks.
+  * Byte-dance's [Coze](https://www.coze.com/) is another nice choice to replace OpenAI's GPTs.
+
+![Coze by ByteDance](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231225231326-XErTBmrR72ODM5JpbIRpT1cwGyPREv.jpg)
+
+
 
 
 ## Future Patterns
 
-* RAG based pattern: work with RAG to retrieve the context of the code and generate code based on the context.
-* semi-auto-meta pattern: human organize key strokes of multiple agents to complete a complex task with structured complex context (very matured AI pattern in the future) inside one `work in one workspace` (like Notion) to structure the context and provide the context to AI agents to keep complex operations in one place. -> idea from elaboration studio of Arno.
-* full-auto-meta pattern: multiple agents working together to complete a complex task with structured complex context (very matured AI pattern in the future). 
+* **Full RAG and Fine-tuning** pattern, as enhancement for complex tasks. Use patterns of RAG to combine external knowledge as more accurate context to feed LLM for more accurate output, such as cases of code snippets, PRDs, Images and more structured data.
+
+![RAG related conceptions](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20231225231645-yyeLeWK5mh8h6IM2DoZpkERZAuTofx.jpg)
+
+> Image from paper of `Retrieval-Augmented Generation for Large Language Models: A Survey`
+
+
+* **Semi-auto-meta pattern**: human organize key strokes of multiple agents to complete a complex task with structured complex context (very matured AI pattern in the future) inside one `work in one workspace` (like Notion) to structure the context and provide the context to AI agents to keep complex operations in one place. -> idea from elaboration studio of Arno.
+* **Full-auto-meta pattern**: multiple agents working together to complete a complex task with structured complex context (very matured AI pattern in the future). 
 
 
 ## References
