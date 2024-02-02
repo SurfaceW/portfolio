@@ -1,0 +1,176 @@
+---
+title: 'Next.js Stack Architecture Design'
+publishedAt: '2024-02-02'
+summary: "Arno's Architecture Design for complex next.js driven web application."
+tags: ['Frontend', 'Backend', 'Fullstack']
+---
+
+# Next.js Stack Architecture Design
+
+Arno offer his best BP while using next.js in Alibaba's DingTalk and other larger projects.
+
+## Server
+
+### API & Architecture Style
+
+* architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project
+* unleash the power of *Restful API Design* keep and follow strict API design principle, or other formal API design principle such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary
+* **Stateless and Serverless** design first for service to be easily scaled and managed
+* for public API, you should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility
+
+### Application Layer (Controller)
+
+`Controller` / `Routes`: for next.js is api-routes use `Function` programming style, traditional Application Layer.
+
+* handle the request and response in Web and Application layer
+* deal with the error for web or other protocol response
+* return `unified` response or service result object to be handled by the client
+* controller can be write in global `middleware` function or wrapped by high-order function to handle the common logic
+* handle error codes and error message
+* better with 0 business logic in this layer
+
+### Service Layer
+
+`Service`: module to handle the business logic with encapsulated domain service & managers in OO style
+
+* Domain Driven Design provide domain service to handle the business logic
+* can not throw error and should deal with the error
+* return `unified` response or service result object to be handled by the controller
+* use Swagger or other **formal API Specs** to integrate with third-party services vendor, make sure the API is well documented in code and use tool to generate those API client code
+* try **Interface Oriented** design for various kinds of similar services, e.g. `*.service.impl.ts`
+* obey the **Rules of OO BP**, such as SOLID, DRY, KISS, etc.
+  * use DI style to inject the dependency and build DI driven service dependency and instance management
+
+### Manager Layer
+
+`Manager`: module to manage the business logic as the reusable code, in OO style
+
+* can throw error
+* optional DI provided for service layer
+* make it more atomic and modular to encapsulate the business logic
+* `utils` and `helper` functions can be put here as a sub-category of manager
+
+### Next.js Best Practice Guide
+
+* use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
+* make full use of Next.js' **layered cache system** in page / routes, React.cache, fetch cache, client cache, etc.
+* try to use EdgeRuntime for handling the static content and fetch related simple tasks
+* use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data
+* separate the ServerComponentData / ClientComponentData, use it to handle the server-side rendering and client-side rendering cleverly
+* use CDN for static files and contents, use `next/image` etc. for resource optimizations
+* use `next/script` for script optimizations
+* make use add `metadata` to next.js pages for SEO and SNS sharing
+* boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism
+* use `server` / `client` / `shared` folder to separate the code for different runtime
+* check every possible config in `next.config.js` to optimize the performance and security before you go to production
+
+### Make full use of tools / libs of Node / JavaScript Ecology
+
+* DB layer can be presented by `Prisma` ORM or other db service vendor
+* error / request trace with trace API & tools, such as `Sentry` / `Raygun`
+* logs with log API & tools including SLS / ELK for logging and debugging 
+* consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
+* add unit tests to cover basic lib / tools and key business logic
+* use config middleware such as `Diamond` or Vercel Configs for app configs
+* use `Redis` or other memory shared to handle the cache and session shared by different server instances
+* consider use the AB Test service or Gray Release service to handle the feature release
+* use `Kafka` or other message queue to handle the async tasks and event-driven tasks
+* use `K8S` or other container service to handle the deployment and scaling
+* use `Prometheus` or other monitoring service to handle the monitoring and alerting
+* use `Grafana` or other dashboard service to handle the dashboard and visualization
+* use `Jenkins` or other CI/CD service (Github Actions or Vercel) to handle the CI/CD pipeline and production process
+* use `Jest` or other testing service to handle the unit test and integration test
+* ...
+
+
+## Web Client
+
+### React Best Practice Guide
+
+* separate the **Logic** and **View** in different layers
+  * JSX / Component should be purely use Functional way
+  * DO NOT write chunks of business logic such as handler / callbacks / hooks in the JSX / Component use a function from a client manager or service
+  * try *Server Actions* if possible to handle the server-side logic and client-side logic together in a more simple and clear way
+* separate the `State` of client in different layers
+  * `ServerState`: state managed by server
+    * use hooks for location / url pathname / search-params / next-params, etc, as state of server ...
+    * use `SWR` or `ReactQuery` to handle the server state and cache or directly handle it by page in server component to reduce the complexity in client
+  * `SharedContext` usually do not mutate that often, use `React.Context` to handle the shared state and context, such as Theme, Locale, User, etc as Global shared context.
+  * `SharedState` use `redux`, `zustand` or `recoil` with logger and middleware to handle the shared better immutable state among components which can be easily visualized, traced, logged and debugged.
+  * `ReactiveState` consider to use `RxJS` or `Mobx` to handle the reactive state and event-driven state
+  * `LocalComponentState` try to use `useState` and `useReducer` to handle the local state of the component
+* **Hook-Style First** to encapsulate the logic and make it more reusable among components and reduce the code in JSX component body, which make the code more clear and easy to maintain
+
+### Logic Encapsulation
+
+* **Service** liked to the server service, client service and encapsulated apis to invoke by `useSwr` or `useQuery` or other API client.
+  * some typical examples are:
+    * the db-service of local
+    * the local-data-cache service
+    * the Restful API service
+  * service can encapsulate the logic and handle the error and response elegantly, which should not emit exceptions or errors
+  * service can coordinate the different services or manager to handle the complex logic
+  * ...
+* **Manager** liked to the server manager, client manager and encapsulated business logic to be invoked by the service or component
+  * some typical examples are:
+    * the business logic manager
+    * the logs manager
+    * the event-pub-sub manager
+    * ...
+  * manager are the basic building blocks of the business logic and can be reused by different services
+  * manager can throw error without extra handling process which shall delegate to the service to handle it properly
+
+### Tips for Performance & Storage
+
+* use web worker to handle the heavy computing tasks
+* use *Rust* / *WASM* to handle the heavy computing tasks
+* use Service Worker to handle the offline and cache data and requests
+* use local-db such as `IndexedDB` to handle the local storage and cache
+* use `localStorage` / `sessionStorage` to handle the local storage and cache for use preference and temporary data cache
+
+### Network and Communication
+
+* use WebRTC / Websocket for more real-time and interactive tasks
+* use native `fetch` API first other than ajax or other network communication mechanism
+* use WebStream with Fetch API to handle the large data transfer and stream data
+
+### Tips for UI & UX
+
+* use `TailwindCSS` or `ChakraUI` to handle the UI and layout
+* use `AntD` or `MaterialUI` with highly *customizable theme* and *complex logic and functionality encapsulated*
+* use `Storybook` or other UI testing service to handle the UI testing and visual testing
+* consider *compatibility* in different viewport, size, versions and more
+* follow the BP of Mobile Web App development principles
+* follow some web dev guides of Google / Apple / Microsoft / Mozilla / W3C ...
+* consider obey the A11Y and I18N principles
+* add some reasonable animation and transition to make the UI more vivid and interactive
+* Responsive Design FIRST
+* Dark Scheme Compatibility
+* use `SSG` / `SSR` / `ISR` / `CSR` / `Reactive` / `Hybrid` to handle the different rendering strategy to boost the performance and user experience
+* ...
+
+### Domain Specified Technology
+
+Do not create the wheel again, use the domain specified technology to handle the domain specified tasks.
+
+* TextEditor / IDE / Code Formatter / Linter ...
+* Chart / Graph / Data Visualization ...
+* Map / Location / Geo ...
+* Real-time Collaboration ...
+* 3D Rendering / 2D Rendering / Animation ...
+* Audio / Video / Media ...
+* Web XR / VR / AR ...
+* ...
+
+## Native Client
+
+> can wait to provide the BP for the native client, such as iOS / Android / Windows / Mac / Linux / WebOS / Tizen / HarmonyOS / ... in actions.
+
+Arno is still exploring 🧭
+
+## Reference
+
+My Related Articles: 
+
+* [Effective Full Stack Dev](/posts/effective-full-stack-dev)
+* [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
