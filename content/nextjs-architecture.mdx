@@ -1,17 +1,15 @@
 ---
-title: 'Next.js Stack Architecture Design'
+title: 'Next.js Full Stack App Architecture Guide'
 publishedAt: '2024-02-02'
 summary: "Arno's Architecture Design for complex next.js driven web application."
 tags: ['Frontend', 'Backend', 'Fullstack']
 ---
 
-# Next.js Stack Architecture Design
-
 Arno offer his best BP while using next.js in Alibaba's DingTalk and other larger projects.
 
 ## Server
 
-### API & Architecture Style
+### General API & Architecture Style
 
 * architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project
 * unleash the power of *Restful API Design* keep and follow strict API design principle, or other formal API design principle such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary
@@ -82,6 +80,31 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 * use `Jest` or other testing service to handle the unit test and integration test
 * ...
 
+### lib and directory structure guide
+
+```markdown
+- `app`: the main app entry of next.js app
+  - `api`: the api routes
+    - `/v1`: the versioned api routes for public use
+      - `*.ts`: the api routes
+- `components`: the shared components
+  - `server`: the server-side components
+  - `client`: the client-side components
+  - `shared`: the shared components
+- `configs`: the app shared configs
+- `lib`: the shared lib and tools
+  - `server`: the server-side lib and tools
+  - `client`: the client-side lib and tools
+  - `shared`: the shared lib and tools
+    - `*.manager.ts`: the biz manager that can be shared
+- `services`: the shared services
+  - `server`: the server-side services
+  - `client`: the client-side services
+  - `shared`: the shared services
+    - `*.service.ts`: the biz service that can be shared
+- `public`: the public static files
+```
+
 
 ## Web Client
 
@@ -141,7 +164,7 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 * use `Storybook` or other UI testing service to handle the UI testing and visual testing
 * consider *compatibility* in different viewport, size, versions and more
 * follow the BP of Mobile Web App development principles
-* follow some web dev guides of Google / Apple / Microsoft / Mozilla / W3C ...
+* follow and apply some web dev guides of Google / Apple / Microsoft / Mozilla / W3C ...
 * consider obey the A11Y and I18N principles
 * add some reasonable animation and transition to make the UI more vivid and interactive
 * Responsive Design FIRST
@@ -168,9 +191,25 @@ Do not create the wheel again, use the domain specified technology to handle the
 
 Arno is still exploring 🧭
 
+## Common Patterns and Conventions
+
+Provide some common patterns and conventions for the next.js full stack app development that developers can follow and use.
+
+### Files
+
+* `*.type.ts`: the typescript language type that can be shared
+* `*.constant.ts`: the constant that can be shared
+* `*.util.ts`: the utility functions that can be shared
+* `*.manager.ts`: the biz manager that can be shared
+* `*.service.ts`: the biz service that can be shared
+* `*.service.impl.ts` the implementation of an abstract service
+* `*.store.ts`: the biz store of zustand or any other react-state manage units that can be shared
+* `*.hook.ts`: the biz hook that can be shared
+
+
 ## Reference
 
 My Related Articles: 
 
-* [Effective Full Stack Dev](/posts/effective-full-stack-dev)
+* [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
 * [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
