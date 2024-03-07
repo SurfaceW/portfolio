@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 export default async function PostPageServer({ params }: {
   params: {
     tag?: string;
+    lang?: string;
   }
 }) {
   // const allViews = await getViewsCount();

@@ -7,6 +7,7 @@ export async function PostListServer({
 }: {
   params: {
     tag?: string
+    lang?: string
   }
 }) {
   return (
@@ -19,6 +20,14 @@ export async function PostListServer({
       </h1>
     
       {allBlogs
+        .filter((post: any) => {
+          if (params.lang) {
+            // i18n tag
+            return post.tags?.includes(params.lang)
+          }
+          return true
+        
+        })
         .filter((post: any) => {
           if (params.tag) {
             return post.tags?.includes(params.tag)
@@ -48,7 +57,7 @@ export async function PostListServer({
             </Link>
             <p className='mb-6'>
               {(post.tags || []).map((tag: any) => (
-                <TaggedLink tag={tag} key={tag} />
+                <TaggedLink lang={params.lang || 'en'} tag={tag} key={tag} />
               ))}
             </p>
           </>

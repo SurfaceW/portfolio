@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutGroup, motion } from 'framer-motion';
 
@@ -22,7 +22,11 @@ const navItems = {
 };
 
 export default function Navbar() {
+  
   let pathname = usePathname() || '/';
+
+  const { lang } = useParams<{ lang: string }>();
+
   if (pathname.includes('/blog/')) {
     pathname = '/blog';
   }

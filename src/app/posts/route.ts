@@ -13,9 +13,9 @@ export const GET = async (req: NextRequest) => {
     firstLanguage === 'zh-MO' ||
     firstLanguage === 'zh'
   ) {
-    redirectURL.pathname = '/posts/cn/rss'
+    redirectURL.pathname = '/posts/cn'
   } else {
-    redirectURL.pathname = '/posts/en/rss'
+    redirectURL.pathname = '/posts/en'
   }
   return NextResponse.redirect(`${redirectURL}`)
 }
