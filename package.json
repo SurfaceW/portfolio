@@ -28,7 +28,8 @@
     "rss": "^1.2.2",
     "server-only": "^0.0.1",
     "shiki": "^0.14.5",
-    "swr": "^2.2.4"
+    "swr": "^2.2.4",
+    "uvcanvas": "^0.2.1"
   },
   "prettier": {
     "arrowParens": "always",

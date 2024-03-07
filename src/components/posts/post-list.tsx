@@ -45,7 +45,7 @@ export async function PostListServer({
             <Link
               key={post.slug}
               className="flex flex-col space-y-1"
-              href={`/posts/${post.slug}`}
+              href={`/posts/${params.lang || 'en'}/${post.slug}`}
             >
               <div className="w-full flex flex-col">
                 <h4 className="text-neutral-900 dark:text-neutral-100 tracking-tight text-lg font-bold hover:text-blue-500 transition-all ease-in duration-200">
