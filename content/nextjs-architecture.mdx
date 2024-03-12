@@ -11,10 +11,10 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 
 ### General API & Architecture Style
 
-* architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project
-* unleash the power of *Restful API Design* keep and follow strict API design principle, or other formal API design principle such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary
-* **Stateless and Serverless** design first for service to be easily scaled and managed
-* for public API, you should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility
+* architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project.
+* unleash the power of *Restful API Design* keep and follow strict API design principle, or other formal API design principle or RPC framework such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary.
+* **Stateless and Serverless** design first for service to be easily scaled and managed.
+* for **public API or internal API management**, we should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility, follow a standard API Design spec such as `OpenAPI` or `Swagger` to make sure the API is well documented and easy to use. API is complicated by the time the complexity of the project grows, there are many methodology to control such complexity, we need to pick a suitable one for the project.
 
 ### Application Layer (Controller)
 
@@ -48,21 +48,33 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 * make it more atomic and modular to encapsulate the business logic
 * `utils` and `helper` functions can be put here as a sub-category of manager
 
+### Data Persistence Layer
+
+* precisely choose SQL or NoSQL DB type for your business features, don't forget to add redundancy and backup for the data.
+* pick ORM or other DB service vendor to handle the data persistence like `Prisma` or `TypeORM`.
+* always start design your db considering the data scaling and data consistency, distributed db and sharding, etc, when you truly need it. e.g. your data-records is over 1M or 10M or 100M in 3 year, etc, they should plan to use different type of db technology and design the data model and data structure in the different ways.
+  * consider use `Serverless` DB to handle the data scaling and management
+* carefully design the data model and data structure in the DB, make full use of the DB index and query optimization, but do not over optimize the db query.
+* follow the Community's SQL, table-creating, index-creating, query-optimization, etc, best practice guide. -> e.g. Alibaba's Java Developer Guide show some best practice guide for MySQL and DB.
+* use *transaction* and *isolation* to handle the data consistency and integrity for sensitive data and operations
+
 ### Next.js Best Practice Guide
 
 * use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
-* make full use of Next.js' **layered cache system** in page / routes, React.cache, fetch cache, client cache, etc.
-* try to use EdgeRuntime for handling the static content and fetch related simple tasks
-* use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data
+* make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
+* try to use *EdgeRuntime* for handling the static content and fetch related simple tasks
+* use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
 * separate the ServerComponentData / ClientComponentData, use it to handle the server-side rendering and client-side rendering cleverly
 * use CDN for static files and contents, use `next/image` etc. for resource optimizations
 * use `next/script` for script optimizations
-* make use add `metadata` to next.js pages for SEO and SNS sharing
+* make use add `metadata` ability inset next.js pages for SEO and SNS sharing
 * boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism
 * use `server` / `client` / `shared` folder to separate the code for different runtime
 * check every possible config in `next.config.js` to optimize the performance and security before you go to production
 
 ### Make full use of tools / libs of Node / JavaScript Ecology
+
+> Avoid reinventing the wheel, use the best tools and libs in the Node / JavaScript Ecology.
 
 * DB layer can be presented by `Prisma` ORM or other db service vendor
 * error / request trace with trace API & tools, such as `Sentry` / `Raygun`
@@ -104,6 +116,10 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
     - `*.service.ts`: the biz service that can be shared
 - `public`: the public static files
 ```
+
+My Practicing:
+
+* [🌟 Github - arno packages](https://github.com/SurfaceW/arno-packages): my basic packages which work and follow the principles above.
 
 
 ## Web Client
@@ -195,7 +211,7 @@ Arno is still exploring 🧭
 
 Provide some common patterns and conventions for the next.js full stack app development that developers can follow and use.
 
-### Files
+### File Types and Conventions
 
 * `*.type.ts`: the typescript language type that can be shared
 * `*.constant.ts`: the constant that can be shared
@@ -213,3 +229,8 @@ My Related Articles:
 
 * [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
 * [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
+
+
+### notes on this article
+
+* 2024-03-12: bugfix and add more details for some topics, add `db` related topics guide
