@@ -217,10 +217,15 @@ Provide some common patterns and conventions for the next.js full stack app deve
 * `*.constant.ts`: the constant that can be shared
 * `*.util.ts`: the utility functions that can be shared
 * `*.manager.ts`: the biz manager that can be shared
+* `*.manager.impl.ts`: the implementation of an abstract manager
 * `*.service.ts`: the biz service that can be shared
 * `*.service.impl.ts` the implementation of an abstract service
 * `*.store.ts`: the biz store of zustand or any other react-state manage units that can be shared
 * `*.hook.ts`: the biz hook that can be shared
+
+### Class methods naming conventions
+
+* for `CRUD` operations of a service, use `create`, `get / list`, `update`, `delete` as the method name prefix
 
 
 ## Reference

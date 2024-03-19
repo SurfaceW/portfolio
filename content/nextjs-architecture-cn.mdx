@@ -1,0 +1,240 @@
+---
+title: 'Next.js 全栈研发架构指南'
+publishedAt: '2024-02-02'
+summary: "Arno's Architecture Design for complex next.js driven web application."
+tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
+---
+
+> Arno 在使用 next.js 为阿里巴巴的钉钉(DingTalk)和其他大型项目提供他最好的最佳实践(BP)。
+
+该文章使用 GPT 翻译自原文：[Next.js Full Stack App Architecture Guide](https://arno.surfacew.com/posts/en/nextjs-architecture)
+
+## Server
+
+### 通用 API 和架构风格
+
+* 架构设计应该是**多样化的，随项目生命周期的不同阶段而演化**，不要总是首先使用相同的架构风格，如`微服务`（micro-services），它们并不总是最佳选择，尤其是对于刚起步或小型项目。
+* 发挥 *Restful API 设计* 的力量，保持并遵循严格的 API 设计原则，或使用其他正式的 API 设计原则或 RPC 框架，如 `GraphQL` 或 `gRPC`，谨慎地在一个项目中应用不同的通信协议，不要增加不必要的复杂性。
+* **无状态（Stateless）和无服务器（Serverless）** 设计应作为首选，以便服务易于扩展和管理。
+* 对于**公共 API 或内部 API 管理**，我们应该在路径名中添加版本控制，如 `/api/v1/*`，以确保向后兼容，遵循标准的 API 设计规范，如 `OpenAPI` 或 `Swagger`，确保 API 文档完善且易于使用。随着项目复杂性的增加，API 也会变得复杂，我们需要选择适合项目的方法来控制这种复杂性。
+
+### Application 层（控制器）
+
+`控制器` / `路由`：对于 next.js 来说，api-routes 使用 `函数` 编程风格，传统的应用层。
+
+* 处理 Web 和应用层的请求与响应
+* 处理 Web 或其他协议响应的错误
+* 返回 `统一` 的响应或服务结果对象，供客户端处理
+* 控制器可以写在全局 `中间件` 函数中，或由高阶函数包装以处理公共逻辑
+* 处理错误代码和错误消息
+* 这一层最好不包含业务逻辑
+
+### Service 层
+
+`Service`：用面向对象（OO）风格封装领域服务和管理器，处理业务逻辑的模块
+
+* 领域驱动设计（Domain Driven Design）提供领域服务来处理业务逻辑
+* 不能抛出错误，并应处理错误
+* 返回 `统一` 的响应或服务结果对象，供控制器处理
+* 使用 Swagger 或其他**正式的 API 规范**与第三方服务供应商集成，确保代码中的 API 文档完善，并使用工具生成这些 API 客户端代码
+* 尝试针对各种类似服务的**面向接口**设计，例如 `*.service.impl.ts`
+* 遵守**面向对象最佳实践（OO BP）的规则**，例如 SOLID、DRY、KISS 等。
+  * 使用依赖注入（DI）风格注入依赖，构建依赖注入驱动的服务依赖和实例管理
+
+### Manager 层
+
+`Manager`：以面向对象（OO）风格管理可复用代码的业务逻辑模块
+
+* 可以抛出错误
+* 为服务层提供可选的依赖注入（DI）
+* 使其更加原子化和模块化以封装业务逻辑
+* `工具函数`（utils）和 `帮助函数`（helper）可以作为管理器的子类别放在这里
+
+### 数据持久层
+
+* 为您的业务特性精确选择 SQL 或 NoSQL 数据库类型，不要忘记为数据添加冗余和备份。
+* 选择 ORM 或其他数据库服务供应商来处理数据持久性，如 `Prisma` 或 `TypeORM`。
+* 总是从数据扩展和数据一致性的角度出发设计数据库，考虑分布式数据库和分片等，在您真正需要时。例如，如果您的数据记录在3年内超过100万、1000万或1亿等，应该计划使用不同类型的数据库技术，并以不同的方式设计数据模型和数据结构。
+  * 考虑使用 `Serverless` 数据库来处理数据扩展和管理
+* 在数据库中仔细设计数据模型和数据结构，充分利用数据库索引和查询优化，但不要过度优化数据库查询。
+* 遵循社区的 SQL、创建表、创建索引、查询优化等最佳实践指南。-> 例如，阿里巴巴的 Java 开发者指南为 MySQL 和数据库提供了一些最佳实践指南。
+* 使用 *事务*（transaction）和 *隔离*（isolation）来处理敏感数据和操作的数据一致性和完整性
+
+### Next.js 最佳实践指南
+
+* 使用 **turbo-pack** + **git-submodules** + **npm packages** 来处理不同级别的代码共享以及单体仓库（monorepo）和多仓库（multi-repo）
+* 充分利用 Next.js 在页面/路由中的**分层缓存系统**，`React.cache`，获取缓存，客户端缓存，外部 redis-cache 等。
+* 尝试使用 *EdgeRuntime* 来处理静态内容和相关简单任务的获取
+* 对于高性能计算任务，使用 Rust + WASM，例如通过 *tiktoken* 计算大数据的令牌
+* 分离 ServerComponentData / ClientComponentData，巧妙地处理服务器端渲染和客户端渲染
+* 使用 CDN 为静态文件和内容提供服务，使用 `next/image` 等进行资源优化
+* 使用 `next/script` 进行脚本优化
+* 利用 next.js 页面内嵌的 `metadata` 能力提升 SEO 和 SNS 分享
+* 通过 Next.js 的 `dynamic/import` 与 `Suspense` 和 `React.lazy` 机制提升性能
+* 使用 `server` / `client` / `shared` 文件夹来分隔不同运行时的代码
+* 在进入生产环境前，检查 `next.config.js` 中的每一个可能的配置，以优化性能和安全性
+
+### 充分利用 Node / JavaScript 生态系统中的工具/库
+
+> 避免重复造轮子，使用 Node / JavaScript 生态系统中最好的工具和库。
+
+* 数据库层可以使用 `Prisma` ORM 或其他数据库服务供应商
+* 使用跟踪 API 和工具进行错误/请求追踪，例如 `Sentry` / `Raygun`
+* 使用日志 API 和工具，包括 SLS / ELK 进行日志记录和调试
+* 考虑使用 `GlobalRef` 用于长时间存在的 node 运行时，而不是无服务器运行时（serverless runtime）
+* 添加单元测试以覆盖基本的库/工具和关键的业务逻辑
+* 使用配置中间件如 `Diamond` 或 Vercel 配置来管理应用配置
+* 使用 `Redis` 或其他内存共享工具来处理不同服务器实例间的缓存和会话共享
+* 考虑使用 AB 测试服务或灰度发布服务来处理功能发布
+* 使用 `Kafka` 或其他消息队列来处理异步任务和事件驱动的任务
+* 使用 `K8S` 或其他容器服务来处理部署和扩展
+* 使用 `Prometheus` 或其他监控服务来处理监控和报警
+* 使用 `Grafana` 或其他仪表板服务来处理仪表板和可视化
+* 使用 `Jenkins` 或其他 CI/CD 服务（如 Github Actions 或 Vercel）来处理 CI/CD 流水线和生产过程
+* 使用 `Jest` 或其他测试服务来处理单元测试和集成测试
+* ...
+
+### 库和目录结构指南
+
+```markdown
+- `app`: next.js 应用的主入口
+  - `api`: api 路由
+    - `/v1`: 供公众使用的版本化 api 路由
+      - `*.ts`: api 路由
+- `components`: 共享组件
+  - `server`: 服务器端组件
+  - `client`: 客户端组件
+  - `shared`: 共享组件
+- `configs`: 应用共享配置
+- `lib`: 共享库和工具
+  - `server`: 服务器端库和工具
+  - `client`: 客户端库和工具
+  - `shared`: 共享库和工具
+    - `*.manager.ts`: 可共享的业务管理器
+- `services`: 共享服务
+  - `server`: 服务器端服务
+  - `client`: 客户端服务
+  - `shared`: 共享服务
+    - `*.service.ts`: 可共享的业务服务
+- `public`: 公共静态文件
+```
+
+我的实践：
+
+* [🌟 Github - arno packages](https://github.com/SurfaceW/arno-packages)：遵循上述原则的我的基础包。
+
+## Web 客户端
+
+### React 最佳实践指南
+
+* 将**逻辑**和**视图**分离在不同层次
+  * JSX / 组件应当纯粹使用函数式方式
+  * 不要在 JSX / 组件中编写大段的业务逻辑，如处理程序（handler）/ 回调（callbacks）/ 钩子（hooks），应使用客户端管理器或服务中的函数
+  * 尽可能尝试使用 *Server Actions* 以更简单明了的方式同时处理服务器端和客户端的逻辑
+* 将客户端的`状态（State）`分离在不同层次
+  * `ServerState`：由服务器管理的状态
+    * 使用钩子来作为服务器的状态，比如位置 / url 路径名 / 搜索参数 / next 参数等...
+    * 使用 `SWR` 或 `ReactQuery` 来处理服务器状态和缓存，或者直接在服务器组件的页面中处理，以减少客户端的复杂性
+  * `SharedContext` 通常不会频繁变动，使用 `React.Context` 来处理共享状态和上下文，例如主题（Theme）、地区设置（Locale）、用户（User）等作为全局共享上下文。
+  * `SharedState` 使用 `redux`、`zustand` 或 `recoil` 以及日志记录器和中间件来更好地处理组件之间共享的不可变状态，这样的状态可以轻松地进行可视化、追踪、记录和调试。
+  * `ReactiveState` 考虑使用 `RxJS` 或 `Mobx` 来处理反应性状态和事件驱动的状态
+  * `LocalComponentState` 尝试使用 `useState` 和 `useReducer` 来处理组件的本地状态
+* **首先考虑钩子风格（Hook-Style First）**来封装逻辑，使其在组件之间更加可复用，减少 JSX 组件主体中的代码，使代码更清晰易维护
+
+### 逻辑封装
+
+* **服务（Service）** 类似于服务器服务、客户端服务以及封装的 api，可通过 `useSwr` 或 `useQuery` 或其他 API 客户端调用。
+  * 一些典型的例子包括：
+    * 本地的数据库服务
+    * 本地数据缓存服务
+    * Restful API 服务
+  * 服务可以封装逻辑并优雅地处理错误和响应，不应该抛出异常或错误
+  * 服务可以协调不同的服务或管理器来处理复杂的逻辑
+  * ...
+* **管理器（Manager）** 类似于服务器管理器、客户端管理器以及封装的业务逻辑，可由服务或组件调用
+  * 一些典型的例子包括：
+    * 业务逻辑管理器
+    * 日志管理器
+    * 事件发布/订阅管理器
+    * ...
+  * 管理器是业务逻辑的基本构建块，可以被不同的服务重用
+  * 管理器可以抛出错误，无需额外处理，应由服务适当处理
+
+### 性能和存储的提示
+
+* 使用 web worker 来处理繁重的计算任务
+* 使用 *Rust* / *WASM* 来处理繁重的计算任务
+* 使用 Service Worker 来处理离线和缓存数据及请求
+* 使用本地数据库如 `IndexedDB` 来处理本地存储和缓存
+* 使用 `localStorage` / `sessionStorage` 来处理用户偏好和临时数据缓存的本地存储和缓存
+
+### 网络和通信
+
+* 使用 WebRTC / Websocket 进行更实时和交互式的任务
+* 首先使用原生 `fetch` API 而不是 ajax 或其他网络通信机制
+* 使用Fetch API 结合 WebStream 来处理大数据传输和流数据
+
+### UI & UX 提示
+
+* 使用 `TailwindCSS` 或 `ChakraUI` 来处理用户界面和布局
+* 使用 `AntD` 或 `MaterialUI`，它们具有高度*可定制的主题*，并封装了*复杂的逻辑和功能*
+* 使用 `Storybook` 或其他 UI 测试服务来处理用户界面测试和视觉测试
+* 考虑在不同的视口、尺寸、版本等方面的*兼容性*
+* 遵循移动 Web 应用开发原则的最佳实践（BP）
+* 遵循并应用 Google / Apple / Microsoft / Mozilla / W3C 等的一些 web 开发指南
+* 考虑遵守无障碍性（A11Y）和国际化（I18N）原则
+* 添加一些合理的动画和过渡效果，使 UI 更生动和互动
+* 响应式设计优先
+* 暗色方案兼容性
+* 使用 `SSG` / `SSR` / `ISR` / `CSR` / `Reactive` / `Hybrid` 来处理不同的渲染策略，以提升性能和用户体验
+* ...
+
+### 特定领域的技术
+
+不要重复造轮子，使用特定领域的技术来处理特定任务。
+
+* 文本编辑器 / 集成开发环境（IDE）/ 代码格式化器（Code Formatter）/ 代码检查工具（Linter）...
+* 图表 / 图形 / 数据可视化...
+* 地图 / 定位 / 地理信息...
+* 实时协作...
+* 3D 渲染 / 2D 渲染 / 动画...
+* 音频 / 视频 / 媒体...
+* Web XR / VR / AR...
+* ...
+
+### 原生客户端
+
+* 可以等待为原生客户端提供最佳实践（BP），例如 iOS / Android / Windows / Mac / Linux / WebOS / Tizen / HarmonyOS / ... 的操作。
+
+Arno 仍在探索 🧭
+
+### 常见模式和约定
+
+为 next.js 全栈应用开发提供开发者可以遵循和使用的一些常见模式和约定。
+
+#### 文件类型和约定
+
+* `*.type.ts`：可以共享的 TypeScript 语言类型
+* `*.constant.ts`：可以共享的常量
+* `*.util.ts`：可以共享的实用工具函数
+* `*.manager.ts`：可以共享的业务管理器
+* `*.manager.impl.ts`：抽象管理器的实现
+* `*.service.ts`：可以共享的业务服务
+* `*.service.impl.ts`：抽象服务的实现
+* `*.store.ts`：可以共享的 zustand 或任何其他 React 状态管理单元的业务存储
+* `*.hook.ts`：可以共享的业务钩子（Hook）
+
+#### 类方法命名约定
+
+* 对于服务的 `CRUD` 操作，使用 `create`、`get / list`、`update`、`delete` 作为方法名前缀
+
+### 参考资料
+
+我的相关文章：
+
+* [高效全栈开发](https://arno.surfacew.com/posts/effective-fullstack-dev)
+* [AI 驱动的前端开发](https://arno.surfacew.com/posts/ai-driven-front-end)
+
+#### 关于本文的注释
+
+* 2024-03-12：修复错误并为某些主题添加更多细节，添加与 `db` 相关的主题指南
