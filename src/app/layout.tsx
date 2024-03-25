@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     default: 'Arno',
     template: '%s | Arno',
   },
+  other: {
+    "google-site-verification": "D9VbrMjUdwyaq2EQFL7yh3fT0lK4WGsgIOlO_aAxA5g"
+  },
   description: 'Developer, designer, and creator.',
   openGraph: {
     title: 'Arno',
