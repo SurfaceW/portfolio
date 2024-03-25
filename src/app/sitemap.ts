@@ -2,11 +2,11 @@ import { allBlogs } from 'contentlayer/generated';
 
 export default async function sitemap() {
   const blogs = allBlogs.map((post) => ({
-    url: `https://arno.surfacew.com/posts/${post.slug}`,
+    url: `https://arno.surfacew.com/posts/${post.tags?.indexOf('cn') ? 'cn' : 'en'}/${post.slug}`,
     lastModified: post.publishedAt,
   }));
 
-  const routes = ['', '/posts', '/photographs', '/idea'].map(
+  const routes = ['', '/posts/en', '/posts/cn', '/rss', '/idea'].map(
     (route) => ({
       url: `https://arno.surfacew.com${route}`,
       lastModified: new Date().toISOString().split('T')[0],
