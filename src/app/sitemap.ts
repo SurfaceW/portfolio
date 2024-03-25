@@ -2,7 +2,7 @@ import { allBlogs } from 'contentlayer/generated';
 
 export default async function sitemap() {
   const blogs = allBlogs.map((post) => ({
-    url: `https://arno.surfacew.com/posts/${post.tags?.indexOf('cn') ? 'cn' : 'en'}/${post.slug}`,
+    url: `https://arno.surfacew.com/posts/${post.tags?.includes('cn') ? 'cn' : 'en'}/${post.slug}`,
     lastModified: post.publishedAt,
   }));
 
