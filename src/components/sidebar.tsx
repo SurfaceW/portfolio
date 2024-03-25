@@ -41,7 +41,10 @@ export default function Navbar() {
           >
             <div className="flex flex-row space-x-0 pr-10">
               {Object.entries(navItems).map(([path, { name }]) => {
-                const isActive = path === pathname;
+                let isActive = path === pathname;
+                if (path === '/posts') {
+                  isActive = pathname.startsWith('/posts');
+                }
                 return (
                   <Link
                     key={path}
