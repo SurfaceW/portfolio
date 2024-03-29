@@ -98,6 +98,11 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
 
 ```markdown
 - `app`: next.js 应用的主入口
+  - `[bizRoute]`: 业务页面路由
+    - `page.tsx`: 业务页面
+    - 其它 Next.js 规定的文件
+    - `*.server.tsx`: 服务器业务组件
+    - `*.client.tsx`: 客户端业务组件
   - `api`: api 路由
     - `/v1`: 供公众使用的版本化 api 路由
       - `*.ts`: api 路由
@@ -223,6 +228,9 @@ Arno 仍在探索 🧭
 * `*.service.impl.ts`：抽象服务的实现
 * `*.store.ts`：可以共享的 zustand 或任何其他 React 状态管理单元的业务存储
 * `*.hook.ts`：可以共享的业务钩子（Hook）
+* `*.client.tsx`: 客户端共享组件
+* `*.server.tsx`: 服务器端共享组件
+* `*.shared.tsx`: 共享组件
 
 #### 类方法命名约定
 
@@ -238,3 +246,4 @@ Arno 仍在探索 🧭
 #### 关于本文的注释
 
 * 2024-03-12：修复错误并为某些主题添加更多细节，添加与 `db` 相关的主题指南
+* 2024-03-29：增加一些关于组件目录的组织规范和命名方式

@@ -96,6 +96,11 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 
 ```markdown
 - `app`: the main app entry of next.js app
+  - `[bizRoute]`: the business route
+    - `page.tsx`: the main page of the route
+    - other nextjs conventions named files
+    - `*.server.tsx`: biz server component
+    - `*.client.tsx`: biz client component
   - `api`: the api routes
     - `/v1`: the versioned api routes for public use
       - `*.ts`: the api routes
@@ -213,6 +218,7 @@ Provide some common patterns and conventions for the next.js full stack app deve
 
 ### File Types and Conventions
 
+
 * `*.type.ts`: the typescript language type that can be shared
 * `*.constant.ts`: the constant that can be shared
 * `*.util.ts`: the utility functions that can be shared
@@ -222,6 +228,9 @@ Provide some common patterns and conventions for the next.js full stack app deve
 * `*.service.impl.ts` the implementation of an abstract service
 * `*.store.ts`: the biz store of zustand or any other react-state manage units that can be shared
 * `*.hook.ts`: the biz hook that can be shared
+* `*.client.tsx`: the client-side component that can be shared
+* `*.server.tsx`: the server-side component that can be shared
+* `*.shared.tsx`: the shared component that can be shared
 
 ### Class methods naming conventions
 
@@ -239,3 +248,4 @@ My Related Articles:
 ### notes on this article
 
 * 2024-03-12: bugfix and add more details for some topics, add `db` related topics guide
+* 2024-03-29: add directory naming conventions for components
