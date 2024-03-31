@@ -1,0 +1,146 @@
+---
+title: 'Arc Browser and its pals'
+publishedAt: '2024-03-31'
+summary: "Arc Browser changed the way I use browser, it empowers the way I organize my tabs and workspace. It's a must-have tool for me. Here I will introduce how I use Arc Browser and how I combine it with other tools like Notion and Alfred."
+tags: ['Tools', 'en']
+---
+
+> I am a big fan of Arc Browser, it's a must-have tool for me. Here I will introduce how I use Arc Browser and how I combine it with other tools like Notion and Alfred.
+
+## Arc Browser introduction
+
+[🌏 Arc Browser](https://arc.net/)
+
+> So what is Arc, here is the AI Intro. from the official website:
+
+The Arc browser, developed by The Browser Company, is designed to offer a calmer and more personalized internet experience. It's a browser that not only meets but anticipates your needs, providing a clean and clutter-free environment.
+
+Key features include:
+
+**Spaces and Profiles**: Organize your online activities—work, study, hobbies—in one window, keeping everything streamlined and accessible.
+
+**Customization**: Tailor your browsing experience with features like Split View and Themes to suit your preferences.
+Privacy: Arc is built with privacy in mind, ensuring that your online activities remain private and secure.
+
+In summary, Arc is a modern browser focused on user experience, customization, and privacy, offering a unique alternative for web browsing.
+
+## Perfect features of Arc Browser
+
+* 🖼️ **unique design of the app**, pretty beautiful and easy to use cross multiple platforms: Mac, PC, iOS ~ -> Modern UI design
+ 
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.24.31-sOD1OdGqJXqBbicE47HWMF7hy7fQ2F.png)
+
+* 🪟 **split view of tabs** -> save to left panel as a group, so you can recovery these three tabs workspace together
+
+* 🗂️ **nested folders to organize tabs in a tree** -> every project can have a tab-group and easily switch between them
+* 🚀 **workspace / scenes for different scenarios** -> switch your working context seamlessly or keep multiple arc windows instances at once
+* ⭐️ **shared favorite context in workspace** -> keep shared stuff in different workspace
+* 🔎 **alfred-liked tab-full-text-search** -> Chrome really sucks at this, just use `cmd + tab` to activate the search menu, so elegant.
+* 🪄 **AI features** -> catch the era of AI
+  *  AI select with search results
+  *  Auto tab-rename
+  *  AI powered web page summary
+  *  ...
+* ⌨️ keyboard **shortcuts** to navigate / fully control your browser -> save time and focus on your work and content
+
+## Combining with other tools
+
+### Notion 
+
+> At this moment web-notion is much better than the desktop app, so I prefer to use web-notion.
+
+* **one page, one base, one task** with split view to properly prepare the context for the task wr are going to perform
+  * notion for organizing structural info of your private knowledge base | web-page | web-page | ...
+  * easily collect and organize your thoughts, ideas, and resources together in a simple space and organize, restore or group it with Arc Browser
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.26.52-edVSCV9tVbr0GlvfE6yCDYrUlaemml.png)
+
+### Alfred
+
+> May also work with other tools like Alfred, but not tested yet.
+
+* accurately launch or focus on workspace / tab with iFrame ... -> with single short-cut
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.31.24-7QcTMuLKGm7s9Cn4zzbU6O5wWc0p0n.png)
+
+* you can download this alfred plugin and modify code of node.js to do your customization, I offer the sample code here to activate the first workspace with first tabs by your own hot-key. Feel free to use 😎.
+
+list-tabs:
+
+```javascript
+#!/usr/bin/env osascript -l JavaScript
+
+function run(args) {
+  let browsers = "Arc";
+
+  let browser = Application(browsers);
+  browser.includeStandardAdditions = true;
+
+  let windowCount = browser.windows.length;
+  console.log("windownCount: ", windowCount);
+
+  let windowIndex = browser.windows.index();
+  console.log("windowIndex[0]:", windowIndex[0]);
+
+  let windowName = browser.windows.name();
+  console.log("windowIndex[0] name:", windowName[0]);
+
+  let spaceCount = browser.windows.spaces.length;
+  console.log("spaceCount: ", spaceCount);
+
+  let spacesTitle = browser.windows.spaces.title();
+  console.log("spacesTitle: ", spacesTitle);
+
+  let spacesId = browser.windows.spaces.id();
+  console.log("spacesId: ", spacesId);
+
+  let result = { items: [] };
+
+  for (let w = 0; w < windowCount; w++) {
+    if (w !== 0) {
+      continue;
+    }
+    for (let s = 0; s < spaceCount; s++) {
+      try {
+        let item = {
+          title: browser.windows[w].spaces[s].title(),
+          subtitle: browser.windows[w].spaces[s].id(),
+          arg: `${w},${s}`,
+        };
+        result.items.push(item);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  console.log(JSON.stringify({ items: result.items }));
+  return JSON.stringify({ items: result.items });
+}
+```
+
+run select tabs:
+
+```javascript
+#!/usr/bin/env osascript -l JavaScript
+
+function run(args) {
+  ObjC.import("stdlib");
+  let Arc = Application("Arc");
+  let query = args[0];
+  let [arg1, arg2, arg3] = query.split(",");
+  let windowIndex = parseInt(arg1);
+  let spaceIndex = arg2 == "undefined" ? undefined : parseInt(arg2);
+  let tabIndex = parseInt(arg3);
+  // console.log("windowIndex: ", windowIndex);
+  // console.log("spaceIndex: ", spaceIndex);
+  // console.log("tabIndex:", tabIndex);
+  if (spaceIndex == undefined) {
+    Arc.windows[windowIndex].tabs[tabIndex].select();
+    Arc.activate();
+  }
+  Arc.windows[windowIndex].spaces[spaceIndex].tabs[tabIndex].select();
+  Arc.activate();
+}
+```
+

@@ -1,0 +1,145 @@
+---
+title: 'Arc 浏览器和它的伙伴们'
+publishedAt: '2024-03-31'
+summary: "Arc Browser 改变了我使用浏览器的方式，它增强了我组织标签页和工作区的能力。对我来说，它是一款必备工具。在这里，我将介绍我如何使用 Arc Browser 以及如何将其与其他工具如 Notion 和 Alfred 结合使用。"
+tags: ['Tools', 'cn']
+---
+
+> 该文章基于 ChatGPT 翻译，原文请参看 [Arc Browser and Its Pals](/posts/en/arc-browser-and-its-friend)
+
+> Arc Browser 改变了我使用浏览器的方式，它增强了我组织标签页和工作区的能力。对我来说，它是一款必备工具。在这里，我将介绍我如何使用 Arc Browser 以及如何将其与其他工具如 Notion 和 Alfred 结合使用。
+
+## Arc Browser introduction
+
+[🌏 Arc Browser](https://arc.net/)
+
+## Arc Browser 介绍
+
+那么什么是 Arc 呢？
+
+这里给出官方网站的 AI 总结：Arc 浏览器由 The Browser Company 开发，旨在提供一个更加平静和个性化的互联网体验。这是一款不仅满足您的需求，而且能预见您需求的浏览器，提供一个干净无杂乱的环境。主要特点包括：
+
+* **空间和配置文件（Spaces and Profiles）**：在一个窗口中组织您的在线活动—工作、学习、爱好—保持一切井井有条且易于访问。
+* **定制（Customization）**：使用像拆分视图（Split View）和主题（Themes）这样的功能来定制您的浏览体验以适应您的偏好。隐私：Arc 在设计时就考虑到隐私，确保您的在线活动保持私密和安全。总之，Arc 是一款专注于用户体验、定制化和隐私的现代浏览器，为网页浏览提供了一个独特的选择。
+
+## Arc Browser 的完美特性
+
+* 🖼️ **应用程序的独特设计**，跨多个平台漂亮且易于使用：Mac、PC、iOS ~ -> 现代 UI 设计
+  
+ 
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.24.31-sOD1OdGqJXqBbicE47HWMF7hy7fQ2F.png)
+
+ * 🪟 **标签的拆分视图** -> 保存到左侧面板作为一组，这样您可以一起恢复这三个标签的工作空间
+ * 🗂️ **嵌套文件夹以树形结构组织标签** -> 每个项目都可以有一个标签组，并且可以轻松地在它们之间切换* 🚀 **不同场景的工作区 / 场景** -> 无缝切换您的工作上下文或同时保持多个 Arc 窗口实例
+ * ⭐️ **工作区中的共享收藏内容** -> 在不同的工作区保持共享的东西
+ * 🔎 **类似 Alfred 的全文标签搜索** -> Chrome 在这方面真的很糟糕，Arc 中只需使用 `cmd + tab` 激活全文搜索菜单，非常优雅 ~
+ * 🪄 **AI 特性** -> 抓住 AI 时代
+    * AI 搜索结果选择  
+    * 自动标签重命名
+    * AI 驱动的网页摘要
+    * ..
+* ⌨️ 轻松使用 **快捷键** 来导航 / 完全控制您的浏览器 -> 节省时间并专注于你的工作和内容
+
+## 与其他工具结合使用
+
+### Notion
+
+> 目前网页版的 Notion 比桌面应用要好很多，所以我更喜欢使用网页版的 Notion。
+
+* **一个页面，一个基地，一个任务**，使用拆分视图适当准备我们即将执行的任务的上下文
+  * Notion 用于组织您私人知识库的结构信息 | 网页 | 网页 | ...  
+  * 轻松收集和组织您的思想、想法和资源，并在一个简单的空间中组织它们，使用 Arc Browser 恢复或分组
+
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.26.52-edVSCV9tVbr0GlvfE6yCDYrUlaemml.png)
+
+
+### Alfred
+
+> 可能也可以与像 Alfred 这样的其他工具一起工作，但尚未测试。
+
+* 通过 iFrame 等准确启动或聚焦工作区 / 标签... -> 使用单一快捷方式
+
+![](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/Screenshot%202024-03-31%20at%2023.31.24-7QcTMuLKGm7s9Cn4zzbU6O5wWc0p0n.png)
+
+* 可以下载这个 Alfred 插件并修改 node.js 的代码以进行您的定制，我在这里提供示例代码，以便您可以通过自己的热键激活第一个工作区的第一个标签。请随意使用 😎
+
+list-tabs:
+
+```javascript
+#!/usr/bin/env osascript -l JavaScript
+
+function run(args) {
+  let browsers = "Arc";
+
+  let browser = Application(browsers);
+  browser.includeStandardAdditions = true;
+
+  let windowCount = browser.windows.length;
+  console.log("windownCount: ", windowCount);
+
+  let windowIndex = browser.windows.index();
+  console.log("windowIndex[0]:", windowIndex[0]);
+
+  let windowName = browser.windows.name();
+  console.log("windowIndex[0] name:", windowName[0]);
+
+  let spaceCount = browser.windows.spaces.length;
+  console.log("spaceCount: ", spaceCount);
+
+  let spacesTitle = browser.windows.spaces.title();
+  console.log("spacesTitle: ", spacesTitle);
+
+  let spacesId = browser.windows.spaces.id();
+  console.log("spacesId: ", spacesId);
+
+  let result = { items: [] };
+
+  for (let w = 0; w < windowCount; w++) {
+    if (w !== 0) {
+      continue;
+    }
+    for (let s = 0; s < spaceCount; s++) {
+      try {
+        let item = {
+          title: browser.windows[w].spaces[s].title(),
+          subtitle: browser.windows[w].spaces[s].id(),
+          arg: `${w},${s}`,
+        };
+        result.items.push(item);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  console.log(JSON.stringify({ items: result.items }));
+  return JSON.stringify({ items: result.items });
+}
+```
+
+run select tabs:
+
+```javascript
+#!/usr/bin/env osascript -l JavaScript
+
+function run(args) {
+  ObjC.import("stdlib");
+  let Arc = Application("Arc");
+  let query = args[0];
+  let [arg1, arg2, arg3] = query.split(",");
+  let windowIndex = parseInt(arg1);
+  let spaceIndex = arg2 == "undefined" ? undefined : parseInt(arg2);
+  let tabIndex = parseInt(arg3);
+  // console.log("windowIndex: ", windowIndex);
+  // console.log("spaceIndex: ", spaceIndex);
+  // console.log("tabIndex:", tabIndex);
+  if (spaceIndex == undefined) {
+    Arc.windows[windowIndex].tabs[tabIndex].select();
+    Arc.activate();
+  }
+  Arc.windows[windowIndex].spaces[spaceIndex].tabs[tabIndex].select();
+  Arc.activate();
+}
+```
+
