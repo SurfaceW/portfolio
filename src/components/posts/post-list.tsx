@@ -20,7 +20,7 @@ export async function PostListServer({
       </h1>
       <div className='mb-6'>
         {params?.lang === 'en' ? (
-          ''
+          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/cn">中文</Link>
         ) : (
           <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/en">English</Link>
         )}
