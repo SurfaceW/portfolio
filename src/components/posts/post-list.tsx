@@ -12,13 +12,19 @@ export async function PostListServer({
 }) {
   return (
     <section>
-      <h1 className="font-bold text-2xl mb-8 tracking-tighter">
+      <h1 className="font-bold text-2xl mb-2 tracking-tighter">
         POSTS from ARNO
         {params?.tag && (
           <span className="text-gray-700 mt-2 text-lg block">#{params?.tag}</span>
         )}
       </h1>
-    
+      <div className='mb-6'>
+        {params?.lang === 'en' ? (
+          ''
+        ) : (
+          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/en">English</Link>
+        )}
+      </div>
       {allBlogs
         .filter((post: any) => {
           if (params.lang) {
