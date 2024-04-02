@@ -3,22 +3,29 @@ import { allBlogs } from 'contentlayer/generated'
 import { TaggedLink } from '@/components/link/category-link'
 
 export async function PostListServer({
-  params
+  params,
+  listOnly,
 }: {
   params: {
     tag?: string
     lang?: string
-  }
+  },
+  listOnly?: boolean
 }) {
+
+  if (!params.lang) {
+    params.lang = 'en'
+  }
+
   return (
     <section>
-      <h1 className="font-bold text-2xl mb-2 tracking-tighter">
+      <h1 hidden={!!listOnly} className="font-bold text-2xl mb-2 tracking-tighter">
         POSTS from ARNO
         {params?.tag && (
           <span className="text-gray-700 mt-2 text-lg block">#{params?.tag}</span>
         )}
       </h1>
-      <div className='mb-6'>
+      <div hidden={!!listOnly} className='mb-6'>
         {params?.lang === 'en' ? (
           <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/cn">中文</Link>
         ) : (
