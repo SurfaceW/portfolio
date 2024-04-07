@@ -21,10 +21,9 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 `Controller` / `Routes`: for next.js is api-routes use `Function` programming style, traditional Application Layer.
 
 * handle the request and response in Web and Application layer
-* deal with the error for web or other protocol response
+* deal with the error for web or other protocol response, handle error codes and error message -> see the following error handling patterns section
 * return `unified` response or service result object to be handled by the client
 * controller can be write in global `middleware` function or wrapped by high-order function to handle the common logic
-* handle error codes and error message
 * better with 0 business logic in this layer
 
 ### Service Layer
@@ -215,6 +214,24 @@ Arno is still exploring 🧭
 ## Common Patterns and Conventions
 
 Provide some common patterns and conventions for the next.js full stack app development that developers can follow and use.
+
+### Error Handling Patterns
+
+> 0 error handling is the best error handling, but we can not avoid the error in the real world, so we need to handle the error elegantly and properly.
+> * low-level API should throw less error and handle the error in the high-level API
+> * use one place to handle the error and log the error, do not handle the error in different places with duplicated code
+
+* use Native `Error` object both in `Server` and `Client`, and do not extend it to add complexity, use unified error msg format like:
+
+```log
+[2024-03-12 12:00:00] [ERROR level] [ServiceName] [ErrorTypeCode] [ErrorMsg] 
+[?ErrorStack] if necessary
+```
+
+* for server response in HTTP Protocol in common, the error should make full use of HTTP status, code, message to describe the error in the response, other RPC protocol should follow their own error handling format pattern
+* use the `warn` / `error` and `fatal` to handle the different level of error, for level of error and fatal, we should use `log` service to report for stability and reliability
+* use `try` / `catch` to handle the error in the service / manager layer, and try-catch phrase block scope should be as less as possible to avoid the performance and ambiguity of the code
+* use `ErrorBoundary` to handle the error in the component client layer for display `fallback` info and error info both from client and server
 
 ### File Types and Conventions
 
