@@ -1,5 +1,5 @@
 ---
-title: 'ProseMirror Architecture Guide'
+title: '🪞 ProseMirror Architecture Guide'
 publishedAt: '2024-04-16'
 summary: "Guide to ProseMirror's architecture and practical usage guide."
 tags: ['Frontend', 'Tools', 'en']
@@ -141,7 +141,7 @@ From the API doc we can see there are several related API to handle paste relate
 * `view.props.transformPastedHTML: fn -> string`: Can be used to transform pasted HTML text, before it is parsed, for example to clean it up.
 * `view.props.transformPastedText: fn -> string`: Can be used to transform pasted plain text, before it is parsed, for example to clean it up.
 * `view.props.clipboardParser: fn -> DomParser`: The parser to use when reading content from the clipboard. When not given, the value of the domParser prop is used.
-* `view.props.clipboardTextParser⁠`: A function to parse text from the clipboard into a document slice. Called after transformPastedText. The default behavior is to split the text into lines, wrap them in <p> tags, and call clipboardParser on it. The plain flag will be true when the text is pasted as plain text.
+* `view.props.clipboardTextParser⁠`: A function to parse text from the clipboard into a document slice. Called after transformPastedText. The default behavior is to split the text into lines, wrap them in `<p>` tags, and call clipboardParser on it. The plain flag will be true when the text is pasted as plain text.
 
 
 ### Detail of paste process in source code
