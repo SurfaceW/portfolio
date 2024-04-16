@@ -1,0 +1,323 @@
+---
+title: 'ProseMirror Architecture Guide'
+publishedAt: '2024-04-16'
+summary: "Guide to ProseMirror's architecture and practical usage guide."
+tags: ['Frontend', 'Tools', 'en']
+---
+
+ProseMirror is a toolkit for building rich-text editors on the web. It is highly customizable and extensible, and it is designed to work well with other tools and frameworks. This guide will help you understand the architecture of ProseMirror and how to use it in practice.
+
+Based on the documents below: 
+
+- [Library Design Guide](https://prosemirror.net/docs/guide/)
+- [Library Reference](https://prosemirror.net/docs/ref/)
+
+This article will use problem and scenario-based examples to help you understand the architecture of ProseMirror and how to use it in practice.
+
+> based on source code version: `1.33.4`
+
+## General Architecture
+
+> Suppose you have already read the Design Guide and have a general understanding of ProseMirror.
+
+
+```puml
+@startuml ProseMirror Architecture
+
+class Node {
+    +type: NodeType
+    +content: Fragment
+    +attrs: Object
+    +marks: Mark[]
+}
+
+class NodeType {
+    +name: String
+    +contentExpr: String
+    +attrs: Object
+    +create(attrs): Node
+    +createAndFill(attrs): Node
+}
+
+class Fragment {
+    +size: int
+    +firstChild(): Node
+    +lastChild(): Node
+    +append(other: Fragment): Fragment
+}
+
+class Mark {
+    +type: MarkType
+    +attrs: Object
+}
+
+class MarkType {
+    +name: String
+    +attrs: Object
+    +create(attrs): Mark
+}
+
+class EditorState {
+    +doc: Node
+    +selection: Selection
+    +storedMarks: Mark[]
+    +apply(tr: Transaction): EditorState
+    +create(config): EditorState
+}
+
+class Transaction extends Transform {
+    +steps: Step[]
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +addStep(step: Step): Transaction
+    +setSelection(selection: Selection): Transaction
+    +setStoredMarks(marks: Mark[]): Transaction
+}
+
+class Transform {
+    +doc: Node
+    +steps: Step[]
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +addStep(step: Step): Transform
+    +replace(from: int, to: int, slice: Slice): Transform
+}
+
+class Step {
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +invert(doc: Node): Step
+}
+
+class EditorView {
+    +state: EditorState
+    +updateState(newState: EditorState): void
+    +dispatchTransaction(transaction: Transaction): void
+}
+
+class Plugin {
+    +props: Object
+    +state: {init(), apply(tr: Transaction, value)}
+}
+
+class Selection {
+    +from: int
+    +to: int
+    +empty: boolean
+}
+
+class Schema {
+    +nodes: OrderedMap<NodeType>
+    +marks: OrderedMap<MarkType>
+    +node(name: String): NodeType
+    +mark(name: String): MarkType
+}
+
+Node --> NodeType
+Node "0..*" o-- "0..1" Fragment : contains
+Fragment "0..*" o-- "0..*" Node : children
+Mark --> MarkType
+EditorState *-- Node : document
+EditorState *-- Selection : current selection
+EditorState *-- "0..*" Mark : active marks
+Transaction --|> Transform : extends
+EditorView *-- EditorState
+Plugin "0..*" -- EditorState : influences
+Selection <|-- TextSelection
+Selection <|-- NodeSelection
+
+@enduml
+```
+
+![Diagram Render](https://img.alicdn.com/imgextra/i2/O1CN01LU5zLM1PQ1Kjs08o5_!!6000000001834-2-tps-3335-1219.png)
+
+## Scenario Driven Digging
+
+### How ProseMirror handle clipboard paste?
+
+From the API doc we can see there are several related API to handle paste related operation
+
+* `view.pasteHTML()`: Run the editor's paste logic with the given HTML string.  
+* `view.pasteText()`: Run the editor's paste logic with the given plain text string.
+* `view.props.handlePaste`: Can be used to override the behavior of pasting. slice is the pasted content parsed by the editor, but you can directly access the event to get at the raw content.
+* `view.props.transformPasted`: Can be used to transform pasted or dragged-and-dropped content before it is applied to the document.
+* `view.props.transformPastedHTML: fn -> string`: Can be used to transform pasted HTML text, before it is parsed, for example to clean it up.
+* `view.props.transformPastedText: fn -> string`: Can be used to transform pasted plain text, before it is parsed, for example to clean it up.
+* `view.props.clipboardParser: fn -> DomParser`: The parser to use when reading content from the clipboard. When not given, the value of the domParser prop is used.
+* `view.props.clipboardTextParser⁠`: A function to parse text from the clipboard into a document slice. Called after transformPastedText. The default behavior is to split the text into lines, wrap them in <p> tags, and call clipboardParser on it. The plain flag will be true when the text is pasted as plain text.
+
+
+### Detail of paste process in source code
+
+
+* invocation sequence can be shown here:
+  * entry: `prosemirror-view/src/input.ts`: this 
+  * core method of handling entry point of paste is `doPaste()`
+
+```ts
+editHandlers.paste = (view, _event) => {
+  let event = _event as ClipboardEvent
+  // Handling paste from JavaScript during composition is very poorly
+  // handled by browsers, so as a dodgy but preferable kludge, we just
+  // let the browser do its native thing there, except on Android,
+  // where the editor is almost always composing.
+  if (view.composing && !browser.android) return
+  let data = brokenClipboardAPI ? null : event.clipboardData
+  let plain = view.input.shiftKey && view.input.lastKeyCode != 45
+  if (data && doPaste(view, getText(data), data.getData("text/html"), plain, event))
+    event.preventDefault()
+  else
+    capturePaste(view, event)
+}
+
+export function doPaste(view: EditorView, text: string, html: string | null, preferPlain: boolean, event: ClipboardEvent) {
+  let slice = parseFromClipboard(view, text, html, preferPlain, view.state.selection.$from)
+  if (view.someProp("handlePaste", f => f(view, event, slice || Slice.empty))) return true
+  if (!slice) return false
+
+  let singleNode = sliceSingleNode(slice)
+  let tr = singleNode
+    ? view.state.tr.replaceSelectionWith(singleNode, preferPlain)
+    : view.state.tr.replaceSelection(slice)
+  view.dispatch(tr.scrollIntoView().setMeta("paste", true).setMeta("uiEvent", "paste"))
+  return true
+}
+
+function capturePaste(view: EditorView, event: ClipboardEvent) {
+  if (!view.dom.parentNode) return
+  let plainText = view.input.shiftKey || view.state.selection.$from.parent.type.spec.code
+  let target = view.dom.parentNode.appendChild(document.createElement(plainText ? "textarea" : "div"))
+  if (!plainText) target.contentEditable = "true"
+  target.style.cssText = "position: fixed; left: -10000px; top: 10px"
+  target.focus()
+  let plain = view.input.shiftKey && view.input.lastKeyCode != 45
+  setTimeout(() => {
+    view.focus()
+    if (target.parentNode) target.parentNode.removeChild(target)
+    if (plainText) doPaste(view, (target as HTMLTextAreaElement).value, null, plain, event)
+    else doPaste(view, target.textContent!, target.innerHTML, plain, event)
+  }, 50)
+}
+
+// Read a slice of content from the clipboard (or drop data).
+export function parseFromClipboard(view: EditorView, text: string, html: string | null, plainText: boolean, $context: ResolvedPos) {
+  let inCode = $context.parent.type.spec.code
+  let dom: HTMLElement | undefined, slice: Slice | undefined
+  if (!html && !text) return null
+  let asText = text && (plainText || inCode || !html)
+  if (asText) {
+    view.someProp("transformPastedText", f => { text = f(text, inCode || plainText, view) })
+    if (inCode) return text ? new Slice(Fragment.from(view.state.schema.text(text.replace(/\r\n?/g, "\n"))), 0, 0) : Slice.empty
+    let parsed = view.someProp("clipboardTextParser", f => f(text, $context, plainText, view))
+    if (parsed) {
+      slice = parsed
+    } else {
+      let marks = $context.marks()
+      let {schema} = view.state, serializer = DOMSerializer.fromSchema(schema)
+      dom = document.createElement("div")
+      text.split(/(?:\r\n?|\n)+/).forEach(block => {
+        let p = dom!.appendChild(document.createElement("p"))
+        if (block) p.appendChild(serializer.serializeNode(schema.text(block, marks)))
+      })
+    }
+  } else {
+    view.someProp("transformPastedHTML", f => { html = f(html!, view) })
+    dom = readHTML(html!)
+    if (browser.webkit) restoreReplacedSpaces(dom)
+  }
+
+  let contextNode = dom && dom.querySelector("[data-pm-slice]")
+  let sliceData = contextNode && /^(\d+) (\d+)(?: -(\d+))? (.*)/.exec(contextNode.getAttribute("data-pm-slice") || "")
+  if (sliceData && sliceData[3]) for (let i = +sliceData[3]; i > 0; i--) {
+    let child = dom!.firstChild
+    while (child && child.nodeType != 1) child = child.nextSibling
+    if (!child) break
+    dom = child as HTMLElement
+  }
+
+  if (!slice) {
+    let parser = view.someProp("clipboardParser") || view.someProp("domParser") || DOMParser.fromSchema(view.state.schema)
+    slice = parser.parseSlice(dom!, {
+      preserveWhitespace: !!(asText || sliceData),
+      context: $context,
+      ruleFromNode(dom) {
+        if (dom.nodeName == "BR" && !dom.nextSibling &&
+            dom.parentNode && !inlineParents.test(dom.parentNode.nodeName)) return {ignore: true}
+        return null
+      }
+    })
+  }
+  if (sliceData) {
+    slice = addContext(closeSlice(slice, +sliceData[1], +sliceData[2]), sliceData[4])
+  } else { // HTML wasn't created by ProseMirror. Make sure top-level siblings are coherent
+    slice = Slice.maxOpen(normalizeSiblings(slice.content, $context), true)
+    if (slice.openStart || slice.openEnd) {
+      let openStart = 0, openEnd = 0
+      for (let node = slice.content.firstChild; openStart < slice.openStart && !node!.type.spec.isolating;
+           openStart++, node = node!.firstChild) {}
+      for (let node = slice.content.lastChild; openEnd < slice.openEnd && !node!.type.spec.isolating;
+           openEnd++, node = node!.lastChild) {}
+      slice = closeSlice(slice, openStart, openEnd)
+    }
+  }
+
+  view.someProp("transformPasted", f => { slice = f(slice!, view) })
+  return slice
+}
+```
+
+
+```puml
+@startuml
+participant "User\n(Clipboard Event)" as User
+participant "EditorView" as EditorView
+participant "EditorState" as EditorState
+participant "Event Handlers" as Handlers
+participant "DOM/Text\nProcessing" as Processing
+participant "Slice\nConstruction" as SliceCon
+
+User -> EditorView : paste(event)
+EditorView -> Handlers : editHandlers.paste(view, event)
+alt brokenClipboardAPI
+    Handlers -> Handlers : capturePaste(view, event)
+    Handlers -> EditorView : focus()
+    alt plainText
+        Handlers -> Processing : target.value (textarea)
+    else
+        Handlers -> Processing : target.textContent, target.innerHTML
+    end
+    Processing -> Handlers : doPaste(view, text, html, plain, event)
+    Handlers -> Processing : parseFromClipboard(view, text, html, plainText, $context)
+    Processing -> SliceCon : transformPastedText or transformPastedHTML
+    Processing -> SliceCon : clipboardTextParser or clipboardParser or domParser
+    Processing -> SliceCon : transformPasted(slice, view)
+    alt handling by handlePaste prop
+        Handlers -> EditorView : someProp("handlePaste", f(view, event, slice))
+    else
+        SliceCon -> Processing : slice
+        Processing -> Handlers : slice
+        Handlers -> EditorState : replaceSelection(slice)
+        EditorState -> Handlers : dispatch(tr)
+    end
+end
+
+alt not brokenClipboardAPI
+    Handlers -> Processing : create invisible textarea or div and extract content
+    Handlers -> Handlers : doPaste(view, text, html, plain, event)
+    Handlers -> EditorState : replaceSelection(slice)
+    EditorState -> Handlers : dispatch(tr)
+end
+
+@enduml
+```
+
+![invocation sequence of paste event](https://img.alicdn.com/imgextra/i2/O1CN01iRBPgP1CNBshI2QNG_!!6000000000068-2-tps-1117-721.png)
+
+* copy process is similar to paste, but with different API and behavior, you can refer to the API doc for more details.
+
+Now we can see the whole process of paste event handling in ProseMirror, and how it is implemented in the source code. The interesting part here is:
+
+* `capturePaste` method is used to handle the paste event when the clipboard API is broken. It creates a hidden textarea or div element to capture the pasted content and then calls `doPaste` method to handle the pasted content.
+* `view.input.shiftKey && view.input.lastKeyCode != 45` is used to determine if the pasted content is plain text with shift key pressed.
+
+## More Scenarios
+
+🚧 Work in progress ...
+

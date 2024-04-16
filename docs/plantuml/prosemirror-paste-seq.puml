@@ -1,0 +1,35 @@
+@startuml
+
+participant "User" as user
+participant "ProseMirror View" as view
+participant "handlePaste" as handlePaste
+participant "transformPasted" as transformPasted
+participant "transformPastedHTML" as transformPastedHTML
+participant "transformPastedText" as transformPastedText
+participant "clipboardTextParser" as clipboardTextParser
+participant "clipboardParser" as clipboardParser
+participant "Document" as doc
+
+user -> view : Paste content (HTML/Text)
+alt using handlePaste to override behavior
+    view -> handlePaste : handlePaste(event, slice, view)
+    handlePaste -> view : Possibly modified slice
+else default paste handling
+    view -> transformPasted : transformPasted(slice)
+    transformPasted -> view : Transformed slice
+    alt if HTML content
+        view -> transformPastedHTML : transformPastedHTML(html)
+        transformPastedHTML -> view : Cleaned HTML
+        view -> clipboardParser : clipboardParser(cleaned HTML)
+        clipboardParser -> view : Parsed document slice
+    else if plain text
+        view -> transformPastedText : transformPastedText(text)
+        transformPastedText -> view : Cleaned text
+        view -> clipboardTextParser : clipboardTextParser(cleaned text, true)
+        clipboardTextParser -> view : Parsed document slice
+    end
+end
+
+view -> doc : Apply parsed content to document
+
+@enduml

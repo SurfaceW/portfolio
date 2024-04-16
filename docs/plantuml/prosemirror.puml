@@ -1,0 +1,102 @@
+@startuml ProseMirror Architecture
+
+class Node {
+    +type: NodeType
+    +content: Fragment
+    +attrs: Object
+    +marks: Mark[]
+}
+
+class NodeType {
+    +name: String
+    +contentExpr: String
+    +attrs: Object
+    +create(attrs): Node
+    +createAndFill(attrs): Node
+}
+
+class Fragment {
+    +size: int
+    +firstChild(): Node
+    +lastChild(): Node
+    +append(other: Fragment): Fragment
+}
+
+class Mark {
+    +type: MarkType
+    +attrs: Object
+}
+
+class MarkType {
+    +name: String
+    +attrs: Object
+    +create(attrs): Mark
+}
+
+class EditorState {
+    +doc: Node
+    +selection: Selection
+    +storedMarks: Mark[]
+    +apply(tr: Transaction): EditorState
+    +create(config): EditorState
+}
+
+class Transaction extends Transform {
+    +steps: Step[]
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +addStep(step: Step): Transaction
+    +setSelection(selection: Selection): Transaction
+    +setStoredMarks(marks: Mark[]): Transaction
+}
+
+class Transform {
+    +doc: Node
+    +steps: Step[]
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +addStep(step: Step): Transform
+    +replace(from: int, to: int, slice: Slice): Transform
+}
+
+class Step {
+    +apply(doc: Node): {doc: Node, failed?: string}
+    +invert(doc: Node): Step
+}
+
+class EditorView {
+    +state: EditorState
+    +updateState(newState: EditorState): void
+    +dispatchTransaction(transaction: Transaction): void
+}
+
+class Plugin {
+    +props: Object
+    +state: {init(), apply(tr: Transaction, value)}
+}
+
+class Selection {
+    +from: int
+    +to: int
+    +empty: boolean
+}
+
+class Schema {
+    +nodes: OrderedMap<NodeType>
+    +marks: OrderedMap<MarkType>
+    +node(name: String): NodeType
+    +mark(name: String): MarkType
+}
+
+Node --> NodeType
+Node "0..*" o-- "0..1" Fragment : contains
+Fragment "0..*" o-- "0..*" Node : children
+Mark --> MarkType
+EditorState *-- Node : document
+EditorState *-- Selection : current selection
+EditorState *-- "0..*" Mark : active marks
+Transaction --|> Transform : extends
+EditorView *-- EditorState
+Plugin "0..*" -- EditorState : influences
+Selection <|-- TextSelection
+Selection <|-- NodeSelection
+
+@enduml
