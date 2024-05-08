@@ -1,16 +1,17 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Mdx } from '@/components/mdx';
-import { allBlogs } from 'contentlayer/generated';
-import Balancer from 'react-wrap-balancer';
-import { Suspense } from 'react';
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { Mdx } from '@/components/mdx'
+import { allBlogs } from 'contentlayer/generated'
+import Balancer from 'react-wrap-balancer'
+import { Suspense } from 'react'
+import Script from 'next/script'
 
 export async function generateMetadata({
-  params,
+  params
 }): Promise<Metadata | undefined> {
-  const post = allBlogs.find((post) => post.slug === params.slug);
+  const post = allBlogs.find((post) => post.slug === params.slug)
   if (!post) {
-    return;
+    return
   }
 
   const {
@@ -18,9 +19,9 @@ export async function generateMetadata({
     publishedAt: publishedTime,
     summary: description,
     image,
-    slug,
-  } = post;
-  const ogImage = image;
+    slug
+  } = post
+  const ogImage = image
 
   return {
     title,
@@ -33,53 +34,53 @@ export async function generateMetadata({
       url: `https://arno.surfacew.com/posts/${slug}`,
       images: [
         {
-          url: ogImage,
-        },
-      ],
+          url: ogImage
+        }
+      ]
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImage],
-    },
-  };
+      images: [ogImage]
+    }
+  }
 }
 
 function formatDate(date: string) {
-  const currentDate = new Date();
-  const targetDate = new Date(date);
+  const currentDate = new Date()
+  const targetDate = new Date(date)
 
-  const yearsAgo = currentDate.getFullYear() - targetDate.getFullYear();
-  const monthsAgo = currentDate.getMonth() - targetDate.getMonth();
-  const daysAgo = currentDate.getDate() - targetDate.getDate();
+  const yearsAgo = currentDate.getFullYear() - targetDate.getFullYear()
+  const monthsAgo = currentDate.getMonth() - targetDate.getMonth()
+  const daysAgo = currentDate.getDate() - targetDate.getDate()
 
-  let formattedDate = '';
+  let formattedDate = ''
 
   if (yearsAgo > 0) {
-    formattedDate = `${yearsAgo}y ago`;
+    formattedDate = `${yearsAgo}y ago`
   } else if (monthsAgo > 0) {
-    formattedDate = `${monthsAgo}mo ago`;
+    formattedDate = `${monthsAgo}mo ago`
   } else if (daysAgo > 0) {
-    formattedDate = `${daysAgo}d ago`;
+    formattedDate = `${daysAgo}d ago`
   } else {
-    formattedDate = 'Today';
+    formattedDate = 'Today'
   }
 
   const fullDate = targetDate.toLocaleString('en-us', {
     month: 'long',
     day: 'numeric',
-    year: 'numeric',
-  });
+    year: 'numeric'
+  })
 
-  return `${fullDate} (${formattedDate})`;
+  return `${fullDate} (${formattedDate})`
 }
 
 export default async function BlogPost({ params }) {
-  const post = allBlogs.find((post) => post.slug === params.slug);
+  const post = allBlogs.find((post) => post.slug === params.slug)
 
   if (!post) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -88,7 +89,7 @@ export default async function BlogPost({ params }) {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(post.structuredData),
+          __html: JSON.stringify(post.structuredData)
         }}
       ></script>
       <h1 className="font-bold text-2xl tracking-tighter">
@@ -100,6 +101,28 @@ export default async function BlogPost({ params }) {
         </p>
       </div>
       <Mdx code={post.body.code} />
+      <br />
+      <div className="giscus">
+
+      </div>
+      <Script
+        src="https://giscus.app/client.js"
+        id="giscus-script"
+        data-repo="SurfaceW/portfolio"
+        data-repo-id="R_kgDOGun1sw"
+        data-category="General"
+        data-category-id="DIC_kwDOGun1s84CfMm1"
+        data-mapping="title"
+        data-strict="1"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      ></Script>
     </section>
-  );
+  )
 }
