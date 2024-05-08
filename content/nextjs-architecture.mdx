@@ -5,7 +5,7 @@ summary: "Arno's Architecture Design for complex next.js driven web application.
 tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 ---
 
-Arno offer his best BP while using next.js in Alibaba's DingTalk and other larger projects.
+> Arno write his BestPractice while design next.js powered Apps in Alibaba's DingTalk and other larger projects.
 
 ## Server
 
@@ -93,6 +93,46 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
 
 ### lib and directory structure guide
 
+
+Recommend directory structure for the next.js full stack app:
+
+```
+.
+├── app
+├── components
+├── configs
+├── data
+├── tools
+├── i18n
+├── lib
+├── prisma
+├── public
+├── services
+├── tailwind.config.ts
+├── tsconfig.json
+└── types
+```
+
+The dependency of the directory structure:
+
+* base functionality
+  * `public`: the public static files
+  * `prisma`: the prisma db schema and model
+  * ...
+* global shared
+  * `tools`: global tools for the app (scripts are also included here)
+  * `types`: global type use for external lib or low-level common shared types
+  * `configs`: global configs for the app
+  * `i18n`: global i18n for the app
+* share logic
+  * `lib`: the shared lib and tools, is the basic blocks shared for upper layers, such as `utils`, `helpers`, `constants`, `bizTypes`, `manager`, etc.
+  * `services`: the shared services
+  * `components`: the shared components
+* application logic
+  * `app`: the main app entry of next.js app
+
+more detail:
+
 ```markdown
 - `app`: the main app entry of next.js app
   - `[bizRoute]`: the business route
@@ -120,6 +160,41 @@ Arno offer his best BP while using next.js in Alibaba's DingTalk and other large
     - `*.service.ts`: the biz service that can be shared
 - `public`: the public static files
 ```
+
+Or for unified business logic module, you can group file within a module folder for more clear and easy to maintain:
+
+```markdown
+- `module-name`
+  - `*.client.ts(x)`
+  - `*.server.ts(x)`
+  - `*.shared.ts(x)`
+```
+
+Full example could be:
+
+```
+├── elaborator
+│   ├── client
+│   │   ├── flow.manager.ts
+│   │   └── position.manager.tsx
+│   ├── server
+│   │   └── elaborator.base.task.ts
+│   ├── shared
+│   │   ├── elaborator.diagram.manager.ts
+│   │   ├── elaborator.enum.ts
+│   │   └── elaborator.type.ts
+│   └── tasks
+│       ├── edoc-generator
+│       │   └── doc-generator.server.ts
+│       ├── mental-framework-generator
+│       │   └── mental-framework-generator.server.ts
+│       └── problem-outline-generator
+│           ├── problem-outline-generator.server.ts
+│           └── problem-outline.node.client.tsx
+```
+
+* control the naming length of your file, use `path` as the context, do not make file name too long
+
 
 My Practicing:
 
@@ -235,7 +310,6 @@ Provide some common patterns and conventions for the next.js full stack app deve
 
 ### File Types and Conventions
 
-
 * `*.type.ts`: the typescript language type that can be shared
 * `*.constant.ts`: the constant that can be shared
 * `*.util.ts`: the utility functions that can be shared
@@ -248,11 +322,16 @@ Provide some common patterns and conventions for the next.js full stack app deve
 * `*.client.tsx`: the client-side component that can be shared
 * `*.server.tsx`: the server-side component that can be shared
 * `*.shared.tsx`: the shared component that can be shared
+* `*.[designPatterName].*.ts`: the design pattern implementation in the code
+  * `account.adapter.impl.ts` the adapter pattern implementation of specific service
 
 ### Class methods naming conventions
 
+* use verb first and noun second for the method name, e.g. `createUser`, `getUser`, `updateUser`, `deleteUser`
 * for `CRUD` operations of a service, use `create`, `get / list`, `update`, `delete` as the method name prefix
-
+* for common operations like `search` `fetch` `count` `aggregate` ... as the method name prefix
+* for common state-trans operations like `init` `start` `stop` `pause` `resume` ... as the method name prefix
+* use `batch` `bulk` `multi` as the method name prefix for batch operations
 
 ## Reference
 
