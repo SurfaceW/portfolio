@@ -32,7 +32,7 @@ export const UVCardElaborationStudio: React.FC<{
 }> = ({ height }) => {
   return (
     <div className="uv-card w-full h-[200px]" onClick={() => {
-      window.open("https://elaboration.studio", "_blank");
+      window.open("https://e-studio.ai", "_blank");
     }}>
       <div className={`relative opacity-30 hover:opacity-40 w-full`} style={{
         height: height || 200,
