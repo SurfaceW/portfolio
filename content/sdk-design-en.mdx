@@ -1,0 +1,77 @@
+---
+title: '🧑🏻‍💻 SDK Design Guide'
+publishedAt: '2024-10-15'
+summary: '📏 Without rules, nothing can be accomplished. These days, I have been busy with SDK design related to the business domain at work. During the design process, I hope to gather ideas and provide some design references.'
+tags: ['SDK', 'Software', 'FrontEnd', 'en']
+---
+
+> 📏 Without rules, nothing can be accomplished.
+
+These days, I have been busy with SDK design related to the business domain at work. During the design process, I hope to gather ideas and provide some design references.
+
+# Definition of SDK
+
+SDK, as the name implies, Software Developer Kit, generally includes:
+
+- Frameworks that support software programming runtime
+- Programming interfaces (APIs) exposed by internal modules
+- Supporting developer tools (IDE, CLI, etc.)
+
+# Design Principles
+
+To design an SDK that serves a wide range of developers well, I have extracted some important design principles from a series of articles:
+
+**"Clear Structure"**: Make the SDK easy to use
+
+- **Minimal Core**: The number of APIs should be as few as possible; less is more
+- **Single Responsibility**: Classes and modules should have loosely coupled functionalities without specific business logic
+- **Extension Mechanism**: Non-core functionalities should be implemented through external extensions to decouple from core modules
+- **Consistent Naming**: Use a consistent naming convention and be cautious with API naming
+- **Simple Design**: Keep API input/output parameters and functionalities as simple as possible, aiming for thin interface design and atomic function methods
+- **Comprehensive Documentation**: Provide detailed documentation, including API specs and usage guides
+
+**"Stable and High Performance"**: Ensure the API's performance and quality are reliable
+
+- **Testing Assurance**: Use unit tests and CI mechanisms to ensure API stability
+- **Performance Focus**: Perform performance analysis and optimization for high-frequency APIs
+- **Asynchronous Interfaces**: Use asynchronous calls in scenarios where blocking the main process is not recommended
+- **Effective Logging**: Provide comprehensive runtime logs for APIs to facilitate debugging and ensure application stability
+- **Reduce Size**: Minimize the size of SDKs, frameworks, and related API packages
+
+**"Backward Compatibility"**: Provide compatibility strategies to ensure consistent API behavior
+
+- **Consistency**: Provide version tracking mechanisms and keep API names, input/output parameters, and functionalities unchanged
+- **Gradual Evolution**: For APIs that require breaking changes, use the @deprecated identifier to notify developers to upgrade, and provide sufficient time (usually 2-3 major versions) before removal
+- **Release Notes**: Provide comprehensive release notes for APIs or SDKs
+
+Of course, some important design patterns and guidelines in software engineering can also improve the code design quality of SDKs, such as:
+
+- [Mainstream Software Design Patterns](https://www.yuque.com/surfacew/ggwv30/fs5h7r) (Factory, Facade, etc.)
+- [S.O.L.I.D](https://en.wikipedia.org/wiki/SOLID): Principles of modular (OO) development
+- [GRASP](https://en.wikipedia.org/wiki/GRASP_\(object-oriented_design\)): Object-oriented design principles
+- KISS: Keep it simple and stupid
+
+# Example Design Goals
+
+Taking the xstate state machine library design as an example [x-state-design-goals](https://xstate.js.org/docs/about/goals.html#api-goals):
+
+- Adherence to the W3C SCXML Specification and David Harel's original statecharts formalism
+- Promote an Actor model event-based architecture
+- Compatibility with all frameworks and platforms
+- Ability to completely serialize machine definitions to JSON (and SCXML)
+- Pure, functional createMachine(...) API
+- Zero dependencies
+
+# References
+
+- [Apple HealthKit SDK](https://developer.apple.com/documentation/healthkit)
+- [Apple Messages Kit](https://developer.apple.com/documentation/messages)
+- [Google Firebase FireStore SDK](https://googleapis.dev/nodejs/firestore/latest/BulkWriter.html)
+- [SDK Design Principles](http://techoffee.me/programming/sdk-design-principles/)
+- [Azure SDK](https://azure.github.io/azure-sdk/general_introduction.html)
+- [Qt API](https://wiki.qt.io/API_Design_Principles)
+- [Three Principles of API First Design](https://medium.com/adobetech/three-principles-of-api-first-design-fa6666d9f694)
+- [API Design Principles by Matrin Fowler](https://martinfowler.com/tags/API%20design.html)
+- [Sentry SDK design philosophy and principle](https://develop.sentry.dev/sdk/philosophy/)
+- [JavaScript SDK design guide](https://github.com/hueitan/javascript-sdk-design#image-beacon)
+- [Figma Plugin Design System](https://www.figma.com/plugin-docs/how-plugins-run/)
