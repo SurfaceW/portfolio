@@ -1,0 +1,118 @@
+---
+title: '📦 Web Browser Sandbox Technology Guide'
+publishedAt: '2024-10-18'
+summary: "We shall compare several ways of sandboxing technologies in one article and provide insights for picking the right way to solve your problem in your context, especially concerned with Browser Sandbox or Browser Security."
+tags: ['FrontEnd', 'Best Practices', 'en']
+---
+
+> Choose the right way to solve the problem.
+
+What is sandbox? A sandbox is a security mechanism that isolates running programs or processes to prevent them from affecting the overall system or accessing sensitive data. It is suitable for third-party apps and programs to ensure that they operate in a controlled environment, minimizing the risk of malware or unauthorized access to the host system.
+
+In Web Browser’s context, the mainstream sandbox technologies are:
+
+- `iframe`: creating a new browsing context allows for the isolation of content and enhances security by preventing potentially harmful scripts from affecting the parent document.
+- `ShadowRealm`: a feature that allows developers to create isolated environments for executing code. It more works like code interpreter and running script in isolated context.
+- `WebWorker`: use thread isolation to enhance performance and security by allowing scripts to run in the background without interfering with the user interface. At the same time to avoid host’s scripting and DOM & BOM.
+- `CSP`: use HTTP header to define a security policy that helps prevent cross-site scripting (XSS) and other code injection attacks by controlling which resources can be loaded and executed in the browser. 
+- `ShadowDOM`: create style isolation by encapsulating styles within a component, preventing them from affecting the global scope and ensuring that styles do not leak out or interfere with other elements on the page.
+- `Javascript features`: use `Proxy`, `object.sealed`, `with(scoped)` features to enhance security and control over object manipulation Scripting in web applications.
+
+We can combine those technologies to create a more secure and efficient browsing experience with third-party plugins / apps or modules. Here we shall select some typical scenarios to illustrate how these sandbox technologies work together to mitigate risks and enhance user safety while maintaining functionality and performance.
+
+## None UI Scripting
+
+For script only scenario, `ShadowRealm` provide a standard way of loading remote script and execute it in an isolated environment, ensuring that the execution does not interfere with the main application context or expose sensitive data to potential vulnerabilities.
+
+```javascript
+const red = new ShadowRealm();
+
+// realms can import modules that will execute within its own environment.
+// When the module is resolved, it captured the binding value, or creates a new
+// wrapped function that is connected to the callable binding.
+const redAdd = await red.importValue('./inside-code.js', 'add');
+
+// redAdd is a wrapped function exotic object that chains its call to the
+// respective imported binding.
+let result = redAdd(2, 3);
+
+console.assert(result === 5); // yields true
+
+// The evaluate method can provide quick code evaluation within the constructed
+// shadowRealm without requiring any module loading, while it still requires CSP
+// relaxing.
+globalThis.someValue = 1;
+red.evaluate('globalThis.someValue = 2'); // Affects only the ShadowRealm's global
+console.assert(globalThis.someValue === 1);
+
+// The wrapped functions can also wrap other functions the other way around.
+const setUniqueValue =
+    await red.importValue('./inside-code.js', 'setUniqueValue');
+
+/* setUniqueValue = (cb) => (cb(globalThis.someValue) * 2); */
+
+result = setUniqueValue((x) => x ** 3);
+
+console.assert(result === 16); // yields true
+```
+
+Poly-fill `ShadowRealm` is not a complicated thing, we can use both `iframe` or `web-worker` to implement its APIs.
+
+## UI Component
+
+### Complex AI Scenario
+
+For 3rd-party UI Component integration.
+
+`iframe` solution is suitable for those large-section rendering, as it allows for the isolation of content and prevents interference with the main document, but the cost of iframe creating resource is relatively huge compared with other methods of content isolation, such as using \`ShadowDOM\` or \`WebWorker\`, which offer lighter-weight alternatives for managing separate contexts without the same level of resource overhead.
+
+Let’s dive deeper:
+
+- `iframe` can have more attributes to control the inner behavior of iframe sandbox, such as `allow-scripts` or `allow-same-origin` can precisely control the execution of scripts and the sharing of resources between the iframe and its parent document, thereby enhancing security while allowing for necessary functionality.
+- `iframe` can use `about:blank` to create a secure context for blocking unwanted domain request.
+- `iframe` can design a Host API injection system via `postMessage()` to simulate `IPC` mechanism through two individual browsing contexts, allowing for secure communication between the main page and the iframe while maintaining the necessary isolation to protect against potential vulnerabilities.
+- to better **control** the third-party module / UI component behavior inside `iframe`, the control layer of code can both wrap outside the iframe and inside the iframe to accurately control the behavior of the embedded content.
+
+For a more complicated scripting isolation with external APIs, learn from `Figma` plugin can be cool. Figma use `wasm` (WebAssembly) to embedded a light JavaScript runtime interpreter to parse plugin code and inject Figma Host API into the isolated environment, allowing developers to run their scripts securely while interacting with Figma's core functionalities without risking the integrity of the main application.
+
+![image.png](https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/image-TsfZtktQYbLVFFXwc4NbATXMI1xt7x.png "image.png")
+
+### Simple AI Scenario
+
+> iframe has its price.
+
+Use iframe for isolation usually means more cost due to the additional resources required to manage the separate browsing context and the overhead associated with rendering and communication between the main document and the iframe.
+
+So as for the smaller element or reusable UI components, we shall avoid use iframe as a heavy load weapon, instead, by using JavaScript proxy, Function eval, and `with` scope modification, we can lock or eliminate unwanted interactions, ensure that the encapsulated styles and behaviors remain intact and do not interfere with the global context of the application. 
+
+For style isolation, by using `ShadowDOM` to create a boundary that encapsulates the component's structure and styles, preventing any external CSS or JavaScript from affecting its appearance or functionality, thereby enhancing the overall security and integrity of the web application.
+
+More to say, use `CSS Modules` to encapsulate styles and prevent conflicts, ensuring that each component maintains its own unique styling without affecting others in the application.
+
+Use DSL driven declarative UI builder, we can encapsulate the functionality of UI components while ensuring that they remain isolated from external influences, thus third party scripting can run in none-DOM environment and maintain the integrity of the application, leveraging sandbox technologies like \`ShadowRealm\` and \`WebWorker\` to provide a secure and efficient execution context for these scripts.
+
+## Micro FronEnd Sub Apps Isolations
+
+Micro FrontEnd architecture allows teams to develop and deploy independent front-end applications that can coexist within a larger application. This approach enhances scalability, maintainability, and team autonomy. However, it also introduces challenges related to security and integration, which can be effectively addressed using various sandbox technologies.
+
+Consider the teams is in trusted scope, we place `performance` and `collaborative efficience` in the first place. Hence `iframe` is not the first choice.
+
+- use individual `cloned` global object is to ensure that each micro frontend operates in its own isolated environment, preventing any unintended interactions or conflicts between different applications.
+- use `ShadowDOM` and mount sub-app into the main application context, ensuring that styles and behaviors are encapsulated and do not interfere with the global scope.
+- use strict `LifeCycle` of mount / unmount app like `single-spa` lib, to ensure that each micro frontend sub-application is properly initialized and cleaned up, allowing for efficient resource management and preventing memory leaks during the application's lifecycle.
+- for those complicated share and unified apps, we can use `webpack module federation` or similar technologies to facilitate the seamless integration and isolation of micro front-end sub-apps, ensuring that each component operates independently while still **<u>being able to share resources and functionality effectively</u>**.
+
+Finally, cutting the monolith into smaller, manageable pieces allows for more focused development and testing, enabling teams to deploy updates without affecting the entire system. the integration of sandbox technologies in Micro FrontEnd architectures ensures that sub-applications operate independently, enhancing security and reducing the risk of cross-application vulnerabilities.
+
+## Conclusion
+
+In conclusion, the integration of sandbox technologies in web development is crucial for enhancing security, performance, and user experience. By utilizing mechanisms such as `iframes`, `ShadowDOM`, `WebWorkers`, and `CSP`, developers can effectively isolate third-party applications and components, mitigating risks associated with malware and unauthorized access. The strategic combination of these technologies not only safeguards sensitive data but also allows for seamless interaction between various elements within a web application.
+
+As the landscape of web development continues to evolve, embracing these sandboxing techniques will be essential for building robust and secure applications that prioritize user safety while maintaining functionality.
+
+## Reference
+
+- [ShadowReal tc 39](https://github.com/tc39/proposal-shadowrealm/blob/main/explainer.md)
+- [FigmaPlugin Arcitecture](https://www.figma.com/plugin-docs/how-plugins-run/)
+- [WebWorker MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
+- [iframe MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe)
