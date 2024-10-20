@@ -14,9 +14,10 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
 ### 通用 API 和架构风格
 
 * 架构设计应该是**多样化的，随项目生命周期的不同阶段而演化**，不要总是首先使用相同的架构风格，如`微服务`（micro-services），它们并不总是最佳选择，尤其是对于刚起步或小型项目。
-* 发挥 *Restful API 设计* 的力量，保持并遵循严格的 API 设计原则，或使用其他正式的 API 设计原则或 RPC 框架，如 `GraphQL` 或 `gRPC`，谨慎地在一个项目中应用不同的通信协议，不要增加不必要的复杂性。
-* **无状态（Stateless）和无服务器（Serverless）** 设计应作为首选，以便服务易于扩展和管理。
-* 对于**公共 API 或内部 API 管理**，我们应该在路径名中添加版本控制，如 `/api/v1/*`，以确保向后兼容，遵循标准的 API 设计规范，如 `OpenAPI` 或 `Swagger`，确保 API 文档完善且易于使用。随着项目复杂性的增加，API 也会变得复杂，我们需要选择适合项目的方法来控制这种复杂性。
+* 发挥 [*Restful API 设计*](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) 的力量，保持并遵循严格的 API 设计原则，或使用其他正式的 API 设计原则或 RPC 框架，如 `GraphQL` 或 `gRPC`，谨慎地在一个项目中应用不同的通信协议，不要增加不必要的复杂性。
+* **无状态（Stateless）和无服务器（Serverless）** 设计应作为首选，以便服务易于扩展和管理。 `Vercel` 为 next.js 应用提供了一个很好的无服务器平台。我们也可以将无服务器函数部署在 `Aliyun` 或 `CloudFlare EdgeWorker` 中作为服务供应商。
+* 对于**公共 API 或内部 API 管理**，我们应该在路径名中添加版本控制，如 `/api/v1/*`，以确保向后兼容，遵循标准的 API 设计规范，如 [`OpenAPI`](https://swagger.io/specification/) 或 `Swagger`，确保 API 文档完善且易于使用。随着项目复杂性的增加，API 也会变得复杂，我们需要选择适合项目的方法来控制这种复杂性。
+* **充分利用 Next.js** 的全栈开发能力，快速构建 Web 应用并验证您的想法，快速试错。随着项目的增长和复杂性的增加，再添加和隔离不同的层次，再用微服务的思想进行解构。
 
 ### Application 层（控制器）
 
@@ -36,6 +37,24 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
 * 领域驱动设计（Domain Driven Design）提供领域服务来处理业务逻辑
 * 不能抛出错误，并应处理错误
 * 返回 `统一` 的响应或服务结果对象，供控制器处理
+* 控制器层可以试用 GlobalMiddleware 或者高阶函数来处理公共逻辑（类似 koa 的思路），包括：
+  * 可组合的 `页面路由`
+  * 可组合的 `API 路由`
+  * 可组合的 `服务器动作`
+
+```ts
+// API Route
+export const POST = composeAPIRoute([authUser, authBizLogic, async(req, res, ctx) => {}])
+// Page Server
+export const getServerSideProps = composePageServer(function(params, ctx) {
+  return <div>...</div>
+}, [authUserInPage, authBizLogicInPage])
+// Server Action
+export const serverAction = composeServerAction([authUserAction, authBizLogicAction, async(req, res, ctx) => {}])
+```
+
+> 具体的 Sample 代码可以参看：https://github.com/SurfaceW/arno-packages/tree/main/server/next
+
 * 使用 Swagger 或其他**正式的 API 规范**与第三方服务供应商集成，确保代码中的 API 文档完善，并使用工具生成这些 API 客户端代码
 * 尝试针对各种类似服务的**面向接口**设计，例如 `*.service.impl.ts`
 * 遵守**面向对象最佳实践（OO BP）的规则**，例如 SOLID、DRY、KISS 等。
@@ -73,6 +92,7 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
 * 通过 Next.js 的 `dynamic/import` 与 `Suspense` 和 `React.lazy` 机制提升性能
 * 使用 `server` / `client` / `shared` 文件夹来分隔不同运行时的代码
 * 在进入生产环境前，检查 `next.config.js` 中的每一个可能的配置，以优化性能和安全性
+* **使用 `sever-action`** 来避免重复的 API 路由声明，并无缝处理服务器端逻辑和客户端逻辑
 
 ### 充分利用 Node / JavaScript 生态系统中的工具/库
 
@@ -234,6 +254,7 @@ Arno 仍在探索 🧭
 * 使用`warn` / `error` 和 `fatal`来处理不同级别的错误，对于严重级别的错误和致命错误，我们应该使用`日志`(log)服务来报告，以保证稳定性和可靠性
 * 在服务/管理层使用`try` / `catch`来处理错误，并且try-catch语句块的范围应该尽可能小，以避免性能问题和代码的模糊性
 * 在组件的客户端层使用`ErrorBoundary`来处理错误，用于显示`备用`(fallback)信息和来自客户端和服务器的错误信息
+  * 比如：[`error-boundary.tsx`](https://github.com/SurfaceW/arno-packages/blob/main/ui/client/error-boundary/index.tsx) 用于实现统一的 UI 错误处理
 
 ### 文件类型和约定
 
@@ -249,6 +270,9 @@ Arno 仍在探索 🧭
 * `*.client.tsx`: 客户端共享组件
 * `*.server.tsx`: 服务器端共享组件
 * `*.shared.tsx`: 共享组件
+* `*.server.action.ts`: Next.js 的 Server Action 可以在服务器和客户端之间共享
+* `*.[designPatternName].*.ts` : 按照设计模式的命名方式来命名文件
+  * `account.adapter.impl.ts` 特定服务的适配器模式实现
 
 ### 类方法命名约定
 
@@ -265,3 +289,4 @@ Arno 仍在探索 🧭
 
 * 2024-03-12：修复错误并为某些主题添加更多细节，添加与 `db` 相关的主题指南
 * 2024-03-29：增加一些关于组件目录的组织规范和命名方式
+* 2024-10-21：增加了一些 server-action 的最佳实践，同时增加了一些关于错误处理的最佳实践

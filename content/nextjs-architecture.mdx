@@ -12,9 +12,10 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 ### General API & Architecture Style
 
 * architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project.
-* unleash the power of *Restful API Design* keep and follow strict API design principle, or other formal API design principle or RPC framework such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary.
-* **Stateless and Serverless** design first for service to be easily scaled and managed.
-* for **public API or internal API management**, we should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility, follow a standard API Design spec such as `OpenAPI` or `Swagger` to make sure the API is well documented and easy to use. API is complicated by the time the complexity of the project grows, there are many methodology to control such complexity, we need to pick a suitable one for the project.
+* unleash the power of [*Restful API Design*](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) keep and follow strict API design principle, or other formal API design principle or RPC framework such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary.
+* **Stateless and Serverless** design first for service to be easily scaled and managed. `Vercel` provides a good serverless platform for next.js app. We can also deploy the serverless function in `Aliyun` or `CloudFlare EdgeWorker` as service vendor.
+* for **public API or internal API management**, we should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility, follow a standard API Design spec such as [`OpenAPI`](https://swagger.io/specification/) or `Swagger` to make sure the API is well documented and easy to use. API is complicated by the time the complexity of the project grows, there are many methodology to control such complexity, we need to pick a suitable one for the project.
+* **Make full use of Next.js** full-stack development ability to quickly build web app and validate your ideas try and fail fast. Add layers and separate apps into different layers when the project grows and the complexity increases.
 
 ### Application Layer (Controller)
 
@@ -23,7 +24,25 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 * handle the request and response in Web and Application layer
 * deal with the error for web or other protocol response, handle error codes and error message -> see the following error handling patterns section
 * return `unified` response or service result object to be handled by the client
-* controller can be write in global `middleware` function or wrapped by high-order function to handle the common logic
+
+* controller can be write in global `middleware` function (similar to `koa`) or wrapped by high-order function to handle the common logic including:
+  * composable `Page Route`
+  * composable `API Route`
+  * composable `Server Action`
+
+```ts
+// API Route
+export const POST = composeAPIRoute([authUser, authBizLogic, async(req, res, ctx) => {}])
+// Page Server
+export const getServerSideProps = composePageServer(function(params, ctx) {
+  return <div>...</div>
+}, [authUserInPage, authBizLogicInPage])
+// Server Action
+export const serverAction = composeServerAction([authUserAction, authBizLogicAction, async(req, res, ctx) => {}])
+```
+
+> Sample Code Here: https://github.com/SurfaceW/arno-packages/tree/main/server/next
+
 * better with 0 business logic in this layer
 
 ### Service Layer
@@ -70,6 +89,8 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 * boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism
 * use `server` / `client` / `shared` folder to separate the code for different runtime
 * check every possible config in `next.config.js` to optimize the performance and security before you go to production
+* **use `sever-action`** to avoid duplicated API route declare and seamlessly handle the server-side logic and client-side logic together
+* 
 
 ### Make full use of tools / libs of Node / JavaScript Ecology
 
@@ -80,7 +101,7 @@ tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 * logs with log API & tools including SLS / ELK for logging and debugging 
 * consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
 * add unit tests to cover basic lib / tools and key business logic
-* use config middleware such as `Diamond` or Vercel Configs for app configs
+* use config middleware such as `Diamond`(Alibaba's config middleware) or Vercel Configs for app configs
 * use `Redis` or other memory shared to handle the cache and session shared by different server instances
 * consider use the AB Test service or Gray Release service to handle the feature release
 * use `Kafka` or other message queue to handle the async tasks and event-driven tasks
@@ -322,6 +343,7 @@ Provide some common patterns and conventions for the next.js full stack app deve
 * `*.hook.ts`: the biz hook that can be shared
 * `*.client.tsx`: the client-side component that can be shared
 * `*.server.tsx`: the server-side component that can be shared
+* `*.server.action.ts`: the Next.js' server action that can be shared among server and client
 * `*.shared.tsx`: the shared component that can be shared
 * `*.[designPatterName].*.ts`: the design pattern implementation in the code
   * `account.adapter.impl.ts` the adapter pattern implementation of specific service
@@ -346,3 +368,4 @@ My Related Articles:
 
 * 2024-03-12: bugfix and add more details for some topics, add `db` related topics guide
 * 2024-03-29: add directory naming conventions for components
+* 2024-10-21: upgrade recent server-action bp and add more details for the recent experience accumulated
