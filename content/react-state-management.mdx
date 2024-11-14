@@ -1,0 +1,80 @@
+---
+title: ' ⚛️ React State Management Best Practice'
+publishedAt: '2024-11-15'
+summary: "Arno's Best Practice for React State Management."
+tags: ['Frontend', 'Backend', 'Fullstack', 'cn']
+---
+
+
+> Understand the core problems state management libraries need to solve. And how the proliferation of modern libraries address them in new ways. —— from [article](https://frontendmastery.com/posts/the-new-wave-of-react-state-management/)
+
+## State Types in General
+
+Generally speaking, the state of a front-end application can be divided into the following types:
+
+- Container State: This type of state is generally uncontrolled, representing a read-only state, or a state that changes through message event listeners or callback patterns. For example: window.history / window.location.hash, etc. The characteristic of this type of state is that the code that changes it is usually not directly under our control.
+- Server Data or State: This refers to data or state that has a status stored on the server, where state changes usually occur on the server and are persisted there. This type of state is often presented in a display format in front-end applications and typically requires the front-end to create variables for management. Especially in back-end management systems, tables are a typical view carrier, and the shape of the data is often directly related to the server structure. This also includes data and states cached locally that need to be continuously synchronized with the server in the future.
+- Client View State: This type of state often exists locally on the client and is purely used to represent the front-end view structure and interaction states. When further detailed, it can be categorized into: application-level shared, page-level shared, and component-level shared.
+  - In the client view state, we can see that React itself provides useState / useRef / useReducer to implement state sharing within components. The main challenge here is performance optimization to avoid re-renders.
+  - Based on what React provides, there are no framework-level recommendations for state management mechanisms at the module (page, application) level, leading to the emergence of many solutions in the industry. We attempt to extract some core elements to analyze the differences in philosophy and design among these frameworks:
+
+<mermaid-content-block cid="cm37ela4o00013b6pzeht0qzz" name="StateManagement of React" viewmode="preview" content="graph LR
+
+  ReactRouter[ReactRouter] -->|Container State| ContainerState(Hash / Pathname / History ...)
+  ReactQuery[ReactQuery] -->|Server Data State| ServerData(ServerData / ServerState)
+  ReactState[ReactState] -->|Client View State| ClientData(ClientState / ClientData)
+  ReactContext[ReactContext] --> ClientData
+  Rx.js[Rx.js] --> ClientData
+  
+  ClientData -->|Application Level| ApplicationState(ApplicationState)
+  ClientData -->|Page Level| PageState(PageState)
+  ClientData -->|Component Level| ComponentState(ComponentState)
+
+  Redux[Redux] --> ApplicationState
+  Recoil[Recoil] --> PageState
+  MobX[MobX] --> ComponentState">
+</mermaid-content-block>
+
+> Let’s take `zustand`, `redux`, `recoil`, and `mobx` for example.
+
+| Feature / Framework or Lib | Zustand | Redux (Flux Concept) | Recoil | MobX |
+| --- | --- | --- | --- | --- |
+| Core Concept | Hook-first & Store-based (Bottom =&gt; Up) | Uni-directional data flow (Up =&gt; Bottom) | Hook-first & Atomic (Bottom =&gt; Up) | Observable |
+| State Mutability | Mutable & Immutable | Immutable | Mutable | Mutable |
+| Memory Management | Automatic | Manual | Automatic | Semi-automatic |
+| Single State Management Concept | No | Yes | No | No |
+| State Change Rendering Optimization | Selector mechanism | Selector mechanism | Semi-manual through subscriptions to atoms | Proxy mechanism |
+| Support for React Concurrent Mode | Yes | No | Yes | No |
+| useSyncExternalStore | Yes | No | Yes | No |
+| Data Serialization / Deserialization | Requires additional library | Requires additional library | Requires additional library | Requires additional library |
+| Code Redundancy | Low | High | Medium | Medium |
+| Extension Mechanism | Middleware support | redux-saga, redux-observable, ... | \- | \- |
+| Applicable Scenarios | Large to medium-sized applications | Medium-sized applications, not too big or too small | similar to `Zustand` | Large `reactive` required apps |
+
+To better address the management of the aforementioned states, we can cleverly use and design some "usage principles" and "design strategies" to enable our applications to better utilize existing technologies for state management.
+
+## **State Design Principles**
+
+Client-side shared state should be tiered based on scope: from bottom to top, they are: **Component Level** =&gt; **Page Level** =&gt; **Application Level**. For applications with a large number of intermediate client states (client-heavy applications), such as text editors, a specialized client state representation model or data model is needed for fine-grained management. Common libraries suitable for client state management include:
+
+- React provides a basic mechanism for managing its own state within components. If the state is not shared, please use the state management provided by React, using useState for operations and React.Context for static data sharing.
+- `Redux`: A single global Store can be represented as an application-level Store, using the Flux action event flow for visual state management. This is currently a mainstream pattern, suitable for scenarios with a small amount of state data. However, as the data volume increases, a bloated global Store becomes a disastrous management issue. Although it can be split, the maintenance cost will rise. You can use SplitReducer to decompose the global Store into page-level and component-level states. The currently popular method is to use ReduxToolkit for state management.
+- `Mobx` / `Recoil`: These are mainstream libraries for managing multiple Stores or States, applicable at the application, page, and component levels. This structure is relatively flat, allowing states to have a one-to-many relationship with views, and Recoil is naturally friendly to Hooks, being a product of the React team. These libraries are comfortable to use when state maintenance is simple early on, leveraging reactive capabilities and the @compute feature for easy maintenance of dependency graphs and data changes. However, as development progresses or if used carelessly, the complexity of understanding can increase, particularly in collaborative environments where state management can easily become chaotic. Teams and projects lacking clear rules and design guidelines should be cautious when using these decentralized management libraries.
+- `Rx.js`: While not a state management library, RX is a powerful tool for processing multiple asynchronous data streams. It is mentioned here primarily to indicate its capability to handle applications like IM (Instant Messaging), merging and rendering messages from multiple channels. It is also a good tool for scenarios involving multiple real-time data generation and processing. However, it has a steep learning curve and requires a highly specialized team to manage effectively.
+
+The shared state on the client side should be minimized: It is undeniable that shared states increase cognitive load in design and understanding. Any application should reduce the number of shared states at higher levels and control state changes at smaller granularities whenever possible.
+
+Focus on the visualization of shared states: Redux provides a logger tool that allows you to see the state changes from each event dispatch in the Console and DevTools. Recoil's snapshot can also perform state diffs. In summary, to enhance debugging efficiency, providing state diffs and the reasons for state changes (Actions) is very beneficial for developers to improve their debugging capabilities in complex applications.
+
+Container states can be simply mapped and encapsulated: The hash paths or pathname on Web containers often carry state information. We need to establish a mapping of state relationships at the application or page level to facilitate sharing and reading among different business logic and code.
+
+- `ReactRouter`: Using third-party libraries for state encapsulation is also acceptable. The Router encapsulates the routing state of external containers for unified management.
+
+The encapsulation of server data and states should be tiered as needed, and centralized management can also be implemented: For scenarios with a small amount of server data, it is reasonable to store states at the component or page level. However, for a large number of requests associated with extensive states and data, a centralized state management mechanism can be used to represent requests and server states as front-end object entities (similar to the ReactQuery model). This can even be virtualized as a local I/O database for offline data reading and writing, then synchronized with the server, depending on the needs.
+
+- `ReactQuery`: Provides an excellent practice for connecting server states and client states. Often, we find that in some back-office systems, server states are decoupled, and client states are scarce. ReactQuery abstracts the requests, request data, and processes, isolating server data from client data states. This is a good paradigm for separating front-end and back-end data state management, which can reduce the complexity of code in front-end application design.
+- `Swr`: is a lightweight library that simplifies data fetching and caching, providing a seamless way to synchronize server data with client states while ensuring efficient revalidation and updates.
+
+## Conclusion
+
+In conclusion, effective state management is crucial for building robust and scalable React applications. By understanding the different types of state—Container State, Server Data State, and Client View State—developers can make informed decisions about which state management solution best fits their application's needs. The choice between libraries like Redux, Recoil, and MobX should be guided by the specific requirements of the project, including data flow, mutability, and performance considerations. By adhering to best practices and leveraging the strengths of these tools, developers can create a seamless user experience, ensuring that their applications are not only functional but also efficient and responsive to user interactions.
