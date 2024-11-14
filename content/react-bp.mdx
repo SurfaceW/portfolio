@@ -44,7 +44,7 @@ To achieve these goals, here are some experiences and principles summarized by @
 
 ### **High Performance Principles**
 
-- Follow the performance optimization design specifications of the React framework. To avoid issues with duplicate rendering, refer to <https://www.developerway.com/posts/react-re-renders-guide>, and extract some important principles:
+- Follow the performance optimization design specifications of the React framework. To avoid issues with duplicate rendering, refer to [React ReRender BP](https://www.developerway.com/posts/react-re-renders-guide), and extract some important principles:
   - Understand the triggers for re-rendering: parent node re-rendering, node state changes, Context value changes, and Hook changes.
     - 🚫 Do not create component classes in the render function (this will re-render the entire child component tree every time).
     - ✅ Try to pass state down to "leaf" nodes as much as possible, minimizing intermediate states or related states.
