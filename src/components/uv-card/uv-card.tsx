@@ -44,7 +44,7 @@ export const UVCardElaborationStudio: React.FC<{
         top: -height || -200,
       }}>
         <h2 className="font-bold">ELABORATION STUDIO 🦄</h2>
-        <p>Elaborate your ideas and solve your problems with AI.</p>
+        <p>Elaborate your ideas and solve your problems with AI in fully boosted context way ~</p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { allBlogs } from 'contentlayer/generated'
 import Balancer from 'react-wrap-balancer'
 import { Suspense } from 'react'
 import Script from 'next/script'
+import { UVCardElaborationStudio } from '@/components/uv-card/uv-card'
 
 export async function generateMetadata({
   params
@@ -102,6 +103,10 @@ export default async function BlogPost({ params }) {
       </div>
       <Mdx code={post.body.code} />
       <br />
+      <div className="arno-recommendation mt-8">
+        <h2 className="pb-4">Arno Crafting Apps</h2>
+        <UVCardElaborationStudio />
+      </div>
       <div className="giscus">
 
       </div>
