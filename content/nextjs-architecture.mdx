@@ -41,7 +41,7 @@ export const getServerSideProps = composePageServer(function(params, ctx) {
 export const serverAction = composeServerAction([authUserAction, authBizLogicAction, async(req, res, ctx) => {}])
 ```
 
-> Sample Code Here: https://github.com/SurfaceW/arno-packages/tree/main/server/next
+> Sample Code Here: <https://github.com/SurfaceW/arno-packages/tree/main/server/next>
 
 * better with 0 business logic in this layer
 
@@ -80,6 +80,7 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 
 * use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
 * make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
+  * ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) <- read carefully and use it wisely 😎
 * try to use *EdgeRuntime* for handling the static content and fetch related simple tasks
 * use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
 * separate the ServerComponentData / ClientComponentData, use it to handle the server-side rendering and client-side rendering cleverly
@@ -90,7 +91,7 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 * use `server` / `client` / `shared` folder to separate the code for different runtime
 * check every possible config in `next.config.js` to optimize the performance and security before you go to production
 * **use `sever-action`** to avoid duplicated API route declare and seamlessly handle the server-side logic and client-side logic together
-* 
+*
 
 ### Make full use of tools / libs of Node / JavaScript Ecology
 
@@ -98,7 +99,7 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 
 * DB layer can be presented by `Prisma` ORM or other db service vendor
 * error / request trace with trace API & tools, such as `Sentry` / `Raygun`
-* logs with log API & tools including SLS / ELK for logging and debugging 
+* logs with log API & tools including SLS / ELK for logging and debugging
 * consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
 * add unit tests to cover basic lib / tools and key business logic
 * use config middleware such as `Diamond`(Alibaba's config middleware) or Vercel Configs for app configs
@@ -113,7 +114,6 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 * ...
 
 ### lib and directory structure guide
-
 
 Recommend directory structure for the next.js full stack app:
 
@@ -216,11 +216,9 @@ Full example could be:
 
 * control the naming length of your file, use `path` as the context, do not make file name too long
 
-
 My Practicing:
 
 * [🌟 Github - arno packages](https://github.com/SurfaceW/arno-packages): my basic packages which work and follow the principles above.
-
 
 ## Web Client
 
@@ -314,6 +312,7 @@ Provide some common patterns and conventions for the next.js full stack app deve
 ### Error Handling Patterns
 
 > 0 error handling is the best error handling, but we can not avoid the error in the real world, so we need to handle the error elegantly and properly.
+>
 > * low-level API should throw less error and handle the error in the high-level API
 > * use one place to handle the error and log the error, do not handle the error in different places with duplicated code
 
@@ -358,11 +357,10 @@ Provide some common patterns and conventions for the next.js full stack app deve
 
 ## Reference
 
-My Related Articles: 
+My Related Articles:
 
 * [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
 * [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
-
 
 ### notes on this article
 
