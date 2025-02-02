@@ -41,7 +41,7 @@ export const getServerSideProps = composePageServer(function(params, ctx) {
 export const serverAction = composeServerAction([authUserAction, authBizLogicAction, async(req, res, ctx) => {}])
 ```
 
-> Sample Code Here: <https://github.com/SurfaceW/arno-packages/tree/main/server/next>
+> Sample Code Here: [https://github.com/SurfaceW/arno-packages/tree/main/server/next](https://github.com/SurfaceW/arno-packages/tree/main/server/next)
 
 * better with 0 business logic in this layer
 
@@ -80,7 +80,7 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 
 * use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
 * make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
-  * ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) <- read carefully and use it wisely 😎
+  * ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) - read carefully and use it wisely 😎
 * try to use *EdgeRuntime* for handling the static content and fetch related simple tasks
 * use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
 * separate the ServerComponentData / ClientComponentData, use it to handle the server-side rendering and client-side rendering cleverly
