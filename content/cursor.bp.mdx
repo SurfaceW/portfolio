@@ -37,6 +37,67 @@ Chat lets you talk with an AI that sees your codebase. The chat can always see y
 - Enable Workspace / Project Indexing
 - General Cursor Rule
 - `.cursorrules` for project system prompt
+
+High Quality Cursor Rules Example let's take React project for example:
+
+```markdown
+# React App Development Principles
+
+- **Design First, Then Implement.** Start with macro design before implementation.
+
+  - Carefully choose foundational libraries and engineering architecture based on business requirements. Remember to evaluate the <u>long-term viability and community support of these libraries</u> to ensure they align with your project's goals and can adapt to future changes. `Less is more` because it helps to reduce complexity, making the codebase easier to maintain and understand while minimizing potential issues that may arise from over-reliance on numerous dependencies.
+  - Consider use the right *<u>state design pattern</u>*, using appropriate frameworks and libraries to decompose application states into maintainable parts.
+  - Consider the decomposition of UI components, for example:
+    - View components (components with application-level states), usually tied with `router` level and are responsible for rendering the overall layout and structure of the application, ensuring a seamless user experience as users navigate through different routes.
+    - Business components (foundational components with business characteristics, such as an internal contact selection component), encapsulate specific business logic and functionality, allowing for greater reusability and maintainability across different parts of the application.
+    - Basic components (general-purpose components without business characteristics, such as `AntD` and Material-UI, which provide reusable UI elements that can be easily integrated into various applications without being tied to specific business logic.
+  - Focus on the design of data `immutability`, which can have remarkable effects in specific scenarios especially when it comes to optimizing performance by preventing unintended side effects and ensuring predictable state management throughout the application lifecycle.
+  - Especially consider the "**<u>orthogonality</u>**" between components, meaning the separation of responsibilities between React components, extracting them into different view components for easier system maintenance and independence, which also facilitates testing.
+    - Business UI Scenario: rendering business UI elements
+    - Data Fetching Scenario: data fetching and UI state presentation
+    - Global State Scenario: global state listening and management
+    - Data persistence Scenario: components responsible for data I/O persistence, etc.
+    - ...
+
+- When facing complex business logic in systems, consistently use the object-oriented (OO) programming paradigm for structural design and functional implementation, enforcing the use of TypeScript as the programming language.
+
+### **High Performance Principles**
+
+- Follow the performance optimization design specifications of the React framework. To avoid issues with duplicate rendering, refer to [React ReRender BP](https://www.developerway.com/posts/react-re-renders-guide), and extract some important principles:
+  - Understand the triggers for re-rendering: parent node re-rendering, node state changes, Context value changes, and Hook changes.
+    - 🚫 Do not create component classes in the render function (this will re-render the entire child component tree every time).
+    - ✅ Try to pass state down to "leaf" nodes as much as possible, minimizing intermediate states or related states.
+    - ✅ Pass children as props.
+    - ✅ Pass Component classes as props.
+    - ✅ Use React.memo to prevent updates from propagating downward.
+    - ✅ Correctly use useMemo() and useCallback() to cache computationally expensive values and functions.
+    - ✅ Use keys as unique identifiers (for lists).
+    - ✅ Use the useMemo mechanism for Context values.
+    - ✅ When injecting Context, separate data and API methods.
+    - ✅ Differentiate Context functions; avoid a single Context.Provider to rule them all.
+    - ✅ Use Context Selectors to update views as needed.
+- Decompose view components (FunctionComponent) as much as possible; avoid combining them into a large function, as using `useState()` within a function will cause the entire node and subtree Render function to execute, affecting performance.
+- Consider caching strategies at every level and keep them in mind. Additionally, use libraries that support caching appropriately to implement reasonable caching in high-frequency scenarios.
+- Always enable the [<u>RenderHighlight</u>](https://arno.surfacew.com/posts/en/browser-module-tech) feature in React DevTools to visually detect the actual rendering situation of the DOM. If duplicate rendering or imprecise rendering areas (redundant rendering) are found, immediately perform targeted optimizations.
+- Pay attention to package size; use mechanisms like *TreeShaking* to eliminate redundant dependencies and be cautious when introducing external dependencies.
+
+### **Stability Principles**
+
+- Use mature, high-quality open-source libraries, but be sure to use version locks, similar to `yarn.lock` mechanism to avoid potential breaking changes that could disrupt the stability of your application during updates.
+- When using Hooks, pay special attention to prevent circular dependencies; handle Hooks dependencies with great care. Using the linter can help identify potential issues early in the development process, ensuring a more stable and reliable application.
+- Be mindful of `XSS` protection; non-trusted content needs to be escaped before output.
+
+### **Maintainability Principles**
+
+- Unify the `code writing style` and writing principles within the team. Read `Write Clean Code` or similar book to ensure that all team members adhere to best practices and maintain consistency throughout the codebase. Use kinds of linters to automatically enforce coding standards and catch potential errors early in the development process, fostering a collaborative environment where quality code is prioritized.
+- Unify the code organization style within the team: *directory organization*, *project organization* (MonoRepo), etc. For large projects, it is reasonable to decompose and allow technical and business autonomy; oligarchic applications are not conducive to large team operations.
+- Reasonably use *design patterns* and *design principles* within the team to improve program structure and behavior organization, facilitating effective communication to form a consensus and unify the design language.
+  - Strictly adhere to the basic principle of separating views and logic (this is easy to say but often not followed).
+  - Use layered design thinking to manage application state reasonably.
+- Control file length; often, the root of complexity comes from not segmenting and separating code in a lazy manner, leading to lengthy files. **<u>500 lines</u>** may be the limit.
+- For extracting React-type components, refer to the discussion on complexity in the frontend "component" [design principles](https://frontendmastery.com/posts/building-future-facing-frontend-architectures) which provides feasible design principles.
+```
+
 - `@` Symbol boost
   - `Files`: auto / full-file / outline / chunks
   - `Folders`: is especially useful for [**long context chat**](https://docs.cursor.com/chat/overview#long-context-chat) where you want to provide a lot of context to the AI.
