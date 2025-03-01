@@ -28,7 +28,7 @@ export const GET = async (res: Request, { params }: { params: {
     feed.item({
       title: post.title,
       description: post.summary,
-      url: `${siteUrl}/posts/${post.slug}`,
+      url: `${siteUrl}/posts/${lang}/${post.slug}`,
       guid: post.slug,
       date: post.publishedAt,
     });

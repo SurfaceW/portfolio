@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { PostListServer } from '@/components/posts/post-list'
 import Link from 'next/link'
+import { NextResponse } from 'next/server'
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -16,7 +17,6 @@ export default async function PostPageServer({
   }
 }) {
   // const allViews = await getViewsCount();
-
   return (
     <>
       <PostListServer params={params} />
