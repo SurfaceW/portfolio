@@ -41,61 +41,50 @@ Chat lets you talk with an AI that sees your codebase. The chat can always see y
 High Quality Cursor Rules Example let's take React project for example:
 
 ```markdown
-# React App Development Principles
+# React App Development Instructions
 
-- **Design First, Then Implement.** Start with macro design before implementation.
+## Core Principles
 
-  - Carefully choose foundational libraries and engineering architecture based on business requirements. Remember to evaluate the <u>long-term viability and community support of these libraries</u> to ensure they align with your project's goals and can adapt to future changes. `Less is more` because it helps to reduce complexity, making the codebase easier to maintain and understand while minimizing potential issues that may arise from over-reliance on numerous dependencies.
-  - Consider use the right *<u>state design pattern</u>*, using appropriate frameworks and libraries to decompose application states into maintainable parts.
-  - Consider the decomposition of UI components, for example:
-    - View components (components with application-level states), usually tied with `router` level and are responsible for rendering the overall layout and structure of the application, ensuring a seamless user experience as users navigate through different routes.
-    - Business components (foundational components with business characteristics, such as an internal contact selection component), encapsulate specific business logic and functionality, allowing for greater reusability and maintainability across different parts of the application.
-    - Basic components (general-purpose components without business characteristics, such as `AntD` and Material-UI, which provide reusable UI elements that can be easily integrated into various applications without being tied to specific business logic.
-  - Focus on the design of data `immutability`, which can have remarkable effects in specific scenarios especially when it comes to optimizing performance by preventing unintended side effects and ensuring predictable state management throughout the application lifecycle.
-  - Especially consider the "**<u>orthogonality</u>**" between components, meaning the separation of responsibilities between React components, extracting them into different view components for easier system maintenance and independence, which also facilitates testing.
-    - Business UI Scenario: rendering business UI elements
-    - Data Fetching Scenario: data fetching and UI state presentation
-    - Global State Scenario: global state listening and management
-    - Data persistence Scenario: components responsible for data I/O persistence, etc.
-    - ...
+- Design first, then implement
+- Use appropriate state management (zustand recommended)
+- Decompose UI into View, Business, and Basic components
+- Enforce data immutability
+- Maintain component orthogonality (separation of responsibilities)
+- Use object-oriented paradigm with TypeScript for complex business logic
 
-- When facing complex business logic in systems, consistently use the object-oriented (OO) programming paradigm for structural design and functional implementation, enforcing the use of TypeScript as the programming language.
+## Performance Optimization
 
-### **High Performance Principles**
+- Prevent unnecessary re-renders:
+  - Don't create component classes in render functions
+  - Pass state to leaf nodes when possible
+  - Pass children as props
+  - Use React.memo to prevent downward updates
+  - Use useMemo/useCallback for expensive operations
+  - Use unique keys for lists
+  - Use useMemo for Context values
+  - Separate data and API methods in Context
+  - Use multiple Context providers instead of one
+  - Implement Context Selectors
 
-- Follow the performance optimization design specifications of the React framework. To avoid issues with duplicate rendering, refer to [React ReRender BP](https://www.developerway.com/posts/react-re-renders-guide), and extract some important principles:
-  - Understand the triggers for re-rendering: parent node re-rendering, node state changes, Context value changes, and Hook changes.
-    - 🚫 Do not create component classes in the render function (this will re-render the entire child component tree every time).
-    - ✅ Try to pass state down to "leaf" nodes as much as possible, minimizing intermediate states or related states.
-    - ✅ Pass children as props.
-    - ✅ Pass Component classes as props.
-    - ✅ Use React.memo to prevent updates from propagating downward.
-    - ✅ Correctly use useMemo() and useCallback() to cache computationally expensive values and functions.
-    - ✅ Use keys as unique identifiers (for lists).
-    - ✅ Use the useMemo mechanism for Context values.
-    - ✅ When injecting Context, separate data and API methods.
-    - ✅ Differentiate Context functions; avoid a single Context.Provider to rule them all.
-    - ✅ Use Context Selectors to update views as needed.
-- Decompose view components (FunctionComponent) as much as possible; avoid combining them into a large function, as using `useState()` within a function will cause the entire node and subtree Render function to execute, affecting performance.
-- Consider caching strategies at every level and keep them in mind. Additionally, use libraries that support caching appropriately to implement reasonable caching in high-frequency scenarios.
-- Always enable the [<u>RenderHighlight</u>](https://arno.surfacew.com/posts/en/browser-module-tech) feature in React DevTools to visually detect the actual rendering situation of the DOM. If duplicate rendering or imprecise rendering areas (redundant rendering) are found, immediately perform targeted optimizations.
-- Pay attention to package size; use mechanisms like *TreeShaking* to eliminate redundant dependencies and be cautious when introducing external dependencies.
+- Decompose components to minimize render scope
+- Implement appropriate caching strategies
+- Use RenderHighlight in React DevTools to detect render issues
+- Optimize package size with TreeShaking
 
-### **Stability Principles**
+## Stability Guidelines
 
-- Use mature, high-quality open-source libraries, but be sure to use version locks, similar to `yarn.lock` mechanism to avoid potential breaking changes that could disrupt the stability of your application during updates.
-- When using Hooks, pay special attention to prevent circular dependencies; handle Hooks dependencies with great care. Using the linter can help identify potential issues early in the development process, ensuring a more stable and reliable application.
-- Be mindful of `XSS` protection; non-trusted content needs to be escaped before output.
+- Use mature libraries with version locks
+- Prevent circular dependencies in Hooks
+- Implement XSS protection
+- Add ErrorBoundary for error handling
 
-### **Maintainability Principles**
+## Maintainability Guidelines
 
-- Unify the `code writing style` and writing principles within the team. Read `Write Clean Code` or similar book to ensure that all team members adhere to best practices and maintain consistency throughout the codebase. Use kinds of linters to automatically enforce coding standards and catch potential errors early in the development process, fostering a collaborative environment where quality code is prioritized.
-- Unify the code organization style within the team: *directory organization*, *project organization* (MonoRepo), etc. For large projects, it is reasonable to decompose and allow technical and business autonomy; oligarchic applications are not conducive to large team operations.
-- Reasonably use *design patterns* and *design principles* within the team to improve program structure and behavior organization, facilitating effective communication to form a consensus and unify the design language.
-  - Strictly adhere to the basic principle of separating views and logic (this is easy to say but often not followed).
-  - Use layered design thinking to manage application state reasonably.
-- Control file length; often, the root of complexity comes from not segmenting and separating code in a lazy manner, leading to lengthy files. **<u>500 lines</u>** may be the limit.
-- For extracting React-type components, refer to the discussion on complexity in the frontend "component" [design principles](https://frontendmastery.com/posts/building-future-facing-frontend-architectures) which provides feasible design principles.
+- Unify code style with linters
+- Standardize directory and project organization
+- Apply design patterns and principles
+- Strictly separate views and logic
+- Limit file length to 500 lines maximum
 ```
 
 - `@` Symbol boost
@@ -115,11 +104,11 @@ High Quality Cursor Rules Example let's take React project for example:
 - PastedLinks
 - `.cursorignore` : This file allows you to specify which files or directories should be excluded from indexing, ensuring that only relevant content is considered during the context engineering process.
 
-### Note Pads
+### Cursor Rules
 
-Notepads are powerful context-sharing tools in Cursor that bridge the gap between composers and chat interactions. Think of them as enhanced reference documents that go beyond the capabilities of `.cursorrules`, allowing you to create reusable contexts for your development workflow.
+Cursor Rules are powerful context-sharing tools in Cursor that bridge the gap between composers and chat interactions.
 
-Notepads serve as collections of thoughts, rules, and documentation that can be:
+Cursor Rules serve as collections of thoughts, rules, and documentation that can be:
 
 - Shared between different parts of your development environment
 - Referenced using the `@` syntax
@@ -148,7 +137,32 @@ General Scenarios
    - Best practices
    - Team conventions
 
-## Advanced Composer
+My experience guide:
+
+* use `.context` folder to collect all the related context, try to use git submodule to manage the context sharing across different projects.
+* use `.cursor` directory to manage all the cursor related files, including `.cursorrules`, `.cursorignore`, etc and manage them via cursor app it self.
+* `.cursor` can reference `.context` folder for context sharing.
+
+### .cursor folder
+
+Obey the rules of Cursor Editor and is the main entry for cursor related files.
+
+For more cursor rule guide, you can refer to [Awesome Cursor Rules](https://github.com/PatrickJS/awesome-cursorrules?tab=readme-ov-file#frontend-frameworks-and-libraries).
+
+### .context folder
+
+> May have variety of files, here are some examples:
+
+* `prompts`: typical prompts reference
+* `examples`: few shots examples
+  * `code`: code examples
+  * `types`: types declaration examples or interfaces declaration examples
+* `docs`: docs reference
+* `architecture`: architecture reference /guide
+* `projects`: projects reference for sub-apps or sub-modules
+* ...
+
+## Advanced Composer / Agent
 
 Composer is your AI coding assistant that lives in your editor. It helps you explore code, write new features, and modify existing code without leaving your workflow. Use `⌘I` to open it, and `⌘N` to create a new Composer.
 
@@ -164,10 +178,14 @@ Agent can make up to 25 tool calls before stopping. For now, Agent supports only
 
 - Iterate on lints → Composer attempts to fix linting issues in generated code for most programming languages. If Composer detects lint errors, it will try to fix them automatically when this feature is enabled. Currently, only one iteration is supported.
 
+## MCP
+
+* use MCP for your private tools usage, try to encapsulate your tools into MCP server and provide extra context for coding related things to Cursor.
+* example MCP server can be found in [awesome-mcp-server](https://mcp.so/servers) and some github awesome lists.
+
 ## VSCode Features
 
 - VSCode Extensions and Configs migration
-
 - Search with Alfred with `PROJECT`
 
 ## Engineering Workflow
@@ -178,3 +196,7 @@ Agent can make up to 25 tool calls before stopping. For now, Agent supports only
 ## Reference
 
 - Cursor Docs -> [https://docs.cursor.com/get-started/migrate-from-vscode](https://docs.cursor.com/get-started/migrate-from-vscode)
+
+## Updates
+
+- 2025-03-16: add cursor rules and agent related content like `.cursor` and `.context` dir usage and examples, and MCP guide.
