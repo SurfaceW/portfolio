@@ -1,5 +1,5 @@
 ---
-title: 'Cursor Best Practice ✨'
+title: '✨ Cursor Best Practice'
 publishedAt: '2025-02-02'
 summary: "Arno's best practices for Cursor."
 tags: ['Cursor', 'Best Practices', 'en']
@@ -139,9 +139,9 @@ General Scenarios
 
 My experience guide:
 
-* use `.context` folder to collect all the related context, try to use git submodule to manage the context sharing across different projects.
-* use `.cursor` directory to manage all the cursor related files, including `.cursorrules`, `.cursorignore`, etc and manage them via cursor app it self.
-* `.cursor` can reference `.context` folder for context sharing.
+- use `.context` folder to collect all the related context, try to use git submodule to manage the context sharing across different projects.
+- use `.cursor` directory to manage all the cursor related files, including `.cursorrules`, `.cursorignore`, etc and manage them via cursor app it self.
+- `.cursor` can reference `.context` folder for context sharing.
 
 ### .cursor folder
 
@@ -153,14 +153,14 @@ For more cursor rule guide, you can refer to [Awesome Cursor Rules](https://gith
 
 > May have variety of files, here are some examples:
 
-* `prompts`: typical prompts reference
-* `examples`: few shots examples
-  * `code`: code examples
-  * `types`: types declaration examples or interfaces declaration examples
-* `docs`: docs reference
-* `architecture`: architecture reference /guide
-* `projects`: projects reference for sub-apps or sub-modules
-* ...
+- `prompts`: typical prompts reference
+- `examples`: few shots examples
+  - `code`: code examples
+  - `types`: types declaration examples or interfaces declaration examples
+- `docs`: docs reference
+- `architecture`: architecture reference /guide
+- `projects`: projects reference for sub-apps or sub-modules
+- ...
 
 ## Advanced Composer / Agent
 
@@ -180,8 +180,8 @@ Agent can make up to 25 tool calls before stopping. For now, Agent supports only
 
 ## MCP
 
-* use MCP for your private tools usage, try to encapsulate your tools into MCP server and provide extra context for coding related things to Cursor.
-* example MCP server can be found in [awesome-mcp-server](https://mcp.so/servers) and some github awesome lists.
+- use MCP for your private tools usage, try to encapsulate your tools into MCP server and provide extra context for coding related things to Cursor.
+- example MCP server can be found in [awesome-mcp-server](https://mcp.so/servers) and some github awesome lists.
 
 ## VSCode Features
 
