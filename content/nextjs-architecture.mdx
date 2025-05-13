@@ -1,33 +1,84 @@
 ---
 title: '🪐 Next.js Full Stack App Architecture Guide'
-publishedAt: '2024-02-02'
+publishedAt: '2025-05-13'
 summary: "Arno's Architecture Design for complex next.js driven web application."
 tags: ['Frontend', 'Backend', 'Fullstack', 'en']
 ---
 
-> Arno write his BestPractice while design next.js powered Apps in Alibaba's DingTalk and other larger projects.
+> Arno write his BestPractice while design next.js powered Apps in Alibaba's DingTalk and personal projects.
 
 ## Server
 
 ### General API & Architecture Style
 
-* architecture design should be **varied, evolved with different stages of life cycle of the project**, do not always use the same architecture style such as `micro-services` first, they are not always the best choice for starter or small project.
-* unleash the power of [*Restful API Design*](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) keep and follow strict API design principle, or other formal API design principle or RPC framework such as `GraphQL` or `gRPC`, carefully choose to apply different communication protocols in one project, do not add complexity until it is really necessary.
-* **Stateless and Serverless** design first for service to be easily scaled and managed. `Vercel` provides a good serverless platform for next.js app. We can also deploy the serverless function in `Aliyun` or `CloudFlare EdgeWorker` as service vendor.
-* for **public API or internal API management**, we should add version control in pathname such as `/api/v1/*` to make sure the backward compatibility, follow a standard API Design spec such as [`OpenAPI`](https://swagger.io/specification/) or `Swagger` to make sure the API is well documented and easy to use. API is complicated by the time the complexity of the project grows, there are many methodology to control such complexity, we need to pick a suitable one for the project.
-* **Make full use of Next.js** full-stack development ability to quickly build web app and validate your ideas try and fail fast. Add layers and separate apps into different layers when the project grows and the complexity increases.
+* **Adaptive Architecture Design** - Architecture should evolve throughout different stages of a project's lifecycle. Don't default to complex patterns like `micro-services` for every project, especially for smaller initiatives or MVPs. Instead, embrace an evolutionary approach where architecture adapts to changing requirements and scale.
+
+* **Strategic API Design** - Leverage [*RESTful principles*](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) and adhere to strict design guidelines. When appropriate, consider RPC frameworks like `GraphQL` or `gRPC`. Carefully evaluate communication protocols before integration—avoid unnecessary complexity unless specific requirements justify it.
+
+* **Stateless and Serverless First** - Design services to be inherently scalable and manageable by prioritizing stateless architectures and serverless deployment models. Platforms like `Vercel` provide optimized serverless environments for Next.js applications. Alternative deployment options include `Aliyun` or `CloudFlare EdgeWorker` services.
+
+* **Robust API Management** - Implement versioning (e.g., `/api/v1/*`) to maintain backward compatibility for both public and internal APIs. Adhere to standardized specifications like [`OpenAPI`](https://swagger.io/specification/) or `Swagger` to ensure comprehensive documentation and usability. As project complexity increases, select appropriate methodologies to manage this complexity based on your specific use cases.
+
+* **Leverage Next.js Full-stack Capabilities** - Utilize Next.js's comprehensive full-stack features to rapidly develop and validate concepts. Implement a layered architecture approach, introducing separation as complexity grows to maintain maintainability and scalability.
+
+Here we illstrate the layered architecture design for the next.js full stack app:
+
+```
++-----------------------------------------------------------------------------------------------+
+|                                       CLIENT                                                  |
++-----------------------------------------------------------------------------------------------+
+                |                          |                           |
+                | Page Request             | API Request               | Server Action
+                ↓                          ↓                           ↓
++-----------------------------------------------------------------------------------------------+
+|                                    CONTROLLER LAYER                                           |
+|                                                                                               |
+|  +-----------------+    +------------------+    +---------------------+                       |
+|  |   Page Route    |    |    API Route     |    |    Server Action    |                       |
+|  +-----------------+    +------------------+    +---------------------+                       |
+|         |                       |                         |                                   |
+|         +--------------------------------------------------                                   |
+|                                  |                                                            |
++-----------------------------------------------------------------------------------------------+
+                                   | Call
+                                   ↓
++-----------------------------------------------------------------------------------------------+
+|                                    SERVICE LAYER                                              |
+|                                                                                               |
+|  +------------------+    +------------------+    +------------------+                         |
+|  | Domain Service A |    | Domain Service B |    | Domain Service C |                         |
+|  +------------------+    +------------------+    +------------------+                         |
+|         |                       |                        |                                    |
+|         +--------------------------------------------------                                   |
+|                                  |                                                            |
++-----------------------------------------------------------------------------------------------+
+                                   | Use
+                                   ↓
++-----------------------------------------------------------------------------------------------+
+|                                   MANAGER LAYER                                               |
+|                                                                                               |
+|  +------------------+    +------------------+    +------------------+                         |
+|  |    Manager A     |    |    Manager B     |    |    Manager C     |                         |
+|  +------------------+    +------------------+    +------------------+                         |
+|                                                                                               |
++-----------------------------------------------------------------------------------------------+
+                                   | Access
+                                   ↓
++-----------------------------------------------------------------------------------------------+
+|                             DATA PERSISTENCE LAYER                                            |
++-----------------------------------------------------------------------------------------------+
+```
 
 ### Application Layer (Controller)
 
-`Controller` / `Routes`: for next.js is api-routes use `Function` programming style, traditional Application Layer.
+`Controller` / `Routes`: for next.js is api-routes use `Function` programming style, it plays a role as traditional Application Layer.
 
 * handle the request and response in Web and Application layer
 * deal with the error for web or other protocol response, handle error codes and error message -> see the following error handling patterns section
 * return `unified` response or service result object to be handled by the client
-
 * controller can be write in global `middleware` function (similar to `koa`) or wrapped by high-order function to handle the common logic including:
   * composable `Page Route`
-  * composable `API Route`
+  * composable `API Route` -> can directly call from server-actions
   * composable `Server Action`
 
 ```ts
@@ -49,60 +100,95 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 
 `Service`: module to handle the business logic with encapsulated domain service & managers in OO style
 
-* Domain Driven Design provide domain service to handle the business logic
-* can not throw error and should deal with the error
+* try to use **Domain Driven Design** principle to provide domain service to handle the business logic, persist data and other domain related tasks
+* can not throw error and should deal with the error in the service layer
 * return `unified` response or service result object to be handled by the controller
 * use Swagger or other **formal API Specs** to integrate with third-party services vendor, make sure the API is well documented in code and use tool to generate those API client code
 * try **Interface Oriented** design for various kinds of similar services, e.g. `*.service.impl.ts`
 * obey the **Rules of OO BP**, such as SOLID, DRY, KISS, etc.
   * use DI style to inject the dependency and build DI driven service dependency and instance management
 
+example of this layer code can be:
+
+```ts
+export class ElaboratorService {
+  private prisma = prismaClient;
+
+  constructor() { }
+
+  // handle error and unified response
+  @WithServiceResult()
+  async updateElaborator(data: Prisma.ElaboratorUpdateInput) {
+    return await this.prisma.elaborator.update({
+      where: {
+        id: data.id as bigint,
+      },
+      data: data,
+    }) as any as ServiceResult<Elaborator>;
+  }
+}
+```
+
 ### Manager Layer
 
 `Manager`: module to manage the business logic as the reusable code, in OO style
 
-* can throw error
-* optional DI provided for service layer
+* can throw error and deal with the error in the service layer, or higher level
+* can be used in the service layer or other manager layer, also in the controller layer (server actions, routes, etc), but not recommended in the higher layer
+* optional DI(Dependency Injection) provided for service layer
 * make it more atomic and modular to encapsulate the business logic
 * `utils` and `helper` functions can be put here as a sub-category of manager
 
 ### Data Persistence Layer
 
 * precisely choose SQL or NoSQL DB type for your business features, don't forget to add redundancy and backup for the data.
-* pick ORM or other DB service vendor to handle the data persistence like `Prisma` or `TypeORM`.
+* pick ORM or other DB service vendor to handle the data persistence like `Prisma` or `TypeORM` with migration and schema management
 * always start design your db considering the data scaling and data consistency, distributed db and sharding, etc, when you truly need it. e.g. your data-records is over 1M or 10M or 100M in 3 year, etc, they should plan to use different type of db technology and design the data model and data structure in the different ways.
-  * consider use `Serverless` DB to handle the data scaling and management
+  * consider use `Serverless` DB to handle the data scaling and management, like `PlantScale`
 * carefully design the data model and data structure in the DB, make full use of the DB index and query optimization, but do not over optimize the db query.
 * follow the Community's SQL, table-creating, index-creating, query-optimization, etc, best practice guide. -> e.g. Alibaba's Java Developer Guide show some best practice guide for MySQL and DB.
 * use *transaction* and *isolation* to handle the data consistency and integrity for sensitive data and operations
+* use *sharding* and *partition* to handle the data scaling and performance
+* use *replication* and *backup* to handle the data redundancy and backup
 
-### Next.js Best Practice Guide
+### Next.js Framework Best Practice Guide
 
 * use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
 * make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
   * ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) - read carefully and use it wisely 😎
+
+![layered-cache-of-nextjs](https://nextjs.org/_next/image?url=https%3A%2F%2Fh8DxKfmAPhn8O0p3.public.blob.vercel-storage.com%2Fdocs%2Fdark%2Fcaching-overview.png&w=3840&q=75)
+
 * try to use *EdgeRuntime* for handling the static content and fetch related simple tasks
-* use Rust + WASM for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
-* separate the ServerComponentData / ClientComponentData, use it to handle the server-side rendering and client-side rendering cleverly
-* use CDN for static files and contents, use `next/image` etc. for resource optimizations
-* use `next/script` for script optimizations
+* next.js 15 middleware can run both edge and node runtime, handle common request logic in `middleware` and use `next/server` to handle the request and response
+* use *Rust* + *WASM* for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
+* separate the `ServerComponentData` / `ClientComponentData`, use it to handle the server-side rendering and client-side rendering cleverly
+* use library internal impl of basic component:
+  * use CDN for static files and contents, use `next/image` etc. for resource optimizations
+  * use `next/script` for script optimizations
 * make use add `metadata` ability inset next.js pages for SEO and SNS sharing
 * boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism
 * use `server` / `client` / `shared` folder to separate the code for different runtime
 * check every possible config in `next.config.js` to optimize the performance and security before you go to production
 * **use `sever-action`** to avoid duplicated API route declare and seamlessly handle the server-side logic and client-side logic together
-*
+
+> Server Actions FIRST :)
 
 ### Make full use of tools / libs of Node / JavaScript Ecology
 
 > Avoid reinventing the wheel, use the best tools and libs in the Node / JavaScript Ecology.
 
+
+> `Supabase` in the recent years is a good example of using the best tools and libs in the Node / JavaScript Ecology to build a full-stack app.
+
+* Vercel's `ai` sdk is great way to handle the AI related tasks (llm, agentic app creator, etc)
 * DB layer can be presented by `Prisma` ORM or other db service vendor
+* use `Jest` or other testing service to handle the unit test and integration test
 * error / request trace with trace API & tools, such as `Sentry` / `Raygun`
 * logs with log API & tools including SLS / ELK for logging and debugging
 * consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
 * add unit tests to cover basic lib / tools and key business logic
-* use config middleware such as `Diamond`(Alibaba's config middleware) or Vercel Configs for app configs
+* use config middleware such as `Diamond`(Alibaba's config middleware) or Vercel `Configs` for app configs
 * use `Redis` or other memory shared to handle the cache and session shared by different server instances
 * consider use the AB Test service or Gray Release service to handle the feature release
 * use `Kafka` or other message queue to handle the async tasks and event-driven tasks
@@ -110,7 +196,6 @@ export const serverAction = composeServerAction([authUserAction, authBizLogicAct
 * use `Prometheus` or other monitoring service to handle the monitoring and alerting
 * use `Grafana` or other dashboard service to handle the dashboard and visualization
 * use `Jenkins` or other CI/CD service (Github Actions or Vercel) to handle the CI/CD pipeline and production process
-* use `Jest` or other testing service to handle the unit test and integration test
 * ...
 
 ### lib and directory structure guide
@@ -223,6 +308,13 @@ My Practicing:
 ## Web Client
 
 ### React Best Practice Guide
+
+Arno used to summary the React Best Practice Guide in the past 👇🏻
+
+* [React Best Practice Guide of Arno](/posts/en/react-bp)
+* [React State Management Best Practice of Arno](/posts/en/react-state-management)
+
+---
 
 * separate the **Logic** and **View** in different layers
   * JSX / Component should be purely use Functional way
@@ -359,11 +451,14 @@ Provide some common patterns and conventions for the next.js full stack app deve
 
 My Related Articles:
 
-* [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
-* [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
+* [Effective Full Stack Dev](https://arno.surfacew.com/posts/en/effective-fullstack-dev)
+* [AI Driven front-end development](https://arno.surfacew.com/posts/en/ai-driven-front-end)
+* [Cursor BP](/posts/en/cursor.bp)
 
 ### notes on this article
 
+* 2024-02-02: initial version
 * 2024-03-12: bugfix and add more details for some topics, add `db` related topics guide
 * 2024-03-29: add directory naming conventions for components
 * 2024-10-21: upgrade recent server-action bp and add more details for the recent experience accumulated
+* 2025-05-13: keep updated with latest knowledge and version of next.js and other related technologies
