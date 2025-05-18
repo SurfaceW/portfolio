@@ -1,17 +1,29 @@
 ---
-title: '✨ Cursor Best Practice'
-publishedAt: '2025-02-02'
-summary: "Arno's best practices for Cursor."
-tags: ['Cursor', 'Best Practices', 'en']
+title: '✨ VibeCoding x Cursor Best Practice'
+publishedAt: '2025-05-18'
+summary: "Arno's best practices for VibeCoding and Cursor."
+tags: ['Cursor', 'AI', 'Best Practices', 'en']
 ---
 
-## Basic Editing Experience
+## Why VibeCoding?
 
-- **Tab Engineer**
-- **Multi-Line Edits**
-- **Smart Rewrites**
+- 🚀 Boost your speed and efficiency to craft programming stuff in an incredible way!
+- 🦄 Faster MVP and PMF, to iterate project faster in natural language.
+- 🧑🏻‍💻 It's technology agnostic but much better when you know your technology stack to leverage the AI tools even faster ~
 
-## Chat
+> That's the future way to building and crafting web apps.
+
+## Use VibeCoding Tool Well
+
+Before we start, let's learn how to use Cursor and how to make full use of it first. If you are familiar with Cursor, you can skip this part. Or you can directly to [Cursor Docs](https://docs.cursor.com/welcome) to learn more about Cursor.
+
+### Basic Editing Code
+
+- **Tab Engineer**: use tab to let the code completion happen quickly
+- **Multi-Line Edits**: tab can work with multiple lines at once or jump to the next target position to edit
+- **Smart Rewrites**: use tab to rewrite the code quickly
+
+### Chat
 
 Chat lets you talk with an AI that sees your codebase. The chat can always see your current file and cursor, so you can ask it things like: "Is there a bug here?". You can add particular blocks of code to the context with *⌘+Shift+L* or `"@."` You can chat with your entire codebase with `⌘+Enter`.
 
@@ -22,7 +34,7 @@ Chat lets you talk with an AI that sees your codebase. The chat can always see y
 - Ask web use `@Web` indicator (search)
 - Add documentation address as more ctx. for RAG process
 
-## Editing Code and Cmd + K
+### Editing Code and Cmd + K
 
 ⌘ K lets you edit and write code with the AI. To edit, try selecting some code, click "Edit," and describe how the code should be changed. To generate completely new code, just type ⌘ K without selecting anything.
 
@@ -31,78 +43,6 @@ Chat lets you talk with an AI that sees your codebase. The chat can always see y
 - Quick Questions
 - Inline Generations
 - Inline Edits
-
-## Context Engineering
-
-- Enable Workspace / Project Indexing
-- General Cursor Rule
-- `.cursorrules` for project system prompt
-
-High Quality Cursor Rules Example let's take React project for example:
-
-```markdown
-# React App Development Instructions
-
-## Core Principles
-
-- Design first, then implement
-- Use appropriate state management (zustand recommended)
-- Decompose UI into View, Business, and Basic components
-- Enforce data immutability
-- Maintain component orthogonality (separation of responsibilities)
-- Use object-oriented paradigm with TypeScript for complex business logic
-
-## Performance Optimization
-
-- Prevent unnecessary re-renders:
-  - Don't create component classes in render functions
-  - Pass state to leaf nodes when possible
-  - Pass children as props
-  - Use React.memo to prevent downward updates
-  - Use useMemo/useCallback for expensive operations
-  - Use unique keys for lists
-  - Use useMemo for Context values
-  - Separate data and API methods in Context
-  - Use multiple Context providers instead of one
-  - Implement Context Selectors
-
-- Decompose components to minimize render scope
-- Implement appropriate caching strategies
-- Use RenderHighlight in React DevTools to detect render issues
-- Optimize package size with TreeShaking
-
-## Stability Guidelines
-
-- Use mature libraries with version locks
-- Prevent circular dependencies in Hooks
-- Implement XSS protection
-- Add ErrorBoundary for error handling
-
-## Maintainability Guidelines
-
-- Unify code style with linters
-- Standardize directory and project organization
-- Apply design patterns and principles
-- Strictly separate views and logic
-- Limit file length to 500 lines maximum
-```
-
-- `@` Symbol boost
-  - `Files`: auto / full-file / outline / chunks
-  - `Folders`: is especially useful for [**long context chat**](https://docs.cursor.com/chat/overview#long-context-chat) where you want to provide a lot of context to the AI.
-  - `Code` : select and add to chat
-  - `Docs` : reference to docs lib in project
-  - `Git` : check the git diff and info
-  - `CodeBase` : Through `@Codebase`, Cursor Chat goes through these steps until it finds the most important pieces of code to use.
-    - Gathering: scanning through your codebase for important files / code chunks
-    - Reranking: reordering the context items based on relevancy to the query
-    - Reasoning: thinking through a plan of using the context
-    - Generating: coming up with a response
-  - `Web` : use extra context searching with web
-  - `Chat` : with specific chat-history / sessions
-  - `Definitions` : symbol adds all nearby definitions to Cmd K as context.
-- PastedLinks
-- `.cursorignore` : This file allows you to specify which files or directories should be excluded from indexing, ensuring that only relevant content is considered during the context engineering process.
 
 ### Cursor Rules
 
@@ -149,22 +89,9 @@ Obey the rules of Cursor Editor and is the main entry for cursor related files.
 
 For more cursor rule guide, you can refer to [Awesome Cursor Rules](https://github.com/PatrickJS/awesome-cursorrules?tab=readme-ov-file#frontend-frameworks-and-libraries).
 
-### .context folder
+### Composer / Agent Mode
 
-> May have variety of files, here are some examples:
-
-- `prompts`: typical prompts reference
-- `examples`: few shots examples
-  - `code`: code examples
-  - `types`: types declaration examples or interfaces declaration examples
-- `docs`: docs reference
-- `architecture`: architecture reference /guide
-- `projects`: projects reference for sub-apps or sub-modules
-- ...
-
-## Advanced Composer / Agent
-
-Composer is your AI coding assistant that lives in your editor. It helps you explore code, write new features, and modify existing code without leaving your workflow. Use `⌘I` to open it, and `⌘N` to create a new Composer.
+Agent is your AI coding assistant that lives in your editor. It helps you explore code, write new features, and modify existing code without leaving your workflow. Use `⌘I` to open it, and `⌘N` to create a new Composer.
 
 Enable Agent with `⌘.` to get a coding partner that proactively works with your codebase:
 
@@ -178,25 +105,269 @@ Agent can make up to 25 tool calls before stopping. For now, Agent supports only
 
 - Iterate on lints → Composer attempts to fix linting issues in generated code for most programming languages. If Composer detects lint errors, it will try to fix them automatically when this feature is enabled. Currently, only one iteration is supported.
 
-## MCP
+### Cursor x MCP
 
 - use MCP for your private tools usage, try to encapsulate your tools into MCP server and provide extra context for coding related things to Cursor.
 - example MCP server can be found in [awesome-mcp-server](https://mcp.so/servers) and some github awesome lists.
+
+## Vibe Coding Best Practices
+
+### Core BP Guide
+
+- **Strategic Prompt Engineering**: Crafting clear, contextual, and iterative prompts.
+- **Tool-Specific Context Mechanisms**: Leveraging features like `.cursorrules` and custom instructions.
+- **Human Oversight and Evaluation**: Maintaining critical review of all AI-generated code.
+- **Proactive Quality Management**: Ensuring maintainability and security in AI outputs.
+- **Continuous Learning**: Adapting skills alongside AI capabilities, keep learning and evolving.
+
+### VibeCoding Manifesto
+
+- Human-AI collaboration philosophy
+- Choosing the right tech stack
+- Balancing AI assistance with developer expertise
+
+[Vibe Manifesto](https://vibemanifesto.org/) guide the principles of VibeCoding as below:
+
+- **Focus on the problem, not the code**. Code is just the medium—what matters is solving the right problems.
+- **Taste is the ultimate filter**. AI can generate infinite solutions, but only human judgment can pick the right one.
+- **Systems thinking beats syntax mastery**. The best engineers don't just code—they architect, evaluate, and iterate.
+- **AI is your co-creator**. The best engineers wield AI to amplify their impact, not just automate tasks.
+- **Speed is the new craftsmanship**. The highest priority is delivering valuable software continuously and exponentially faster.
+- **Deliver in minutes, not days**. AI enables a pace where shipping happens as fast as thinking.
+- **Change is fuel**. Welcome new requirements at any stage—flexibility is a superpower, not a burden.
+- **Simplicity scales**. The best way to build fast and flexibly is to maximize what you don't build.
+- **Code is disposable**. If it doesn't work, reroll. Don't get attached.
+- **Favor reinvention over patchwork**. When a solution no longer meets our needs, we embrace regeneration to achieve greater clarity and efficiency.
+- **Optimize for acceleration**. The future belongs to those who build with exponential speed in mind.
+- **Evolve constantly**. Teams should reflect, adapt, and upgrade their tools and workflows regularly.
+
+### VibeCoding Strategy
+
+General strategies for VibeCoding:
+
+- **unified prompting engineering**: build robust and precise prompts & context engineering for AI tools, see the next section for more details
+- **small is beautiful**: small projects in mono repos, *small is beautiful, small is powerful* in large scale view, keep things simple and elegant way, such as file, class, service, and module, even the application itself.
+- _breaking complex tasks into manageable components_: use techniques like task decomposition, modular design, and microservices to simplify development and enhance collaboration.
+- _iterative refinement strategies_: continuously improve and adapt your codebase through regular feedback loops and incremental changes.
+
+CodeQuality Strategies:
+
+Refactoring AI-Generated Code
+
+- Treating AI outputs as initial drafts
+- Proactive and iterative refinement processes
+- Example prompts for effective refactoring
+
+Design Principles
+
+- Emphasizing reusability in prompts and outputs
+- Clear architecture and modular design
+- Consistent naming conventions
+
+Testing Approaches
+
+- Test-driven development with AI assistance
+- Writing tests for stability and refactoring
+- Using tests to guide AI code generation
+
+## Context & Prompt Engineering
+
+For basic rules:
+
+- basic prompting engineering techniques (just learn from internet, there are a lot of resources)
+- _precise and contextual prompting requirements_
+- _use code as examples as few-shot learning demonstrations_
+- add **software engineering** knowledge and experience from real world software engineering in brief and concise way
+
+For tools to better indexing the code:
+
+- Enable Workspace / Project Indexing
+- General Cursor Rule
+- `.cursorrules` for project system prompt
+
+High Quality Cursor Rules Example:
+
+```markdown
+# React App Development Instructions
+
+## Core Principles
+
+- Design first, then implement
+- Use appropriate state management (zustand recommended)
+- Decompose UI into View, Business, and Basic components
+- Enforce data immutability
+- Maintain component orthogonality (separation of responsibilities)
+- Use object-oriented paradigm with TypeScript for complex business logic
+
+## Performance Optimization
+
+- Prevent unnecessary re-renders:
+
+  - Don't create component classes in render functions
+  - Pass state to leaf nodes when possible
+  - Pass children as props
+  - Use React.memo to prevent downward updates
+  - Use useMemo/useCallback for expensive operations
+  - Use unique keys for lists
+  - Use useMemo for Context values
+  - Separate data and API methods in Context
+  - Use multiple Context providers instead of one
+  - Implement Context Selectors
+
+- Decompose components to minimize render scope
+- Implement appropriate caching strategies
+- Use RenderHighlight in React DevTools to detect render issues
+- Optimize package size with TreeShaking
+
+## Stability Guidelines
+
+- Use mature libraries with version locks
+- Prevent circular dependencies in Hooks
+- Implement XSS protection
+- Add ErrorBoundary for error handling
+
+## Maintainability Guidelines
+
+- Unify code style with linters
+- Standardize directory and project organization
+- Apply design patterns and principles
+- Strictly separate views and logic
+- Limit file length to 500 lines maximum
+```
+
+---
+
+Make full-use of providing context by use `@` symbol, and use `@Recommended` to get the best context for your code generator.
+
+- `@` Symbol boost
+  - `Files`: auto / full-file / outline / chunks
+  - `Folders`: is especially useful for [**long context chat**](https://docs.cursor.com/chat/overview#long-context-chat) where you want to provide a lot of context to the AI.
+  - `Code` : select and add to chat
+  - `Docs` : reference to docs lib in project
+  - `Git` : check the git diff and info
+  - `CodeBase` : Through `@Codebase`, Cursor Chat goes through these steps until it finds the most important pieces of code to use.
+    - Gathering: scanning through your codebase for important files / code chunks
+    - Reranking: reordering the context items based on relevancy to the query
+    - Reasoning: thinking through a plan of using the context
+    - Generating: coming up with a response
+  - `Web` : use extra context searching with web
+  - `Chat` : with specific chat-history / sessions
+  - `Definitions` : symbol adds all nearby definitions to Cmd K as context.
+- PastedLinks
+- `.cursorignore` : This file allows you to specify which files or directories should be excluded from indexing, ensuring that only relevant content is considered during the context engineering process.
+
+### Build your own Instructions by Project
+
+`.rules` basic folder for all rules and instructions for AI as project folder
+
+---
+
+`/commit` commit message rules for all the commit messages
+
+- `/commit-msg.md` - rules for commit msg generation
+
+---
+
+`/tech` technology rule folder for all the tech-stack
+
+- `/project.md` - general rules for all the tech-stack -> this is for project specific
+- `/general/tech/*.md` - tech-stack guide for the project
+  - `/oo-bp.md`: object-oriented programming best practice
+  - `/react-bp.md`: react best practice
+  - `/next.js.md`: next.js best practice
+  - ...
+
+---
+
+`/prd` the project folder for all PRD, modules and iterations related specifications
+
+- `/main.md` - main folder for all the code, description of the project
+- `/modules/*` - all the modules for the project (optional)
+- `/iterations/*` - all the production iterations for the code, the trace is important (optional)
+- `/commits/*` - so your basic instructions should be persist here and quote by the AI tool for iteration and generation (optional)
+- `/release/*` - similar to release logs and feature tags
+
+---
+
+#### Repository Management
+
+- Monorepo with workspaces approach
+- Small, focused projects within larger structures
+- File naming best practices (concrete vs. generic names), avoid use `index.ts` those easy-to-duplicate names in AI Era
+
+## Technology Stack Recommendations
+
+choose mature and elegant tech stack for your project, and use the best boilerplate to start quickly. Here I use `next.js` as an example.
+
+- Framework-specific best practices (React, Next.js, etc.)
+- API design guidelines and conventions
+- Database schema standardization
 
 ## VSCode Features
 
 - VSCode Extensions and Configs migration
 - Search with Alfred with `PROJECT`
 
-## Engineering Workflow
+## Typical Scenarios
 
-- Commit Msg Generation → in git tab
-- Bug Finder → based on the diff info and git related things
+### Codebase QA x General QA
+
+when the code-base index is enabled, you can ask the AI to do the code-base QA and general QA.
+
+use `dev-in`'s wiki to learn open-source code quickly, for private code, you can use `@Codebase` to get the context of the code to do quick QA.
+
+### 0 -> 1 Vibe Coding
+
+start from scratch, build a new project with Cursor and VibeCoding.
+
+- use boilerplate to start quickly with maturity and elegance, print the BP in code boilerplate
+- prepare the `.context` folder first according to the project requirements and rules above.
+- start the step by step coding with Cursor and VibeCoding to create the project from scratch.
+
+### 1 -> N Vibe Coding
+
+feature iteration, module iteration, and keep trace in `prd` dir, and update or promoted your tech in sync with the project level instructions.
+
+### Testing
+
+- set up the test environment wit mature and elegant test framework, like `jest` or `vitest` for unit test, and `cypress` for e2e test.
+- TDD Approach: write tests first and then implement the code
+- BDD Approach: write tests for the existing code and refactor, do feature iteration
+
+add your test BP to system prompt of AI tool, to maintain the test quality and coverage automatically.
+
+### Refactor
+
+target on existing code, refactor the code with Cursor and VibeCoding.
+
+- consider use `TDD` to write the test first and then refactor the code, and use Cursor to help you with the TDD process.
+- use container (remote) mode, is a good way to refactor the code, and use Cursor to help you with the TDD process remotely.
+
+### Code Review
+
+- code Review with AI assistance, ask AI to review the code and give suggestions, with @Diff to check the diff of the code locally.
+- in dev-ops, platform may have some code review process, you can use other llm service to help you with the code review process and enable those tools to do the code review with peers and AI, let AI do the dirty job.
+
+### Bugfix
+
+- prepare rich and detailed bug report with the bug description, steps to reproduce, and expected behavior.
+- let ai write local test cases to reproduce the bug, and then fix the bug with AI assistance.
+- let ai write tests for the bug fix, and then run the tests to verify the bug fix.
+
+### Documentation
+
+- write the doc-style you want in system rule
+- just generate the doc with AI assistance and keep in sync when code is modified
+
+### Commit Message Generation
+
+some tools have commit message generation, you can use the commit message generation tool to generate the commit message automatically and add your custom rules to the commit message generation tool is a good way to keep the commit message consistent and easy to read.
 
 ## Reference
 
 - Cursor Docs -> [https://docs.cursor.com/get-started/migrate-from-vscode](https://docs.cursor.com/get-started/migrate-from-vscode)
 
-## Updates
+### Updates
 
 - 2025-03-16: add cursor rules and agent related content like `.cursor` and `.context` dir usage and examples, and MCP guide.
+- 2025-05-18: upgrade to general vibe-coding guideline
