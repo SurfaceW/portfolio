@@ -258,24 +258,9 @@ Make full-use of providing context by use `@` symbol, and use `@Recommended` to 
 
 ### Build your own Instructions by Project
 
+> writing your PRD and tech design inside the `.context` is better for AI to learn and generate the code.
+
 `.rules` or `.context` basic folder for all rules and instructions for AI as project folder
-
----
-
-`/commit` commit message rules for all the commit messages
-
-- `/commit-msg.md` - rules for commit msg generation
-
----
-
-`/tech` technology rule folder for all the tech-stack
-
-- `/project.md` - general rules for all the tech-stack -> this is for project specific
-- `/general/tech/*.md` - tech-stack guide for the project
-  - `/oo-bp.md`: object-oriented programming best practice
-  - `/react-bp.md`: react best practice
-  - `/next.js.md`: next.js best practice
-  - ...
 
 ---
 
@@ -288,6 +273,22 @@ Make full-use of providing context by use `@` symbol, and use `@Recommended` to 
 - `/release/*` - similar to release logs and feature tags
 
 ---
+
+`/tech` technology rule folder for all the tech-stack
+
+- `/project.md` - general rules for all the tech-stack -> this is for project specific
+- `/modules/*` - all the modules for the project (optional) tech design
+- `/general/tech/*.md` - tech-stack guide for the project
+  - `/oo-bp.md`: object-oriented programming best practice
+  - `/react-bp.md`: react best practice
+  - `/next.js.md`: next.js best practice
+  - ...
+
+---
+
+`/commit` commit message rules for all the commit messages
+
+- `/commit-msg.md` - rules for commit msg generation
 
 #### Repository Management
 
