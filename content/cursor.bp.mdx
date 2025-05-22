@@ -262,7 +262,7 @@ Make full-use of providing context by use `@` symbol, and use `@Recommended` to 
 
 `.rules` or `.context` basic folder for all rules and instructions for AI as project folder
 
-- `general.md` - general introduction for the project
+- `project.manifest.md` - general introduction for the project
 
 ---
 
@@ -278,9 +278,9 @@ Make full-use of providing context by use `@` symbol, and use `@Recommended` to 
 
 `/tech` technology rule folder for all the tech-stack
 
-- `/project.md` - general rules for all the tech-stack -> this is for project specific
+- `/general-guide.md` - general rules for all the tech-stack -> this is for project specific
 - `/modules/*` - all the modules for the project (optional) tech design
-- `/general/tech/*.md` - tech-stack guide for the project
+- `/[general-biz].md` - tech-stack guide for the project
   - `/oo-bp.md`: object-oriented programming best practice
   - `/react-bp.md`: react best practice
   - `/next.js.md`: next.js best practice
@@ -291,6 +291,38 @@ Make full-use of providing context by use `@` symbol, and use `@Recommended` to 
 `/commit` commit message rules for all the commit messages
 
 - `/commit-msg.md` - rules for commit msg generation
+
+Combo with GithubCopilot or cursor rule file `.mdc` let's take Github Copilot as an example:
+
+```json
+{
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".github/commit.instruction.md"
+    },
+    {
+      "file": ".context/commit.instruction.md"
+    }
+  ],
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": ".context/project.manifest.md"
+    },
+    {
+      "file": ".context/prd.main.md"
+    },
+    {
+      "file": ".context/tech/general-guide.md"
+    },
+    {
+      "file": ".context/tech/react.js.md"
+    },
+    {
+      "file": ".context/tech/next.js.md"
+    }
+  ]
+}
+```
 
 #### Repository Management
 
