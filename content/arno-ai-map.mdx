@@ -1,9 +1,49 @@
 ---
 title: '🗺️ Arno AI Map'
 publishedAt: '2025-04-20'
-summary: "Arno's AI Best Practices Map."
+summary: "Arno's AI Era's Best Practices Map."
 tags: ['AI', 'en']
 ---
+
+## AI Working Procedure
+
+In general, we can divide the AI working procedure into three main ways:
+
+* **Human First, AI Assist**: human is focusing on the high-level tasks and design to instruct AI for high-level decision making or cross-multiple domain tasks.
+* **AI First, Human Assist in Sync**: human design the task and instruct AI to do the task in a synchronous way, and human is focusing on revise and review the AI's work till the task is done.
+* **AI First, Human Assist in Async**: human design the task and instruct AI to do the task in an asynchronous way, AI using `Agentic` approach to do the task, and human is focusing on later review and revise the AI's work till the task is done. These tasks are usually self-contained and not coupled with other domains, so AI can work independently.
+
+Let's take software development as an example:
+
+### Human First, AI Assist
+
+* app production, tech-architecture, and market high-level design
+* core modules, core features, and core functions design
+* key-decision making about the technology stack, architecture, and modules features
+* complex problem solving and reasoning, such as systematic and systemic reasoning
+* ...
+
+> In this mode, Arno try to create `Elaboration Studio` [e-studio.ai](https://e-studio.ai) to leverage the power of AI and personal context engineering to do the high-level design and decision making, and then use the AI to assist in the low-level tasks.
+
+### AI First, Human Assist in Sync
+
+* app development, coding, and programming in specific modules
+* write PRD, design documents, and technical documents
+* code review, PR review, and design review
+* software development lifecycle, such as devops, CI/CD, and testing
+* ...
+
+> In this mode, dedicated AI tools are used to assist in the coding and programming tasks, such as `Cursor`, `Github Copilot`, and `V0`. These tools are designed to work in sync with human developers, providing real-time assistance and suggestions.
+
+### AI FFirst, Human Assist in Async
+
+* do market or product research
+* write unit-test and integration-test
+* refactor modules, features, and functions
+* batch job on data processing or information processing
+* ...
+
+> In this mode, AI tools are used to work independently on specific tasks, such as `Google Deep Research`, `Manus` and `Google Jules` which can run in the server-end or background without human intervention. These tools are designed to handle specific tasks and can work asynchronously, allowing for greater efficiency and productivity.
 
 ## Scenarios
 
@@ -91,6 +131,13 @@ icons stands for:
 | ChatGPT 4.1 | Fast | 💎 | General tasks, Coding | Less capable than 4o |
 | Gemini Pro 2.5 | Fast | 👍🏻 | Research, Knowledge retrieval | Less creative than GPT-4 |
 | DeepSeek R1 | Medium | 🆓 | Domain-specific tasks | Limited general knowledge |
+| Claude 4 | Medium | 💎 | General tasks, Coding | Cost, API limits |
+
+### General Intension Tools
+
+| Tool | Type | Best For | Integration | Cost |
+|------|------|----------|-------------|------|
+| Manus | Research & General Usages | AutoRun tasks | API | 💎 |
 
 ### Development Tools
 
@@ -127,7 +174,6 @@ icons stands for:
 |----------|---------|----------|------|
 | Vercel | Deployment | Serverless, Edge | 👍🏻 |
 | OpenRouter | API Gateway | Multiple models | 👍🏻 |
-| ElaborationStudio | Personal Workspace | Knowledge management | 💎 |
 
 ## Elaboration Studio
 
@@ -156,4 +202,6 @@ ChatPoweredLLMResults -> EDocs -> EStudioSystematicAgent
 
 ## Trace
 
+- 2025-04-20: initial version
 - 2025-05-10: upgrade some more details and scenarios for AI to use and mapping to the tools and models
+- 2025-05-23: add `AI Working Procedure` for better understanding of the AI working procedure and how to use the tools and models
