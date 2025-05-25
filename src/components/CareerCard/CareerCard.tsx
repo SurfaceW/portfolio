@@ -1,41 +1,53 @@
-import React from 'react';
+import React from 'react'
 
 interface CareerCardProps {
-  careerSteps: string[];
+  careerSteps: string[]
 }
 
 const CareerCard: React.FC<CareerCardProps> = ({ careerSteps }) => {
   return (
-    <div 
-      className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
-                 h-full flex flex-col justify-center 
-                 p-4 sm:p-6" // Base padding mobile, larger for sm+
-    >
-      <div className="relative">
-        {/* Timeline vertical line */}
-        <div 
-          className="hidden sm:block absolute top-0 left-3 sm:left-4 w-0.5 h-full 
-                     bg-blue-300/70 dark:bg-blue-500/70 rounded-full"
-        ></div>
-        <ul className="list-none m-0 p-0">
+    <div className="h-full flex flex-col justify-center p-4">
+      <div className="flex items-center justify-center mb-3">
+        <div className="text-2xl">💼</div>
+      </div>
+      
+      <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 text-center">
+        Career Journey
+      </h3>
+      
+      <div className="relative flex-1">
+        {/* Simplified timeline line */}
+        <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full"></div>
+        
+        <div className="space-y-3">
           {careerSteps.map((step, index) => (
-            <li 
-              key={index} 
-              className="relative pl-8 sm:pl-10 mb-3 last:mb-0 
-                         text-base sm:text-lg text-slate-700 dark:text-slate-200"
+            <div
+              key={index}
+              className="relative pl-6 group transition-all duration-200 hover:translate-x-1"
             >
-              {/* Timeline marker dot */}
-              <div 
-                className="absolute top-1/2 left-0 sm:left-0.5 transform -translate-y-1/2 
-                           w-3 h-3 sm:w-4 sm:h-4 bg-blue-400 dark:bg-blue-300 rounded-full border-2 border-white/50 dark:border-slate-800/50"
-              ></div>
-              {step}
-            </li>
+              {/* Enhanced timeline dot */}
+              <div className="absolute left-0 top-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full border-2 border-white dark:border-gray-800 shadow-sm group-hover:scale-110 transition-transform duration-200">
+                <div className="absolute inset-0.5 bg-white dark:bg-gray-800 rounded-full"></div>
+                <div className="absolute inset-1 bg-gradient-to-br from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full"></div>
+              </div>
+              
+              {/* Step content */}
+              <div className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                {step}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
+        
+        {/* Arrow indicating progression */}
+        <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 text-amber-500 dark:text-amber-400">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CareerCard;
+export default CareerCard

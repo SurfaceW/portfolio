@@ -12,7 +12,7 @@ const WorkCard: React.FC<WorkCardProps> = ({ icon, title, description, link }) =
     <div 
       className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
                  h-full flex flex-col 
-                 p-4 sm:p-6" // Base padding mobile, larger for sm+
+                 p-6" // Consistent padding with other cards
     >
       <div className="mb-3 sm:mb-4">
         <span 

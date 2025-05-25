@@ -17,7 +17,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ title, description, slug })
         <div 
           className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
                      h-full flex flex-col 
-                     p-4 sm:p-5 
+                     p-6
                      transition-all duration-300 ease-in-out 
                      hover:shadow-xl hover:-translate-y-1"
         >

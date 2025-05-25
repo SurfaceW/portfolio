@@ -9,9 +9,9 @@ interface AvatarCardProps {
 const AvatarCard: React.FC<AvatarCardProps> = ({ imageUrl, name, title }) => {
   return (
     <div 
-      className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
+      className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 
                  h-full flex flex-col items-center justify-center text-center 
-                 p-4 sm:p-6" // Base padding for mobile, larger for sm+
+                 p-6" // Consistent padding with other cards
     >
       {imageUrl === "[wip]" ? (
         <div 

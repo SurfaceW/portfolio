@@ -7,9 +7,9 @@ interface ManifestoCardProps {
 const ManifestoCard: React.FC<ManifestoCardProps> = ({ manifestoItems }) => {
   return (
     <div 
-      className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
+      className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 
                  h-full flex flex-col justify-center 
-                 p-4 sm:p-5" // Base padding for mobile, larger for sm+
+                 p-6" // Consistent padding with other cards
     >
       <ul className="list-none p-0 m-0">
         {manifestoItems.map((item, index) => (

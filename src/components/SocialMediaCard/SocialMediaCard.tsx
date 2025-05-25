@@ -16,7 +16,7 @@ const SocialMediaCard: React.FC<SocialMediaCardProps> = ({ socialLinks }) => {
     <div 
       className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
                  h-full flex flex-col items-center justify-center 
-                 p-4 sm:p-5" // Base padding mobile, larger for sm+
+                 p-6" // Consistent padding with other cards
     >
       <ul 
         className="list-none p-0 m-0 flex flex-wrap justify-center 
