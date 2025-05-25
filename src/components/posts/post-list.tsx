@@ -27,9 +27,9 @@ export async function PostListServer({
       </h1>
       <div hidden={!!listOnly} className='mb-6'>
         {params?.lang === 'en' ? (
-          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/cn">中文</Link>
+          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/topics/cn">中文</Link>
         ) : (
-          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/en">English</Link>
+          <Link className="hover:bg-gray-400 transition-all ease-in underline" href="/posts/topics/en">English</Link>
         )}
       </div>
       {allBlogs
@@ -58,7 +58,7 @@ export async function PostListServer({
             <Link
               key={post.slug}
               className="flex flex-col space-y-1"
-              href={`/posts/${params.lang || 'en'}/${post.slug}`}
+              href={`/posts/${post.slug}`}
             >
               <div className="w-full flex flex-col">
                 <h4 className="text-neutral-900 dark:text-neutral-100 tracking-tight text-lg font-bold hover:text-blue-500 transition-all ease-in duration-200">
