@@ -13,9 +13,9 @@ export const GET = async (req: NextRequest) => {
     firstLanguage === 'zh-MO' ||
     firstLanguage === 'zh'
   ) {
-    redirectURL.pathname = '/posts/cn'
+    redirectURL.pathname = '/posts/topics'
   } else {
-    redirectURL.pathname = '/posts/en'
+    redirectURL.pathname = '/posts/topics'
   }
   return NextResponse.redirect(`${redirectURL}`)
 }

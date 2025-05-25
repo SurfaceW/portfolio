@@ -6,7 +6,7 @@ export default async function sitemap() {
     lastModified: post.publishedAt,
   }));
 
-  const routes = ['', '/posts/topics/en', '/posts/topics/cn', '/rss', '/idea'].map(
+  const routes = ['', '/posts/topics', '/rss', '/idea'].map(
     (route) => ({
       url: `https://arno.surfacew.com${route}`,
       lastModified: new Date().toISOString().split('T')[0],

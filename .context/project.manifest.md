@@ -28,3 +28,5 @@ You can learn the `README.md` file for more details about the project.
 - contentlayer
 - React
 - Vercel Edge Config
+
+use `pnpm` for package operations
