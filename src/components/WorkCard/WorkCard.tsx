@@ -9,40 +9,52 @@ interface WorkCardProps {
 
 const WorkCard: React.FC<WorkCardProps> = ({ icon, title, description, link }) => {
   return (
-    <div 
-      className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-white/20 
-                 h-full flex flex-col 
-                 p-6" // Consistent padding with other cards
-    >
-      <div className="mb-3 sm:mb-4">
-        <span 
-          aria-hidden="true" 
-          className="text-3xl sm:text-4xl" // Emoji icon size
-        >
-          {icon}
-        </span>
+    <div className="h-full flex flex-col justify-center p-4">
+      {/* Icon container with animated glow effect */}
+      <div className="relative flex items-center justify-center mb-3">
+        <div className="absolute w-12 h-12 bg-rose-400/10 dark:bg-rose-300/5 rounded-full animate-pulse"></div>
+        <div className="text-3xl z-10">{icon}</div>
       </div>
-      <h2 
-        className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2 sm:mb-3"
-      >
+      
+      {/* Title */}
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">
         {title}
-      </h2>
-      <p 
-        className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-4 sm:mb-6 flex-grow"
-      >
-        {description}
-      </p>
-      <a 
-        href={link} 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="mt-auto block w-full sm:w-auto text-center 
-                   bg-blue-600/70 hover:bg-blue-500/70 dark:bg-blue-500/70 dark:hover:bg-blue-400/70 
-                   text-white font-medium 
-                   py-2 px-4 rounded-lg transition-colors duration-150"
-      >
-        Learn More
-      </a>
+      </h3>
+      
+      <div className="relative flex-1 flex flex-col">
+        {/* Description with side accent */}
+        <div className="pl-3 border-l-2 border-rose-400 dark:border-rose-600 mb-4">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            {description}
+          </p>
+        </div>
+        
+        {/* Button with hover effect */}
+        <a 
+          href={link} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="mt-auto relative group flex items-center justify-center
+                    bg-gradient-to-r from-rose-500/70 to-red-600/70 
+                    hover:from-rose-400/70 hover:to-red-500/70
+                    dark:from-rose-500/50 dark:to-red-600/50
+                    dark:hover:from-rose-400/50 dark:hover:to-red-500/50
+                    text-white font-medium text-sm
+                    py-1.5 px-3 rounded-lg transition-all duration-200"
+        >
+          <span>Visit Project</span>
+          
+          {/* Arrow indicator */}
+          <svg 
+            className="w-3.5 h-3.5 ml-1 transition-transform duration-200 transform group-hover:translate-x-0.5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
     </div>
   );
 };

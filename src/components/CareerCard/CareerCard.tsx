@@ -26,13 +26,13 @@ const CareerCard: React.FC<CareerCardProps> = ({ careerSteps }) => {
               className="relative pl-6 group transition-all duration-200 hover:translate-x-1"
             >
               {/* Enhanced timeline dot */}
-              <div className="absolute left-0 top-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full border-2 border-white dark:border-gray-800 shadow-sm group-hover:scale-110 transition-transform duration-200">
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-gradient-to-br from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full border-2 border-white dark:border-gray-800 shadow-sm group-hover:scale-110 transition-transform duration-200">
                 <div className="absolute inset-0.5 bg-white dark:bg-gray-800 rounded-full"></div>
                 <div className="absolute inset-1 bg-gradient-to-br from-amber-400 to-amber-600 dark:from-amber-300 dark:to-amber-500 rounded-full"></div>
               </div>
               
               {/* Step content */}
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
                 {step}
               </div>
             </div>

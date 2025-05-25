@@ -6,6 +6,9 @@ const nextConfig = {
   experimental: {
     serverActions: false,
   },
+  images: {
+    domains: ['avatars.githubusercontent.com'],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

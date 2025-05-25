@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface AvatarCardProps {
   imageUrl: string;
@@ -8,37 +9,56 @@ interface AvatarCardProps {
 
 const AvatarCard: React.FC<AvatarCardProps> = ({ imageUrl, name, title }) => {
   return (
-    <div 
-      className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 
-                 h-full flex flex-col items-center justify-center text-center 
-                 p-6" // Consistent padding with other cards
-    >
-      {imageUrl === "[wip]" ? (
-        <div 
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-200/30 dark:bg-slate-700/30 
-                     flex items-center justify-center text-slate-500 dark:text-slate-400 
-                     mb-3 sm:mb-4 text-xs sm:text-sm"
-        >
-          [wip]
-        </div>
-      ) : (
-        <img 
-          src={imageUrl} 
-          alt={name} 
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover 
-                     mb-3 sm:mb-4 border-2 border-white/30 shadow-md"
-        />
-      )}
-      <h2 
-        className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-1"
-      >
-        {name}
-      </h2>
-      <p 
-        className="text-sm sm:text-base text-slate-600 dark:text-slate-300"
-      >
-        {title}
-      </p>
+    <div className="h-full flex flex-col justify-center p-4">
+      {/* Emoji icon above the avatar */}
+      <div className="flex items-center justify-center mb-2">
+        <div className="text-2xl">👨‍💻</div>
+      </div>
+      
+      {/* Avatar image with pulsing glow effect */}
+      <div className="relative flex items-center justify-center mb-3">
+        {/* Decorative pulsing background */}
+        <div className="absolute w-24 h-24 rounded-full bg-blue-400/10 dark:bg-blue-300/5 animate-pulse"></div>
+        
+        {imageUrl === "[wip]" ? (
+          <div className="w-20 h-20 rounded-full bg-slate-200/30 dark:bg-slate-700/30 
+                 flex items-center justify-center text-slate-500 dark:text-slate-400 
+                 z-10 border-2 border-blue-300/30 dark:border-blue-500/30">
+            [wip]
+          </div>
+        ) : (
+          <div className="relative w-20 h-20 z-10 rounded-full overflow-hidden border-2 border-blue-300/50 dark:border-blue-500/30 shadow-md">
+            <Image 
+              src={imageUrl} 
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="80px"
+              priority
+            />
+          </div>
+        )}
+      </div>
+      
+      {/* Name with decorative underline */}
+      <div className="text-center mb-1">
+        <h2 className="inline-block text-lg font-bold text-slate-800 dark:text-slate-100 
+                      pb-1 border-b-2 border-blue-400/30 dark:border-blue-500/30">
+          {name}
+        </h2>
+      </div>
+      
+      {/* Title with subtle styling */}
+      <div className="text-center">
+        <p className="text-sm text-slate-600 dark:text-slate-300 
+                    px-3 py-1 bg-blue-50/30 dark:bg-blue-900/10 rounded-full inline-block">
+          {title}
+        </p>
+      </div>
+      
+      {/* Decorative dots in corners */}
+      <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-blue-400/40 dark:bg-blue-500/40"></div>
+      <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/40 dark:bg-blue-500/40"></div>
     </div>
   );
 };
