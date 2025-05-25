@@ -16,4 +16,5 @@ format examples:
 ---
 
 - keep the commit short and brief in less than 70 words each line
-- you can have multiple lines
+- only with oneline to describe the change no extra line
+- if the modifications is too long or complex, the one-line should still be brief but consider add module name or keyword to describe the change, add detail change list in the commit body
