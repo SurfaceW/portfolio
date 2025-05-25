@@ -15,5 +15,5 @@ format examples:
 
 ---
 
-- keep the commit short and brief in less than 70 words
-- only with oneline to describe the change no extra line
+- keep the commit short and brief in less than 70 words each line
+- you can have multiple lines
