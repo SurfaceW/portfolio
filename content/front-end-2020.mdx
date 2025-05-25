@@ -1,90 +1,77 @@
 ---
 title: '2020 AS A FRONT-END DEVELOPER'
 publishedAt: '2020-01-01'
-summary: "Arno 对近期 FE 的方向和手上所做事情的总结思考。"
-tags: ['Frontend', 'cn']
+summary: "Arno's summary and thoughts on the recent direction of FE and the work he has been doing."
+tags: ['Frontend', 'en']
 ---
 
-借着「双🥚」佳节，我也来盘一盘作为一个前端，自己在 2020 这一年做过的一些事情。看大家也聊了不少挺技术的技术方向的，什么 Serverless、WSAM、Flutter，五花八门，啥都有。我想了想，还是傍着业务背景，来聊一聊这一年我和我的团队在前端方向上做过的事情和它背后的思考。
+Taking advantage of the "Double Egg" festival, I'd like to review some of the things I've done as a front-end developer in 2020. I've seen many discussions about various technical directions, such as Serverless, WSAM, Flutter, and so on. I thought about it and decided to talk about the things my team and I have done in the front-end field this year and the thinking behind them, all within the context of our business.
 
-开始之前，先说说我所在的团队是阿里云智能，钉钉事业部下的**「专有钉钉」前端团队**。这支年轻的队伍，刚一岁多一点，正在基于公有钉钉已有的标准能力去服务于大型客户。尤其是政府和央企这类大规模的组织，满足他们各种花里胡哨的业务需求。
+Before I begin, let me introduce my team: the **"Proprietary DingTalk" front-end team** under the DingTalk Business Unit of Alibaba Cloud Intelligence. This young team, just over a year old, is leveraging the existing standard capabilities of public DingTalk to serve large clients, especially large organizations like government and state-owned enterprises, meeting their various and often "fancy" business needs.
 
-也正是由于服务于大型客户的基调和阿里「[云钉一体](https://baijiahao.baidu.com/s?id=1682706368165790318&wfr=spider&for=pc)」的战略。我们整个团队今年都围绕着：「**专有（云）化**」、「**模块化**」、「**定制化**」这些词来做技术布局。团队在阿里集团已有的基础设施之上，快速蓬勃成长，怀着一颗拓宽前端 2B2G 领域边界的命题，走了 1 年 ~ 为此在这里就来和大家聊一聊我们团队在这三个关键词上的探索和思考，也算抛砖引玉了。
+It is precisely because of this focus on serving large clients and Alibaba's "[Cloud DingTalk Integration](https://baijiahao.baidu.com/s?id=1682706368165790318&wfr=spider&for=pc)" strategy that our entire team has centered its technical layout around these keywords this year: "**Proprietary (Cloud) Deployment**," "**Modularization**," and "**Customization**." Building upon Alibaba Group's existing infrastructure, the team has grown rapidly, driven by the mission of expanding the boundaries of the front-end 2B2G (Business-to-Business-to-Government) domain for a year. So, here I'd like to share our team's explorations and thoughts on these three keywords, hoping to spark further discussion.
 
-## 专有化
+## Proprietary Deployment
 
-成熟的 2B 业务，都少不了专有化的影子。试想如果你的整套产品 & 服务（前后端）都要脱离公网环境，部署到一个专有环境里面运行。此时此刻前端应用将：
+Mature B2B businesses inevitably involve proprietary deployments. Imagine if your entire product & service suite (both front-end and back-end) had to be deployed and run in a private environment, disconnected from the public internet. In this scenario, the front-end application would:
 
-- 无法使用 CDN 加速资源获取
+- Be unable to use CDNs for accelerated resource fetching.
+- Have limited internet access.
+- Lose access to many mature public internet-based services and solutions.
 
-- 有限的互联网访问
+Initially, it felt quite isolating. Fortunately, to address the challenges of proprietary deployment, the entire team has put a lot of effort into engineering this year:
 
-- 大量成熟的基于公网的服务和解决方案都无法使用了
-
-刚开始会有一种孤立无援的感觉。好在今年为了解决专有化的问题，整个团队还是在工程上折腾了不少：
-
-- 静态资源构建时分析，本地聚合，输出构建包
-
-- 前端资源 Docker 镜像化，配合运维平台一键发布
-
-- 前端页面脚本本地化客户端集成（CEF 容器离线化）
-
+- Static resource analysis during build time, local aggregation, and outputting build packages.
+- Docker image creation for front-end resources, enabling one-click deployment with the operations platform.
+- Localization of front-end page scripts for client-side integration (CEF container offline capabilities).
 - ...
 
-解决了专有环境交付的「**温饱问题** 🍚」，让项目在交付的时候变得灵动了一些。不过这一块技术还有很多空间待发掘，尤其是阿里小程序体系在的混合云架构下的部署模式，是接下来的一个重要命题。
-## 模块化
+This solved the basic "survival needs 🍚" of proprietary environment delivery, making project delivery more flexible. However, there's still a lot of room for exploration in this area, especially regarding the deployment model of Alibaba's Mini Program ecosystem under a hybrid cloud architecture, which is a crucial topic for the future.
 
-「**模块化**」一直都是程序设计重要的命题。今年团队面对的「**模块化**」是在云钉一体背景下，要将「钉钉」这个 App 变成一副骨架，并且在这之上承载的血肉、组织、器官要能被定制和替换。这就对现有的业务模块提出了更高的抽象标准和要求：
+## Modularization
 
-- 模块需要「**高内聚**」，外放的能力要收敛
+"**Modularization**" has always been an important theme in program design. This year, the "modularization" challenge our team faced, within the context of Cloud DingTalk Integration, was to transform the "DingTalk" app into a foundational framework. The core components, organization, and features built upon it needed to be customizable and replaceable. This placed higher abstraction standards and requirements on existing business modules:
 
-- 模块需要「**结构化**」，满足可插拔可装配的诉求
+- Modules need to be "**highly cohesive**," with a converged set of external capabilities.
+- Modules need to be "**structured**," supporting plug-and-play and assembly.
+- Modules need to be "**standardized**," allowing for extension, customization, and replacement.
 
-- 模块需要「**标准化**」，可扩展，可定制，可替换
+Against this backdrop, thanks to the co-creation and intensive input from our server-side and native client colleagues during this period, and influenced by ideas like **DDD (Domain-Driven Design)**, we are attempting to **explore the "DNA" 🧬 of these existing modules**. We aim to extract their immutable aspects and core designs to become the "**module core**," further solidifying them into what we call "**business assets**".
 
-在这样的背景下，得益于这段时间的服务端和 native 客户端同学的共创和疯狂输入，在 **DDD（领域驱动设计）** 等思想的熏陶之下，让我们尝试在存量的模块中，**去探寻这些模块的「DNA」🧬**，抽离它们的不动点和核心设计成为「**模块核心**」，进一步沉淀为所谓的「**业务资产**」。
+This is essentially a high-level business abstraction, and the process is one of **"continuous refinement"**. It's a mission that each core business module (like chat IM, address book, etc.) will persistently explore over the next 3-5 years. With this, perhaps we can set a "small goal" for ourselves to become the front-end team with the most experience in designing and implementing collaborative application modules in China 😀 wouldn't that be interesting?
 
-这本质上是高层次的业务抽象，其过程是一个「**持续精炼**」的过程，是每一个核心业务模块（比如聊天 IM、通讯录等等）接下来 3-5 年持久探索的命题。这样，是不是可以顺带给自己定一个「小目标」，成为中国协同应用模块设计和实现最 nx 的前端团队 😀 啥的，也挺有意思的吧。
-## 定制化
+## Customization
 
-> 你永远无法预测你的客户会提出什么奇特的需求。 
-> 你也很难对你的大（bà）客（bà）户提出的需求做强硬的回绝。
+> You can never predict the peculiar demands your clients will make.
+> It's also challenging to firmly reject the requests from your major clients.
 
+With the Cloud DingTalk integration, DingTalk is now "tailored to each individual." Faced with a large number of customized business requirements, our team cannot infinitely increase manpower to meet these demands. Therefore, what we need to build is a "stage," allowing our partners to become the "performers." We hope to have a set of models that enable partners to deeply customize and extend the capabilities of the DingTalk platform, exploring new possibilities!
 
-云钉一体下的钉钉是「**千人千面**」的。在面对大量的业务定制需求的背景下，团队不肯能无限制堆人上去满足定制诉求。因而我们要搭建的是「**戏台子**」，让我们的合作伙伴成为「**唱戏人**」。期望有一套模式能够让合作伙伴在钉钉平台能力的基础上，去做深度定制和扩展，延展出新的可能！
+To achieve this, based on the previous "Proprietary Deployment" and "Modularization," we also need to find ways to "empower" our partners to extend and customize the existing "platform capabilities." We must open up everything that can be opened. Thanks to classic programming ideas like **AOP**, **SPI**, and **IoC**, we have new tools in the front-end to design for extension and customization.
 
-为此在上面「专有化」和「模块化」的基础上，我们还需要去设法「赋能」我们的合作伙伴去扩展定制现有「平台能力」，我们得去开放一切可能开放的东西。得益于 **AOP**、**SPI**、**IoC** 等经典的编程思想，我们让它们在前端有了新的武器去做扩展和定制化设计。
+This area is currently in a rapid initial stage, with the team working hard to experiment and find a viable solution that allows for third-party customization of modules. On this road, I've deeply realized that front-end development can also benefit from these classic program design ideas. For instance, frameworks like [Inversify](https://www.yuque.com/surfacew/daily-learn/gcl771), which focus on IoC and DI, are now relevant to the front end. It has also made me understand that as a front-end developer, one should never set limits for oneself; this way, you can go further ~
 
-这一块目前在高速起步阶段，团队在拼命试错，试图找到一个可行解，能够把模块交给三方定制的路走通。在这条路上，我深刻的领悟到，前端也能够得益于这些经典的程序设计思想，比如像 [Inversify](https://www.yuque.com/surfacew/daily-learn/gcl771) 这类专注于 IoC 和 DI 的前端框架。这也让我明白作为一个 FE，永远不要给自己设限，这样能够走得更远 ~
-## 最后
+## Finally
 
-再说一说我自己今年最重要的一个认知吧：
+Lastly, I'd like to share the most important realization I had this year:
 
-- 业务基调，决定技术基调。
-
-- 业务规模，决定技术规模。
-
-- 业务多元，决定技术多元。
-
+- The business tone determines the technical tone.
+- The business scale determines the technical scale.
+- The business diversity determines the technical diversity.
 - ...
 
-蓬勃的业务，才会带来 **沸腾 **的技术！在这一年里自己也和团队一起：
+A thriving business will bring about **boiling** technology! This year, together with the team, I have:
 
-- 研究过集团的跨端物料 [Rax](https://rax.js.org/)，并在业务中落地
+- Researched the group's cross-end materials [Rax](https://rax.js.org/) and implemented them in our business.
+- Established a technical stack of full TS, React Hooks, and Redux.
+- Experimented with various playful uses of [Rx.js](https://github.com/ReactiveX/rxjs) in the messaging (IM) module.
+- Tried out new technologies like [Flutter](https://flutterchina.club/) and WebAssembly, looking for ways to integrate them into our business.
+- Contemplated how to make [Micro Frontends (MS)](https://www.yuque.com/surfacew/daily-learn/vgolwq) a viable solution for keeping mid-to-back office applications "forever young" and vibrant.
 
-- 制定过全量 TS、React Hooks、Redux 的技术栈
+I also experienced the team's expansion from a few people to over a dozen. This process taught me that every team, at different stages, has its own rhythm, and there are certain patterns to follow in what needs to be done. Especially when it comes to technology, things cannot be rushed or delayed; blindly trying to speed things up will backfire. In hindsight, it's still about taking steady steps 👣 and solidly building technical talent is the way to go.
 
-- 折腾过消息（IM）模块中 [Rx.js](https://github.com/ReactiveX/rxjs) 的花式玩法
-
-- 尝鲜过 [Flutter](https://flutterchina.club/)、WebAssembly 等技术，试着在业务里找落地点
-- 思考过如何让 [微前端（MS）](https://www.yuque.com/surfacew/daily-learn/vgolwq)成为中后台应用「永葆青春」活力的落地方案
-
-- ...
-
-同样经历了团队从几个人到十几个人的扩张。这个过程让我明白每个团队在不同的阶段，有不同的节奏，做的事情也要有一定规律可循。尤其在做技术这件事情上，慢不得，也急不得，一味揠苗助长会玩脱的。到头来看还是一步一个脚印 👣，踏实做技术人才是王道。
-
-嗯，哈，也算是给 2020 交了一张相对满意的答卷了 😉 相信， **2021 势必是组织数字化愈演愈烈的一年 ~ **路漫漫其修远兮，吾将上下而求索！
+Well, haha, this can be considered as submitting a relatively satisfactory report card for 2020 😉 I believe that **2021 will undoubtedly be a year of intensified organizational digitalization ~ **The road is long and has no end, and I will search up and down for it!
 
 ---
 
-最后的最后，还是给这支年轻的前端队伍打个小广告 —— 专有钉钉前端团队，欢迎有志之士一起去定义 2B2G 前端研发体系的未来 ~ 欢迎私聊 or 发送简历到我的邮箱 📮 _qingnan.yqn@alibaba-inc.com_ ，我会厚颜无耻地加你微信的 😀
+Finally, I would like to give a little advertisement for this young front-end team — the Proprietary DingTalk front-end team welcomes like-minded individuals to define the future of the 2B2G front-end R&D system together ~ Feel free to private message me or send your resume to my email 📮 _qingnan.yqn@alibaba-inc.com_, and I will shamelessly add you on WeChat 😀

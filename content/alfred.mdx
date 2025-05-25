@@ -1,150 +1,150 @@
 ---
-title: 'Alfred 效率神器'
+title: 'Alfred Productivity Tool'
 publishedAt: '2019-07-09'
-summary: "工欲善其事必先利其器"
-tags: ['Tools', 'cn']
+summary: "A good workman sharpens his tools first."
+tags: ['Tools', 'en']
 ---
 
-> 作为一个资深用户，目前已经有 10W+ 次调用了，遂把这篇三年前的文章送到语雀来，希望能够让更多人受益 ~
+> As a senior user, I have already called it 100,000+ times. So I brought this three-year-old article to Yuque, hoping to benefit more people ~
 
-> 工欲善其事必先利其器，Alfred 在 Mac 上所迸发的效率是前所未有的！
+> A good workman sharpens his tools first. The efficiency Alfred unleashes on a Mac is unprecedented!
 
 
 :::info
-2019年07月09日：
-作为一个资深用户，目前已经有 10W+ 次调用了，遂把这篇三年前的文章送到语雀来，希望能够让更多人受益 ~
+July 09, 2019:
+As a senior user, I have already called it 100,000+ times. So I brought this three-year-old article to Yuque, hoping to benefit more people ~
 :::
 
-## 前言
+## Foreword
 
-作为 Mac 上最强大的效率工具，Alfred 在 Spotlight（MacOS X 自带的搜索和快速启动引擎）的基础上优化了快速启动与搜索的功能，还引入了 Workflows 等强大的扩展功能，使之成为了一个拥有无限自动化潜力的「工具平台」软件，可以用它来实现近乎一切有关自动化的想法。
+As the most powerful productivity tool on Mac, Alfred optimizes quick launch and search functions based on Spotlight (MacOS X's built-in search and quick launch engine). It also introduces powerful extension functions like Workflows, making it a "tool platform" software with unlimited automation potential. You can use it to realize almost any automation idea.
 
-我虽不是 Alfred 的骨灰级用户，但作为一个普通「玩家」，就已经在日常工作中很高频率的使用到了 Alfred。
+Although I am not a hardcore Alfred user, as an ordinary "player", I already use Alfred with high frequency in my daily work.
 
-为了说明 Alfred 的潜在价值。在这里，我们不妨做一个简单的计算，假设每天我都能够保持现况以每日平均唤醒 45.2 次为基数（其实最近的使用频率远高于 45.2 次）。假如每次 Alfred 的操作，可以为我节省 `5s` 的时间（往往有些复杂的操作会大于 5s，比如去寻找一个藏得很深的文件)，那么 5 年下来，竟然能够节省 **4.7** 天。换言之，你能够少用 4.7 天的电脑去工作，换言之，**Alfred 让你的生命延长了 4.7 天**！
+To illustrate the potential value of Alfred, let's do a simple calculation. Assume that I can maintain the current average of 45.2 awakenings per day (in fact, the recent usage frequency is much higher than 45.2 times). If each Alfred operation can save me `5s` (often some complex operations will take longer than 5s, such as finding a deeply hidden file), then over 5 years, it can save **4.7** days. In other words, you can spend 4.7 fewer days working on the computer. In other words, **Alfred extends your life by 4.7 days**！
 
 ```shell
-5 * 365 * 45.2 * 5 / 3600 / 24 = 4.773726852 天
+5 * 365 * 45.2 * 5 / 3600 / 24 = 4.773726852 days
 ```
 
-可见，Alfred 是每日强依赖于计算机的工作者的效率神器。鉴于之前互联网上零零散散地对 Alfred 的文章介绍不够系统，也不是最新，所以我打算在此做个「全家桶」，让读者更好地使用 Alfred 来提高日常的工作效率！
+It can be seen that Alfred is a productivity tool for workers who rely heavily on computers every day. Given that previous scattered articles on the Internet about Alfred were not systematic or up-to-date, I plan to make a "family bucket" here to help readers better use Alfred to improve their daily work efficiency！
 
-那么接下来我就带领大家感受一下 Alfred 的魅力吧 ~
+So next, I will lead you to experience the charm of Alfred ~
 
-## 软件安装
+## Software Installation
 
-Alfred 仅支持 Mac 操作系统。推荐在 [官方网站](https://www.alfredapp.com/) 或 AppStore 中下载该应用，目前其最新版本为：`3.0.3` 。
+Alfred only supports Mac operating systems. It is recommended to download the application from the [official website](https://www.alfredapp.com/) or the AppStore. Its latest version is currently: `3.0.3` 。
 
-Alfred 的基本功能是免费的，但部分强大的扩展功能和 Workflows 功能是需要购买升级包的。个人推荐有经济能力的人还是购买正版的授权码，因为这款软件绝对值这个价（个人授权是 17 欧元，折合人民币 126 元左右，家庭版则更便宜）。
+Alfred's basic functions are free, but some powerful extension functions and Workflows require purchasing an upgrade package. I personally recommend that those who can afford it buy a genuine license code, because this software is definitely worth the price (a personal license is 17 euros, equivalent to about 126 yuan, and the family version is cheaper)。
 
-## 基础功能配置和使用
+## Basic Function Configuration and Use
 
-### 基础配置
+### Basic Configuration
 
-- 推荐大家配置 Alfred 的唤醒键为自己熟悉的快捷键，我个人喜欢使用 `⌥ (Option) + Space` 键唤醒，同时也选择关闭了 Apple 自带的 Spotlight 搜索。如何关闭 Spotlight 请自行百度。
-- 在 Features 右侧面板的 Default Results 选项卡中，我们能够让 Alfred 选择性地从 Apple Spotlight 所提供的元数据索引服务中选择自己想要搜索的内容类型和地址。
-   - 在配置的时候，_最理想的是只将自己期望检索的内容放入搜索域（Search Scope）中_，这样能够很大程度上提高 Alfred 的展示搜索结果的速度。
-   - 对于检索文件的类型，自然也是越少越好，对于我而言很少用到图片、压缩包等文件类型的检索，自然就去掉了。注意：**这里不推荐大家搜索所有类型的文件（Search all file types）** 因为这样搜索出来的结果不仅速度慢，而且搜索结果质量非常之差，会搜出很多系统生成的文件信息等等。
-   - 其次在右侧 `Advanced…` 按钮上可以配置自定义类型的文件，比如我这里配置了思维导图的 `.mmap` 以及 markdown 文件的 `.md` ，根据自身需求可以添加对应的文件类型让 Alfred 去检索这些文件。只需要将 Alfred 无法检索到的文件类型拖至弹出的框内即可添加。
-- Alfred 还能够选择默认的样式或者自定义外观，喜欢折腾 DIY 样式的小伙伴可以在 `Appearance` 面板中修改 Alfred 交互面板的样式。
-- 在 `Advanced` 配置中有涉及「缓存清理」、「元数据重建」等高级配置功能，一般不需要配置，不知道如何使用的情况下请不要茫然下手。
-- Alfred 同时也支持使用「移动端版本的 Alfred」来控制桌面端。具体可以参考 [这篇文章](http://sspai.com/28137) ，在这里我就不赘述了。
+- It is recommended that you configure Alfred's activation key to a shortcut you are familiar with. I personally like to use `⌥ (Option) + Space` to activate it, and I also choose to disable Apple's built-in Spotlight search. Please Baidu how to disable Spotlight yourself.
+- In the Default Results tab on the right panel of Features, we can let Alfred selectively choose the content types and addresses we want to search from the metadata index service provided by Apple Spotlight.
+   - When configuring, _the ideal is to only put the content you expect to retrieve into the Search Scope_，which can greatly improve the speed at which Alfred displays search results.
+   - For the types of files to retrieve, naturally, the fewer the better. For me, I rarely use retrieval of file types such as pictures and compressed packages, so I removed them. Note: **It is not recommended to search all file types here** because the search results will not only be slow, but the quality of the search results will be very poor, and a lot of system-generated file information will be searched out.
+   - Secondly, on the `Advanced…` button on the right, you can configure custom file types. For example, I configured MindManager's `.mmap` and markdown files' `.md` here. You can add corresponding file types according to your own needs to let Alfred retrieve these files. Just drag the file types that Alfred cannot retrieve into the pop-up box to add them.
+- Alfred can also choose default styles or customize the appearance. Friends who like to tinker with DIY styles can modify the style of the Alfred interactive panel in the `Appearance` panel.
+- The `Advanced` configuration includes advanced configuration functions such as "cache cleaning" and "metadata reconstruction". Generally, no configuration is required. Please do not proceed blindly if you do not know how to use them.
+- Alfred also supports using the "mobile version of Alfred" to control the desktop. For details, please refer to [this article](http://sspai.com/28137)，I will not go into details here。
 
-### 基础功能
+### Basic Functions
 
-#### 搜索功能
+#### Search Function
 
-- 通过上述的配置，我能够非常快地搜索各类指定类型的文件。在对应的搜索结果上：
-   - 我们能够通过 `↑↓` 键切换选项，并敲击回车键打开文件或者目录。
-   - 也可以使用 `⌘ + 数字键` 快速打开对应的文件或者目录。
-   - 在选中的文件或者目录上点击 `fn` 键可以触发其 **额外的操作**，配置参考。
-   - 在对应的 _文件_ 上使用 `⌘ + 回车键` 可以 **进入当前文件所在的文件夹中**。
-   - Alfred 同时也支持「**模糊搜索**」，自然能够有效地匹配到对应的搜索内容。
-- Alfred 也支持对应用程序的搜索。
-   - 注意：需要检查 `/Applications` 是否在之前的 Alfred 的可搜索域的配置目录中。
+- With the above configuration, I can search for various specified types of files very quickly. On the corresponding search results:
+   - We can use the `↑↓` keys to switch options and press Enter to open files or directories.
+   - You can also use `⌘ + number key` to quickly open the corresponding file or directory.
+   - Clicking the `fn` key on the selected file or directory can trigger its **additional operations**, refer to the configuration.
+   - Using `⌘ + Enter` on the corresponding _file_ can **enter the folder where the current file is located**.
+   - Alfred also supports "**fuzzy search**"，which can effectively match the corresponding search content.
+- Alfred also supports searching for applications.
+   - Note: You need to check whether `/Applications` is in the configured directory of Alfred's searchable scope.
 
-#### Web 搜索
+#### Web Search
 
-- Alfred 内置了非常多的快捷搜索，可以快速搜索互联网信息。
-   - 如下图 1 所标志的地方，在 Alfred 中输入 `amazon` 并敲击回车，然后输入对应的想要搜索的商品，便会自动在浏览器中打开 Amazon 并显示搜索结果。
-   - 这样的配置还能够通过图中 2 所标志的按钮添加自定义的搜索项，图中添加了一个自定义的淘宝搜索快捷方式。这令我在购物的时候再也不用去加载淘宝首页然后被强行分散注意力了。
-- Alfred 能够记忆你在 Alfred 中敲击过的 URL 并记录在本地数据库中，你下一次再输入 URL 的时候能够快速找到这个 URL。例如我曾经输入过 12306 的网址，而现在我只需要：
-- Alfred 还能够在输入好内容之后通过点击 `⌃(Ctrl) + ↩︎（Enter）` 组合键打开浏览器默认的搜索引擎进行搜索。
+- Alfred has many built-in quick searches that can quickly search Internet information.
+   - As marked by 1 in Figure 1 below, enter `amazon` in Alfred and press Enter, then enter the corresponding product you want to search for, and Amazon will automatically open in the browser and display the search results.
+   - Such a configuration can also add custom search items through the button marked by 2 in the figure. The figure adds a custom Taobao search shortcut. This makes it so that I no longer have to load the Taobao homepage and be forcibly distracted when shopping.
+- Alfred can remember the URLs you have typed in Alfred and record them in the local database. The next time you enter a URL, you can quickly find it. For example, I once entered the URL of 12306, and now I only need to:
+- Alfred can also open the browser's default search engine to search after entering the content by clicking the `⌃(Ctrl) + ↩︎(Enter)` key combination.
 
-#### 计算器
+#### Calculator
 
-- Alfred 也支持计算器计算可以简单地输入 `22 * 33` 便能够计算出结果，敲击回车键之后能够自动保存到剪贴板中，方便快速复制和使用。
-- Alfred 也支持复杂表达式的计算，但是需要使用 `=` 作为开头，比如：`=log2(34) + sqrt(64/2*2^3)` 表达式。
-   - 之前特喜欢用这个功能算账，表示很给力。
+- Alfred also supports calculator calculations. You can simply enter `22 * 33` to calculate the result. After pressing Enter, it will be automatically saved to the clipboard for quick copying and use.
+- Alfred also supports the calculation of complex expressions, but it needs to start with `=`, for example: `=log2(34) + sqrt(64/2*2^3)` expression.
+   - I used to love using this feature to calculate accounts, it's very powerful.
 
-#### 词典查询和通讯录查询
+#### Dictionary and Contacts Search
 
-- Alfred 内置了词典查询并使用 Apple 自带的词典软件，可以通过 `define` 和 `spell` 两个关键词唤起。值得一提的是 `spell` 能够帮你模糊拼写，有时候忘了单词怎么拼，可以使用它，感觉迷之好用。
-- Alfred 也内置了通信录查询，联动 Apple 自带的通讯录，输入对应小伙伴的名词能够查看对应名片，还能够 Copy 对应的信息。
+- Alfred has a built-in dictionary search and uses Apple's built-in dictionary software. It can be activated by the keywords `define` and `spell`. It is worth mentioning that `spell` can help you with fuzzy spelling. Sometimes when you forget how to spell a word, you can use it. It feels surprisingly useful.
+- Alfred also has a built-in contacts search, linked with Apple's built-in contacts. Entering the name of a friend can view the corresponding business card, and you can also copy the corresponding information.
 
-#### 剪切板和 Snippets 访问
+#### Clipboard and Snippets Access
 
-这个是 Alfred 非常有用的功能，建议大家在配置中选择自己的快捷键，并启动对图片和文件复制的缓存。Alfred 同时支持自定义的 Snippet （字符片段）能够将自己定义的文字通过关键词或者快捷键的方式插入到当前光标之后。
+This is a very useful feature of Alfred. It is recommended that you choose your own shortcut keys in the configuration and enable caching for copying pictures and files. Alfred also supports custom Snippets (character fragments) that can insert your defined text after the current cursor through keywords or shortcut keys.
 
-#### 系统功能
+#### System Functions
 
-Alfred 同时还支持快速锁屏幕、关机、清空回收站、休眠等快捷命令。我比较常用的推荐如下：
+Alfred also supports quick commands such as locking the screen, shutting down, emptying the recycle bin, and sleeping. My commonly used recommendations are as follows：
 
-- `lock` 1s 锁屏，走，吃饭去 ~
-- `empty` 清空回收站，瞬间强迫症患者清爽了。
-- `eject` 命令可以弹出磁盘、存储卡或者虚拟磁盘镜像，如 `.dmg` 挂载后的磁盘。
+- `lock` 1s to lock the screen, let's go eat ~
+- `empty` empties the recycle bin, instantly refreshing for OCD patients.
+- The `eject` command can eject disks, memory cards, or virtual disk images, such as disks mounted after `.dmg`.
 
-对于临时的 `shell` 命令，Alfred 可以在唤醒的输入框中输入 `>` 字符来启动 `Terminal` 以执行 `>` 之后的命令字符串。
+For temporary `shell` commands, Alfred can enter the `>` character in the activated input box to start `Terminal` to execute the command string after `>`.
 
-#### 其它扩展
+#### Other Extensions
 
-- Alfred 原生支持 `1Passowrd` 作为密码备忘的神器。
+- Alfred natively supports `1Password` as a great tool for password reminders。
 
 ## Workflows
 
-### 使用 Workflows
+### Using Workflows
 
-Workflows 是一种由自己或者互联网上的开发者为了提高日常效率而开发的自动化脚本以及程序。Workflows 可以在后面给出的资源站点上搜索找到，下载之后双击便可以自动安装到 Workflows 列表中。
+Workflows are automation scripts and programs developed by yourself or developers on the internet to improve daily efficiency. Workflows can be found and downloaded from the resource sites listed later. After downloading, double-clicking them will automatically install them into the Workflows list.
 
-Workflows 非常强大，在这里我陈列几个自己非常喜欢的，也是非常有助于提高日常效率的 Workflows 用于演示，而读者最好可以自挠痒点，找到或者设计属于自己的 Workflows。
+Workflows are very powerful. Here, I will list a few of my favorite Workflows that significantly boost daily efficiency as a demonstration. Readers are encouraged to identify their own pain points and find or design their own Workflows.
 
-- `Chrome History` 以及 `Chrome Bookmarks` 可以用于搜索 Chrome 的收藏书签和历史记录（支持模糊搜索）。
-   - 注意，我自定义了唤醒 Chrome Bookmarks 的快捷键为 `Ctrl + Option + Command + B` （全局优先级最高的快捷键，会覆盖程序内部的快捷键）
-   - 下图展示了 Bookmarks 的应用，History 类似。
-- `Evernote`：支持印象笔记的全局搜索。这功能很好很强大，能够帮助自己快速定位到具体的印象笔记的条目之上。
-- `Mail.app Search`：支持 Email Apple 自带的邮件应用的全局搜索。
-- `Airdrop`：快速打开 Mac 的 AirDrop 功能。
-- `Dash`：代码 Doc 文档全局快速搜索。妈妈再也不用担心我查 API 的速度很慢了。
-- `Sublime Text Projects`：自动搜索索引范围下的 Sublime Projects。开发者提速工具， 这个个人非常喜欢，直接就载入项目文件了，速度非常之快，绝不拖泥带水。
-- `Relaunched`：重启没有响应的程序。
-- `Show Desktop`：一键无窗口，浑身变轻松。
-- `TerminalFinder`：Terminal 和 Finder 之间互相切换。
+- `Chrome History` and `Chrome Bookmarks` can be used to search Chrome\'s bookmarks and history (supports fuzzy search).
+   - Note: I have customized the hotkey for Chrome Bookmarks to `Ctrl + Option + Command + B` (a global high-priority hotkey that will override internal application hotkeys).
+   - The image below shows the Bookmarks application; History is similar.
+- `Evernote`: Supports global search for Evernote. This feature is excellent and powerful, helping to quickly locate specific Evernote entries.
+- `Mail.app Search`: Supports global search for Apple\'s native Mail application.
+- `Airdrop`: Quickly opens Mac\'s AirDrop feature.
+- `Dash`: Global quick search for code documentation. Mom no longer has to worry about my slow API lookup speed.
+- `Sublime Text Projects`: Automatically searches for Sublime Projects within the indexed scope. A developer speed-up tool, I personally like this one very much as it loads project files directly, very fast and efficient.
+- `Relaunched`: Restarts unresponsive applications.
+- `Show Desktop`: One key to a windowless desktop, instantly relaxing.
+- `TerminalFinder`: Switch between Terminal and Finder.
 
-### 设计 Workflows
+### Designing Workflows
 
-Workflows 的设计可以参考官方开发者文档，以及 [这篇关于如何开发的文章](http://myg0u.com/python/2015/05/23/tutorial-alfred-workflow.html)。在这里就不赘述了。
+For Workflow design, refer to the official developer documentation and [this article on how to develop them](http://myg0u.com/python/2015/05/23/tutorial-alfred-workflow.html). I won\'t go into detail here.
 
-### Workflows 资源
+### Workflow Resources
 
-- [开发者专用 Workflows 系列](https://github.com/zenorocha/alfred-workflows) 这个家伙在 Github 上维护的 workflows 不能够更赞了，解决了很多开发中的痒点。随便提几个个人觉得很有用的：
-   - sourceTree 的 workflow 能够直接搜索 sourceTree 中的项目并快速打开。
-   - npm / gem 的快速索引。
-   - caffeinate 防止电脑休眠。
-   - emoji 表情速查。
-   - github 个人 / 全局项目速查
-- [Alfred 论坛](http://www.alfredforum.com/)：个人开发者开发的解决比较特别的问题的插件居多，可以比较容易的通过 `alfred + 问题关键词` 在 Google 上搜到。
-- [Workflows 中文站](http://www.alfredworkflow.com/)：国人收藏的超多 Workflows，总有几款能够满足你。
-- [Workflows 官方站点](https://www.alfredapp.com/workflows/)：官方推荐的「装机必备」系列 Workflows。
-- [Packal](http://www.packal.org/)：官方推荐的 Workflows 分享站点。
+- [Developer-specific Workflows series](https://github.com/zenorocha/alfred-workflows) This collection of workflows maintained on Github is fantastic, addressing many development pain points. Here are a few I find very useful:
+   - The SourceTree workflow can directly search for projects in SourceTree and open them quickly.
+   - Quick indexing for npm / gem.
+   - Caffeinate to prevent the computer from sleeping.
+   - Quick emoji lookup.
+   - Quick search for personal/global GitHub projects.
+- [Alfred Forum](http://www.alfredforum.com/): Mostly plugins developed by individual developers to solve specific problems. You can easily find them on Google by searching `alfred + problem keyword`.
+- [Workflows Chinese Site](http://www.alfredworkflow.com/): A large collection of Workflows curated by Chinese users; there\'s always something to suit your needs.
+- [Workflows Official Site](https://www.alfredapp.com/workflows/): Officially recommended "must-have" Workflows.
+- [Packal](http://www.packal.org/): Officially recommended Workflow sharing site.
 
-## 最后
+## Conclusion
 
-由于篇幅长度的限制，部分内容的扩展和深度阅读可以从下面的参考文章中获悉。建议读者自己多多玩味一番这个激活并提高自己日常 Mac 上工作效率的神器，省时省力，让效率飞起来 ~
+Due to length constraints, further details and in-depth reading for some content can be found in the reference articles below. It is recommended that readers explore and play with this productivity-boosting tool for Mac to save time and effort, and let efficiency soar ~
 
-## 参考文章
+## References
 
-- [Alfred 3.0 新版详解](http://sspai.com/34468)
-- [如何使用Alfred提升操作效率](https://zhuanlan.zhihu.com/p/19985861)
-- [从零开始学习 Alfred（上）：基础功能及设置](http://sspai.com/32979?preview)
-- [从零开始学习 Alfred（下）：用Alfred大幅提升操作效率 - workflow](https://zhuanlan.zhihu.com/p/19986749)
-- [OS X 效率启动器 Alfred 详解与使用技巧](http://sspai.com/27900/)
+- [Alfred 3.0 New Version Explained](http://sspai.com/34468)
+- [How to Use Alfred to Improve Operational Efficiency](https://zhuanlan.zhihu.com/p/19985861)
+- [Learning Alfred from Scratch (Part 1): Basic Functions and Settings](http://sspai.com/32979?preview)
+- [Learning Alfred from Scratch (Part 2): Significantly Improve Operational Efficiency with Alfred - workflow](https://zhuanlan.zhihu.com/p/19986749)
+- [OS X Efficiency Launcher Alfred Explained with Usage Tips](http://sspai.com/27900/)

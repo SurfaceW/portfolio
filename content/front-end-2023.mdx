@@ -1,130 +1,129 @@
 ---
-title: '2023 思考当代 Web 应用研发趋势'
+title: '2023 Thoughts on Current Web Application Development Trends'
 publishedAt: '2023-01-01'
-summary: "Arno 对低代码技术、AIGC、全栈式研发、VR/AR、元宇宙等技术趋势的思考。"
-tags: ['Frontend', 'cn']
+summary: "Arno's thoughts on technology trends such as low-code, AIGC, full-stack development, VR/AR, and the metaverse."
+tags: ['Frontend', 'en']
 ---
 
-> 又到一年规划的时节了，借机看当下，想未来。
+> It's that time of year for planning again. Let's take this opportunity to look at the present and think about the future.
 
 
-把握住大势，才能够掌握未来。这里陈列出一些自身在做技术规划的时候对 Web 应用研发趋势的思考。在这里抛砖引玉，邀大家一起探讨。
+Only by grasping the general trend can we master the future. Here are some of my thoughts on Web application development trends when I was doing technology planning. I'm throwing out these ideas to spark discussion and invite everyone to explore them together.
 
-## 正视低代码，用好低代码
+## Face Low-Code, Use Low-Code Well
 
 > Do code-less, but in a right way ~
 
-> 低代码不是银弹，但对特定领域做厚的低代码产品往往可以产生不可小觑的力量。
+> Low-code is not a silver bullet, but low-code products that are deeply cultivated in specific fields can often generate considerable power.
 
 
-低代码的确成为了一种主流的趋势。但我认为，**切割特定领域立足，深度耕耘的低代码产品才是好的产品**。妄图让低代码颠覆传统，亦或是想要让低代码产品的能力无所不能者，都是不靠谱的。在我看来，典型的场景主要分为以下三类：
+Low-code has indeed become a mainstream trend. However, I believe that **good low-code products are those that focus on specific domains and are deeply cultivated**. It is unrealistic to expect low-code to subvert tradition or to want low-code products to be omnipotent. In my opinion, typical scenarios can be divided into the following three categories：
 
-- 以 Microsoft PowerPlatform 为代表的低代码产品，将用户群体门槛设置为 Excel 的难度系数，**能够让普通非编程专业的用户用这类平台去解决各个领域的长尾需求**，拖拖拽拽生成数据模型，配置 CRUD 的表单，拉拽生成常规工作流。国内以钉钉的宜搭为例，也是朝着这种方向去发展。
-- 以老牌 CRM 厂商 Salesforce，国内用友等为例的低代码产品，这类产品将**重点放在了「二次开发 & 定制」上，在已有的高楼（CRM 产品、ERP 产品等）基础上继续建设**，做定制开发。这类产品往往依赖原始技术资产的积累，然后让生态进入玩转整个定制体系，让定制的边际成本变低。
-- 以应用生产分工视角切入，让产品、设计师、服务端、前端、客户端、测试等身份，**能够在低代码链路上协同产出页面、流程、逻辑的工具性质产品**。这块产品在国内内卷比较厉害，但也被挑战得比较多，这类产品往往容易烂尾，加上技术的封闭性、黑盒性和不可控性，往往选择需要谨慎，否则就会变成 Pitfall 👿。
+- Low-code products represented by Microsoft PowerPlatform set the user threshold to the difficulty of Excel. **This allows ordinary users without professional programming skills to use these platforms to solve long-tail needs in various fields**, such as dragging and dropping to generate data models, configuring CRUD forms, and creating conventional workflows. In China, DingTalk's Yida is an example of this trend.
+- Low-code products from established CRM vendors like Salesforce and domestic players like Yonyou **focus on "secondary development & customization." They build upon existing high-rise buildings (CRM products, ERP products, etc.)** for custom development. These products often rely on the accumulation of original technical assets and then allow the ecosystem to play with the entire customization system, reducing the marginal cost of customization.
+- From the perspective of application production division of labor, these are **tool-based products that enable various roles such as product managers, designers, server-side developers, front-end developers, client-side developers, and testers to collaboratively produce pages, processes, and logic on a low-code pipeline**. This area is highly competitive in China but also faces many challenges. Such products are often prone to failure. Coupled with the closed nature, black-box characteristics, and uncontrollability of the technology, choices need to be made carefully, otherwise, they become pitfalls 👿.
 
-Gartner 2022 低代码象限
+Gartner 2022 Low-Code Magic Quadrant
 
-低代码的确能够降低应用开发的门槛，让更多长尾需求（[阅读《长尾理论》的一些感想](https://www.yuque.com/surfacew/fe/agn5ke)）得到满足；其次低代码应用在快速原型和验证产品想法上有快人一步的空间。这一块我想生成一些对未来的判断：
+Low-code can indeed lower the threshold for application development, allowing more long-tail needs ([Some thoughts on reading "The Long Tail"](https://www.yuque.com/surfacew/fe/agn5ke)) to be met. Secondly, low-code applications have an advantage in rapid prototyping and validating product ideas. Here, I would like to make some predictions for the future：
 
-- 「**边界能力边界问题**」：**专业的应用编程和低代码的编程需要有更好的边界**，好的产品一定是聚焦特定的领域，并且能够给出相比传统编码爆破式效能提升的解法。比如：[宜搭](https://www.aliwork.com/) 实现的是让小白哪怕厂里的工人都能够做应用解决自己发现的问题，这种就是一种突破。**对于小团队而言，将低代码期望解决的问题往往缩放越小，越精专，给出的解法越通用，越能够被集成和复用以放大价值**，这会是比较好的切入点。做低代码切忌心急，伟大的抱负即便是 1 千人的投入也未必能够真正意义上成功。
-- 「**演进和可持续发展问题**」：当应用规模复杂到一定程度的时候，低代码就会出现能力的瓶颈，因为低代码是代码和功能抽象封装后的结果，其表达力永远都是弱于纯粹 Code 编程的。很多产品妄图既要低代码，又要保证完备性，一旦随着业务发展，应用要解决的复杂起来，低代码需要用非常「蹩脚」的方式（比如：开放 CodeEditing）去实现完备性。这种完备性的代价非常高，往往会把产品做成四不像，非专业用户觉得复杂难用，专业用户又觉得鸡肋不屑一顾，**因为产品很难照顾好两类用户群体的「习惯」**。所以，用低代码产品快速开头，快速原型，后续复杂度提升，招架不住的时候，够降解为专业编码，**让低代码应用「顺利毕业」**，我个人认为是有价值的。目前大多低代码平台都不具备这类能力，只能够让用户「焊死」在平台上，要么咽气吞声让需求要么让用户提需求，然后用蹩脚的方式满足复杂定制，要么客户只能够另起炉灶，成本大幅增加。这块在后续演进式，或者叫可以自适应式的应用架构中，我想再聊一聊。
-- 「**开放性问题**」：低代码生产的应用，**背后的数据资产、技术资产需要比较好地和标准的技术生态进行融合互通**，不要让低代码的应用体系成为「孤岛」，以致后续变成孤儿，无人问津。良好的应用开放标准够将核心系统、使命攸关的业务系统、长尾应用等有机地结合在一起，做好数字化。
+- "**Boundary Capabilities and Boundary Issues**": **There needs to be a better boundary between professional application programming and low-code programming**. Good products are those that focus on specific domains and can provide solutions that offer explosive efficiency improvements compared to traditional coding. For example, [Yida](https://www.aliwork.com/) enables even factory workers to build applications to solve problems they discover, which is a breakthrough. **For small teams, the smaller and more specialized the problem that low-code is expected to solve, the more universal the solution, and the more it can be integrated and reused to amplify value**. This would be a good entry point. Don't be impatient when doing low-code; even with a thousand-person investment, grand ambitions may not necessarily succeed in a real sense.
+- "**Evolution and Sustainability Issues**": When the application scale becomes complex to a certain extent, low-code will encounter capability bottlenecks because low-code is the result of abstracting and encapsulating code and functions, and its expressiveness will always be weaker than pure code programming. Many products try to achieve both low-code and completeness. Once the business develops and the application needs to solve complex problems, low-code needs to use very "clumsy" methods (such as opening CodeEditing) to achieve completeness. The cost of this completeness is very high, often turning the product into a mishmash. Non-professional users find it complex and difficult to use, while professional users find it a dispensable gimmick, **because the product can hardly cater to the "habits" of both user groups**. Therefore, I personally believe it is valuable to start quickly with low-code products for rapid prototyping, and when the complexity increases and it becomes unmanageable, to be able to degrade to professional coding, **allowing the low-code application to "graduate smoothly."** Currently, most low-code platforms do not have this capability. They can only "weld" users to the platform, forcing them to either swallow their needs, make users submit requests that are then met in a clumsy way for complex customizations, or customers have to start from scratch, significantly increasing costs. I would like to discuss this further in the context of evolutionary or adaptive application architecture.
+- "**Openness Issues**": For applications produced by low-code, **the underlying data assets and technical assets need to be well integrated and interoperable with the standard technology ecosystem**. Don't let the low-code application system become an "island," lest it become an orphan later, with no one to care for it. Good application openness standards can organically combine core systems, mission-critical business systems, and long-tail applications to achieve digitalization.
 
-部分推荐的延展阅读：
+Some recommended further reading：
 
-- [从实现原理看低代码](https://zhuanlan.zhihu.com/p/451340998)：这篇力荐，讲述了低代码体系编码的优缺点，个人觉得比较客观中肯的文章
+- [Understanding Low-Code from its Implementation Principles](https://zhuanlan.zhihu.com/p/451340998)：This article is highly recommended. It discusses the pros and cons of low-code system coding and is, in my opinion, a relatively objective and pertinent article.
 
-## 看好 AI 背后的潜力爆发
+## Optimistic about the Potential Outbreak Behind AI
 
-> 这段时间 ChatGPT 爆火，Copilot 也让人觉得惊艳。
-
-
-AIGC 最近是真的热点中的热点。未来 Web 应用研发中 AI 的使用包括但不限于下面的场景：
-
-- **编程顾问**：比较快速的搜索引擎，对于部分事实既定的问题，比如：`HTTP CacheControl 缓存头中 max-age 的单位是 s 还是 ms？` **ChatGPT** 的确比 Google 更高效，还可以带上上下文进行持续提问，快速解决编程问题。当然对于部分新手和未知领域的问题，**ChatGPT** 也可以当一个顾问，给一些编码建议，或者代码解释。这块一旦商用，对于不同水位的编程者都能够收益。在我看来如何将每一个 query 的成本降到普通大众可以接受的水位，是接下来 ML 工程体系要竭力突破的地方。
-- **机器人答疑**：通过对大型语言模型比如 GPT-3 的迁移学习，加入自身的「**料**」训练，用于编程领域的常见问题答疑，做去服务的确是好的实践思路。
-- **自然语言 => 代码（或 DSL）**：以 `OpenAPI` 为基础的 **Copilot** / **ChatGPT** 等已经可以由自然语言辅助生成部分代码，虽然是片段，但是可以做实际研发种的编程参考。或者作为入门者参考代码的编写模式。当然使用自然语言生成特定的 DSL（比如 MSPowerPlatform 上生成 workflows 的模式）也是新的门路。
-- **机器代码 Review**：使用 ML 做代码 Review 已经有不少产品问世了，目前看来可以发现一些基础问题可以被发现，但是大规模地代码输入和工程级别的上下文连接是目前的技术瓶颈，还有待提升。
-- **代码 => 代码**：以 `Copilot` 为代表的编码辅助的确越来越强，其推荐的代码往往会结合大量工程、项目的上下文进行演算，虽然 600 元一年的价格小贵，但是想一想自己还是靠着卖代码赚钱，能够提升生产力的它，就会觉得这挺便宜的了，不是么？
-- **图像 => 代码**：这类前几年也玩得比较 6，比如淘系的 `ImageCook`，可以实现简单的 PSD / Sketch => Code，或者中后台常规的设计图像 => React 组件 Code，或者部分商品图片或者简单的视觉效果卡片 => 卡片 DSL，这类尝试比较多，也有一定的落地空间去提升简单 UI 生成的效率，尤其是弱交互的领域范畴。
-- **数字内容生成**：最近以 `StableDiffusion` 为代表的图像生成，语音合成，图像优化等等，也百花齐放，可以通过自然语言去生成特定内容还是颇为有趣的，甚至可以用来做技术项目的 logo 生成，颇为有趣 ~
-
-从调研报告视角来看，Generative AI 的确大有所为，**把 AI 作为日常生产的武器，加速 Web 应用的研发速度的确空间很大**。
-
-图片引用自：[Base10 Blog: If You’re Not First, You’re Last: How AI Becomes Mission Critical](https://base10.vc/post/generative-ai-mission-critical/)，侵权立删
-
-由于 AI 的基础设施的打造门槛极高，但应用门槛确乎在降低，持续关注，期待未来的发展。
-
-## **全栈思考，一体设计，快速创新**
-
-作为前端出身的自己，看到近来有不少人在唱衰前端职业，也有文章称「前端已死」。但个人始终认为前端只是因为特定的时间，特定的需要，做了技术领域下特定的分工罢了。**正所谓分久必合，合久必分**，当 Web 技术逐渐走向成熟的时候，尤其在终端技术、跨端技术、前端技术等开始逐渐成熟的时候，**端（Native）到端（Web）到端（Server）的界线就变得越来越模糊。加之云原生和很多虚拟化技术的加持，屏蔽了我们对应用部署运维、中间件调用、微服务架构实现等复杂性的感知，让全栈开发很多都具备开箱即用的 Tech-less（代码重点关注业务实现，屏蔽底层复杂实现）体验**。
-
-> 纯粹把自己的工作界定在 UI 表现层的编码上，那自然不长久，会随着技术发展而弱化，淘汰。
+> ChatGPT has been extremely popular recently, and Copilot is also impressive.
 
 
-若一个工程师，能够从全栈的视角去定义问题，发现问题和解决问题，并用成熟的基础设施，Tech-less 地解决业务或者技术问题，往往具备较大的生产力提升。这种全栈式的研发过程往往具备如下的优势：
+AIGC is truly a hot topic among hot topics recently. The use of AI in future Web application development includes, but is not limited to, the following scenarios:
 
-- 整个软件的设计，往往具备高度的 **概念一致性**，将业务的问题，巧妙地拆解为一个统一的技术栈进行维护，减少了多角色的沟通协作和概念理解成本，让维护者的认知负荷也可以得到有效降低。
-- 整体的软件实现，往往会使用统一的编程语言和框架，同时现有的技术或者平台能力又能够比较好地屏蔽 IaaS / PaaS 的复杂性，开发者只需要**根据具体的场景去做技术选型，高效率地解决当下的问题，具备灵活度整体较高**。技术栈上的一致性可以得到充分保障。
-- 在微服务和 DDD 驱动的服务端架构为主流的时代，**BaaS 的基础能力已经颇为成熟**，跨平台、跨技术栈之间的互相调用，也通过 REST(HTTP based)、gRPC、HSF 等 RPC 协议屏蔽了服务调用兼容的复杂性。让服务精专于特定的业务领域，比如 Node 就非常适合视图层和交互表现层的应用设计和实现，不适合重计算（CPU 密集型）、企业级服务等等的功能实现。这种架构的平衡取舍就需要企业 CTO / 架构师的关键设计了。
-- 单兵作战能力强，全栈工程师需要成为瑞士**军刀，往往可以在短时间内做应用的研发创造，做出待市场和用户验证的原型系统**，后续也可以持续做服务重构拆解为上述更复杂的微服务建构，做「**演进式**」的架构设计，变为专家系统。
-- 全链路，或者说全端地思考问题，**让人一个解决一个技术问题的深度和厚度增加，解决方案的维度也会有所增加**。比如性能优化上，将不再简单局限在客户端或者服务端，可以激发更好的方案设计，打破已有模式的桎梏。
+- **Programming Consultant**: A relatively fast search engine. For some factual questions, such as: `Is the unit of max-age in the HTTP CacheControl cache header s or ms?` **ChatGPT** is indeed more efficient than Google. It can also carry context for continuous questioning and quickly solve programming problems. Of course, for some novice and unfamiliar domain questions, **ChatGPT** can also act as a consultant, providing some coding suggestions or code explanations. Once this is commercialized, programmers of different levels can benefit. In my opinion, how to reduce the cost of each query to a level acceptable to the general public is where the ML engineering system needs to strive to break through next.
+- **Robot Q&A**: Through transfer learning of large language models such as GPT-3, adding its own "**material**" for training, it is a good practical idea to use it for answering common questions in the programming field and to de-service.
+- **Natural Language => Code (or DSL)**: **Copilot** / **ChatGPT**, etc., based on `OpenAPI`, can already assist in generating some code from natural language. Although it is fragmentary, it can be used as a programming reference in actual R&D, or as a reference for beginners to write code. Of course, using natural language to generate specific DSLs (such as the mode of generating workflows on MSPowerPlatform) is also a new way.
+- **Machine Code Review**: Many products for ML-based code review have already been launched. Currently, it seems that some basic problems can be found, but large-scale code input and engineering-level context connection are current technical bottlenecks that need to be improved.
+- **Code => Code**: Coding assistance represented by `Copilot` is indeed becoming stronger and stronger. The recommended code often combines a large amount of engineering and project context for calculation. Although the price of 600 yuan per year is a bit expensive, when you think that you still make money by selling code, and it can improve productivity, you will feel that it is quite cheap, right?
+- **Image => Code**: This type was also played quite well in the previous few years, such as Taobao's `ImageCook`, which can realize simple PSD / Sketch => Code, or conventional design images of middle and back offices => React component Code, or some product images or simple visual effect cards => card DSL. There are many such attempts, and there is also a certain room for implementation to improve the efficiency of simple UI generation, especially in weakly interactive domains.
+- **Digital Content Generation**: Recently, image generation represented by `StableDiffusion`, speech synthesis, image optimization, etc., have also flourished. It is quite interesting to generate specific content through natural language, and it can even be used to generate logos for technical projects, which is quite interesting ~
 
-实现全栈的路径，但是「**降低全栈的门槛**」一直都是工程师提升全栈能力的重要突破口。近来软件行业做了非常多的尝试，早在 Java 一统终端（Applet）的构想，而后服务端框架出现模板渲染和前后端分离模式的火爆，以至于 SPA（SinglePageApplication）的 UI 视图架构成为主流。
+From the perspective of research reports, Generative AI indeed has a lot to offer. **Using AI as a weapon for daily production and accelerating the R&D speed of Web applications indeed has a lot of room**.
 
-而今在 `Node.js` 火爆当下，`Next.js` [Next.js 研究学习](https://www.yuque.com/surfacew/daily-learn/zpubn3) 破石而出，结合 React Client / Server 渲染同构的思想，尝试更进一步降低前后端视图、API 服务等门槛。在这里我简单绘制一个我对全栈技术的图谱：
+Image cited from: [Base10 Blog: If You’re Not First, You’re Last: How AI Becomes Mission Critical](https://base10.vc/post/generative-ai-mission-critical/), delete if infringing
 
-JavaScript 编程语言视角下的全栈技术生态
+Due to the extremely high threshold for building AI infrastructure, but the application threshold is indeed decreasing, continue to pay attention and look forward to future development.
 
-值得一提的是：
+## **Full-Stack Thinking, Integrated Design, Rapid Innovation**
 
-- **Rust** 等高性能语言近期的流行，为全栈的基础设施的高性能奠定了不少基础，目前很多高性能的研发工具都首选 Rust 做研发，Rust 逐渐开始流行，成为趋势。
-- **Wsam**（WebAssembly） 技术的出现，近来开始成熟，以 Figma 使用 Wsam 实现的设计画布让人惊叹浏览器内部的绘图性能。
-- **JavaScript** 生态的近乎狂热级别的建设和普及（作为 Web 应用建设的基础语言），让 **JavaScript** 的容器化遍布多个端的领域，也为上层应用研发框架跨端的「涉足」奠定了重要的基础。
-- **Next.js** 算是 B/S 跨平台的领导者了，**One Project to rule them all**，近期更是推出了 ServerComponent First 的应用架构，成为了未来可以选择的一类 UI 渲染范式。
+As a front-end developer, I have recently seen many people badmouthing the front-end profession, and some articles claim that "front-end is dead." However, I personally always believe that front-end is just a specific division of labor in the technical field due to specific times and specific needs. **As the saying goes, what is long divided must unite, and what is long united must divide**. When Web technology gradually matures, especially when terminal technology, cross-end technology, front-end technology, etc. begin to mature, **the boundary between end (Native) to end (Web) to end (Server) becomes increasingly blurred. Coupled with the support of cloud native and many virtualization technologies, which shield our perception of the complexity of application deployment and operation, middleware calls, microservice architecture implementation, etc., many full-stack developments have an out-of-the-box Tech-less (code focuses on business implementation, shielding underlying complex implementation) experience**.
 
-整体可见技术意义和业务意义上的全栈的思想解决问题，是大势所趋。
+> Purely defining one's work as coding for the UI presentation layer is naturally not long-lasting and will weaken and be eliminated with technological development.
 
-部分推荐的延展阅读：
+If an engineer can define, discover, and solve problems from a full-stack perspective, and use mature infrastructure to solve business or technical problems in a Tech-less way, they often have greater productivity improvements. This full-stack R&D process often has the following advantages:
 
-- [我看Next.js：一个更现代的海王](https://mp.weixin.qq.com/s?__biz=MzAxMTU0NTc4Nw==&mid=2661157942&idx=1&sn=09266ac8328b2c0373a7631132353bbd&scene=21#wechat_redirect)：狼叔对 Next.js「现代海王」的理解，颇为有趣。
-- [深入 Next.js 实现剖析](https://www.yuque.com/surfacew/daily-learn/fdupg3b6d59ueuig)：个人近期对 Next.13 app 新特性的分析，目前基于 canary 版本的代码研读，欢迎一起探讨。
+- The entire software design often has a high degree of **conceptual consistency**, cleverly decomposing business problems into a unified technology stack for maintenance, reducing communication and collaboration costs and conceptual understanding costs for multiple roles, and effectively reducing the cognitive load of maintainers.
+- The overall software implementation often uses a unified programming language and framework, while existing technology or platform capabilities can better shield the complexity of IaaS / PaaS. Developers only need to **make technical selections according to specific scenarios, efficiently solve current problems, and have relatively high overall flexibility**. Consistency in the technology stack can be fully guaranteed.
+- In an era where microservices and DDD-driven server-side architectures are mainstream, **the basic capabilities of BaaS are already quite mature**. Cross-platform and cross-technology stack calls are also shielded from the complexity of service call compatibility through RPC protocols such as REST (HTTP based), gRPC, and HSF. This allows services to specialize in specific business areas. For example, Node is very suitable for the application design and implementation of the view layer and interactive presentation layer, but not suitable for the functional implementation of heavy computing (CPU-intensive), enterprise-level services, etc. The trade-off of this architecture requires key design by the enterprise CTO / architect.
+- Strong individual combat capability. Full-stack engineers need to be **Swiss army knives, often able to create R&D applications in a short period of time and produce prototype systems to be verified by the market and users**. Subsequently, service refactoring and decomposition can be continuously carried out into the aforementioned more complex microservice constructions, creating an "**evolutionary**" architectural design and becoming an expert system.
+- Thinking about problems from a full-link, or rather, full-end perspective, **increases the depth and breadth of a person solving a technical problem, and the dimensions of the solution will also increase**. For example, in performance optimization, it will no longer be simply limited to the client or server, which can inspire better solution design and break the shackles of existing models.
 
-## 理想主义者：自适应，可以进化的应用架构
+There are paths to achieving full-stack, but "**lowering the threshold for full-stack**" has always been an important breakthrough for engineers to improve their full-stack capabilities. Recently, the software industry has made many attempts, as early as the idea of Java unifying terminals (Applet), and then the popularity of template rendering and front-end and back-end separation models in server-side frameworks, so that the UI view architecture of SPA (SinglePageApplication) has become mainstream.
 
-> 这块相对虚一些，偏向一种对理想的 Web 架构的探索。
+Now that `Node.js` is popular, `Next.js` [Next.js Research and Learning](https://www.yuque.com/surfacew/daily-learn/zpubn3) has emerged, combining the idea of React Client / Server rendering isomorphism, trying to further lower the threshold for front-end and back-end views, API services, etc. Here I briefly draw a map of my understanding of full-stack technology:
+
+Full-stack technology ecosystem from the perspective of JavaScript programming language
+
+It is worth mentioning that:
+
+- The recent popularity of high-performance languages such as **Rust** has laid a lot of foundation for the high performance of full-stack infrastructure. Currently, many high-performance R&D tools prefer Rust for R&D. Rust is gradually becoming popular and becoming a trend.
+- The emergence of **Wsam** (WebAssembly) technology has recently matured. Figma's use of Wsam to implement its design canvas is amazing for the drawing performance inside the browser.
+- The almost fanatical construction and popularization of the **JavaScript** ecosystem (as the basic language for Web application construction) has made the containerization of **JavaScript** spread across multiple end domains, and has also laid an important foundation for upper-layer application R&D frameworks to "set foot" across ends.
+- **Next.js** can be regarded as the leader in B/S cross-platform. **One Project to rule them all**. Recently, it launched a ServerComponent First application architecture, which has become a UI rendering paradigm that can be selected in the future.
+
+Overall, it can be seen that solving problems with full-stack thinking in terms of technology and business is the general trend.
+
+Some recommended further reading:
+
+- [My View on Next.js: A More Modern Poseidon](https://mp.weixin.qq.com/s?__biz=MzAxMTU0NTc4Nw==&mid=2661157942&idx=1&sn=09266ac8328b2c0373a7631132353bbd&scene=21#wechat_redirect): Uncle Wolf's understanding of Next.js as a "modern Poseidon" is quite interesting.
+- [In-depth Analysis of Next.js Implementation](https://www.yuque.com/surfacew/daily-learn/fdupg3b6d59ueuig): My recent analysis of the new features of Next.13 app, currently based on the code reading of the canary version, welcome to discuss together.
+
+## Idealist: Adaptive, Evolvable Application Architecture
+
+> This part is relatively abstract, leaning towards an exploration of an ideal Web architecture.
 
 
-在时间的向前迈进中，业务会变，技术会变，人也会变，应用系统如何经受住时间的考验，让长时间维护的成本降低，做到灵活自适应。设想一个应用不仅仅能够适应业务的灵活多变，也能够适应技术持续的演进，还可以对新老的维护者都有好。**这块似乎是软件工程面向复杂性和不确定性的终极探索**。否能够有一种 Web 应用的架构可以接近这种高度自适应并且可以进化适应变化呢？
+As time moves forward, business will change, technology will change, and people will change. How can application systems withstand the test of time, reduce long-term maintenance costs, and achieve flexible adaptation? Imagine an application that can not only adapt to the flexible changes of business, but also adapt to the continuous evolution of technology, and can also be good for new and old maintainers. **This seems to be the ultimate exploration of software engineering in the face of complexity and uncertainty**. Is it possible to have a Web application architecture that can approach this high degree of adaptability and can evolve to adapt to changes?
 
-在 [《演进式架构》](https://www.yuque.com/surfacew/daily-learn/bbii5l)一书中，作者就尝试给出一种软件架构和研发模型来适应这些「**变化**」，其思想包括：
+In the book ["Evolutionary Architecture"](https://www.yuque.com/surfacew/daily-learn/bbii5l), the author tries to provide a software architecture and R&D model to adapt to these "**changes**", and its ideas include:
 
-- **引入架构适应性（度）函数**，基于形式化的建模和数据驱动的形式来评估系统架构的适应度。
-- **实施增量变更的高度可控性**，包括自动化测试、部署流水线、适应性函数的变化，以此评估新的变化引入对存量体系的影响，又保证存量体系的稳定性。
-- **逐渐解耦存量的应用架构，向当先先进的软件架构做「渐进式」演变**，比如从巨石架构 => 服务导向的架构 => 抽离部分组件用 Serverless 架构实现，在前两点的基础上持续演进。
+- **Introduce architectural fitness (degree) functions**, and evaluate the fitness of the system architecture based on formal modeling and data-driven forms.
+- **Implement highly controllable incremental changes**, including automated testing, deployment pipelines, and changes in fitness functions, to evaluate the impact of new changes on the existing system and ensure the stability of the existing system.
+- **Gradually decouple the existing application architecture and make "gradual" evolution towards the current advanced software architecture**, such as from monolithic architecture => service-oriented architecture => extracting some components to be implemented with Serverless architecture, and continuously evolving on the basis of the first two points.
 - ... 
 
-在个人看来：
+In my personal opinion:
 
-- **关注核心的实现**，关注不变的业务或者技术特性做好 CORE 层的能力建设（比如：领域模型的精炼、业务核心流程的抽象等等），抓住万变中的不变去建立高质量的软件核心。
-- **关注平台工程的建设**，这块是 Gartner 2023 的技术趋势里面提到的一个点，对于大厂而言，所谓的中台也罢，技术平台也罢，都是卓越工程的剪影。平台工程和应用的「一生」息息相关，在构筑平台能力建设的时候，考虑到应用自适应和可进化的要求，作为一个指标进行设计，也能够
+- **Focus on core implementation**, focus on unchanging business or technical characteristics to do a good job in CORE layer capability building (such as: refinement of domain models, abstraction of core business processes, etc.), and grasp the unchanging in the midst of myriad changes to build a high-quality software core.
+- **Focus on the construction of platform engineering**. This is a point mentioned in Gartner's 2023 technology trends. For large factories, whether it is a middle platform or a technology platform, it is a silhouette of excellent engineering. Platform engineering is closely related to the "life" of an application. When building platform capabilities, considering the requirements of application adaptation and evolvability as an indicator for design can also
 
-这块的确是一个很大的命题，能够上升到软件工程的整体层面，但是我们作为工程师，何尝不需要在 Web 应用研发的过程中时刻思考，探寻当下应用的结构设计，关乎它的自适应性和「可进化」的特质呢？在这里也就不继续深入了，否则就是一本叫做「2023 当代软件工程」的书籍所要涵盖的方方面面了。
+This is indeed a big proposition, which can rise to the overall level of software engineering. However, as engineers, why don't we always think about and explore the structural design of current applications in the process of Web application R&D, concerning its adaptability and "evolvable" characteristics? I won't go into further detail here, otherwise, it would cover all aspects of a book called "Contemporary Software Engineering 2023".
 
-## 用 Web 技术连接面向未来的技术领域
+## Connecting to Future-Oriented Technical Fields with Web Technology
 
-Web 技术是当下应用的主要形式载体。在面向未来，我们也需要储备一些连接新的技术领域的能力，比如：
+Web technology is the main form carrier of current applications. Facing the future, we also need to reserve some capabilities to connect to new technical fields, such as:
 
-2022 年，去中心化思潮的来袭，区块链技术 & NTF 等概念大火 🔥。待这波浪潮结束之后，我们再来看看泡沫破裂后，技术留下了什么？使用去中心化的技术 —— 区块链技术、去中心化的身份、去中心化的存储技术，让中心化的应用具备去中心化的能力，这些能力能够给存量的业务带来什么？或者产生什么样的变革？亦或是使用 Web 技术去打造完全去中心化的应用都是值得探索和实验的命题。
+In 2022, the trend of decentralization is coming, and concepts such as blockchain technology & NTF are on fire 🔥. After this wave is over, let's take a look at what technology is left after the bubble bursts? Using decentralized technologies - blockchain technology, decentralized identity, decentralized storage technology - to give centralized applications decentralized capabilities, what can these capabilities bring to existing businesses? Or what kind of changes will they produce? Or using Web technology to build completely decentralized applications are all propositions worth exploring and experimenting with.
 
-再进一步，元宇宙背景下的 Web 技术的生存空间。不知今年 Apple 是否会发布新的 XR 相关的设备。倘若它能够引发下一波穿戴式设备的浪潮的话，其背后和 Web 技术可能产生交集的 Web AR / VR 的表现力，亦或是诞生元宇宙应用中的 Web 特质的引擎，去消费和创造 Web 技术驱动的内容都会成为技术的热点，值得探索。当然图形技术领域本身就是一个门槛极高的领域，要进入也需要较高的学科基础，更需要跨界的耐心和勇气去探索。
+Furthermore, the living space of Web technology in the context of the metaverse. I don't know if Apple will release new XR-related devices this year. If it can trigger the next wave of wearable devices, the expressiveness of Web AR / VR that may intersect with Web technology behind it, or the birth of Web-specific engines in metaverse applications to consume and create Web technology-driven content will become technological hotspots worth exploring. Of course, the field of graphics technology itself is a field with a very high threshold. Entering it also requires a higher subject foundation, and even more cross-border patience and courage to explore.
 
-## 最后
+## Finally
 
-有了趋势，再结合手上的业务看当下，自然可以发掘不少的命题去做，如同 Alan Turning 所言：**尽目光所及之处，只是不远的前方，即使如此，依然可以看到那里有许多值得去完成的工作在等待我们**。
+With the trend, and then looking at the present in combination with the business at hand, we can naturally discover many propositions to do, just as Alan Turing said: **As far as the eye can see, it is only the near future, yet even so, we can still see that there is much work worth doing waiting for us there**.
 
-> 尽目光所及之处，只是不远的前方，即使如此，依然可以看到那里有许多值得去完成的工作在等待我们。 —— Alan Turning, Computing Machinery and Intelligence, 1950
+> As far as the eye can see, it is only the near future, yet even so, we can still see that there is much work worth doing waiting for us there. —— Alan Turing, Computing Machinery and Intelligence, 1950
 
 
-与大家共勉 ~
+Let's encourage each other ~

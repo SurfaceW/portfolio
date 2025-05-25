@@ -1,19 +1,19 @@
 ---
-title: '聊聊前端研发中的控制反转和依赖注入'
+title: 'Talking about Inversion of Control and Dependency Injection in Frontend Development'
 publishedAt: '2022-05-23'
-summary: "本文希望通过前端视角，以 Typescript 作为编程语言，谈谈如何使用 IoC 和 DI 等机制，让大型的前端项目在解决代码依赖、复用和扩展的时候，轻松自如，游刃有余。"
-tags: ['Frontend', 'cn']
+summary: "This article aims to discuss, from a frontend perspective using Typescript as the programming language, how to use mechanisms like IoC and DI to effortlessly manage code dependencies, reuse, and extension in large-scale frontend projects."
+tags: ['Frontend', 'en']
 ---
 
-## 背景
+## Background
 
-以 Web 技术为中心的前端技术，在近几年发展尤为迅猛，诞生了诸多如 Typescript、Angular 等前端技术，支撑了 VSCode 这类史诗级项目的诞生。在这些大型工程 / 项目中，架构师们为了让项目在如此大规模的协同下，依旧能够有效控制复杂度。他们在这些工程中深度实践了面向对象（OO）的编程范式，其中 **控制反转**（_Inversion of Control_，后文简称 IoC）以及 **依赖注入**（_Dependency Injection_，后文简称 DI），这两种技术手段被大量使用。
+Frontend technology, centered around Web technologies, has developed particularly rapidly in recent years. Many frontend technologies such as Typescript and Angular have emerged, supporting the birth of epic projects like VSCode. In these large-scale engineering projects, architects have deeply practiced the object-oriented (OO) programming paradigm to effectively control complexity under such large-scale collaboration. Among them, **Inversion of Control** (hereinafter referred to as IoC) and **Dependency Injection** (hereinafter referred to as DI) are two technical means that are widely used.
 
-本文希望通过前端视角，以 Typescript 作为编程语言，谈谈如何使用 IoC 和 DI 等机制，让大型的前端项目在解决代码依赖、复用和扩展的时候，轻松自如，游刃有余。
+This article aims to discuss, from a frontend perspective using Typescript as the programming language, how to use mechanisms like IoC and DI to effortlessly manage code dependencies, reuse, and extension in large-scale frontend projects.
 
-## 什么是控制反转
+## What is Inversion of Control
 
-首先，我们来聊一聊什么是控制反转。假设我们是一家造车的企业，我们有自己的汽车零部件供应商，早期我们和我们的供应商深度合作共创，建立了汽车引擎的依赖关系：
+First, let's talk about what Inversion of Control is. Suppose we are a car manufacturing company, and we have our own suppliers for car parts. In the early stages, we worked closely with our suppliers to co-create and establish a dependency on a specific car engine:
 ```typescript
 import { V8Engine } from 'vendor';
 
@@ -29,25 +29,25 @@ class CarA {
 
 const car = new CarA();
 ```
-这样咋一看没啥问题，但随着时间的推移，我们希望用更新的引擎，比如 `V9` 来更换存量的引擎。这个时候，我们就会发现，如果我们各种车型都直接依赖了 `vendor` 提供的 `V8Engine`，这种紧耦合的关系，在遇到变化的时候，是非常不灵活的，**牵一发而动全身**。为了解决这个问题，我们便引用了 IoC 的思想，让我们不直接依赖 `V8Engine` 的具体设计，而是依赖一个 `Engine` 的抽象设计，即：**发动机引擎的标准**。
+At first glance, there seems to be no problem. However, as time goes by, we may want to replace the existing engine with a newer version, such as `V9`. If all our car models directly depend on the `V8Engine` provided by the vendor, this tight coupling makes it very inflexible to adapt to changes - **a single change can have widespread effects**. To solve this problem, we adopted the idea of IoC, so that we do not directly depend on the specific design of `V8Engine`, but rather on an abstract design of `Engine`, namely: **the standard of the engine**.
 
-落到程序设计的语境下，面向对象程序设计（OO Design）中有一个很重要的思想：[**面向接口编程**](https://baike.baidu.com/item/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3%E7%BC%96%E7%A8%8B/6025286)**（Interface Oriented）**，接口描述了类等抽象结构应当遵循的标准规范。因此我们对代码做一次升级，让实现依赖接口而非别的具体实现。
+In the context of program design, a very important concept in Object-Oriented Design (OO Design) is [**Programming to an Interface**](https://baike.baidu.com/item/%E9%9D%A2%E5%90%91%E6%8E%A5%E5%8F%A3%E7%BC%96%E7%A8%8B/6025286)**(Interface Oriented)**. An interface describes the standard specifications that classes and other abstract structures should follow. Therefore, we upgrade our code to make the implementations depend on interfaces rather than other specific implementations.
 
-首先，我们定义出能够描述 Engine 规格的抽象接口：
+First, we define an abstract interface that can describe the specifications of the Engine:
 ```typescript
 // standard-engine-interface.ts
 export interface IEngine {
-  // 发动机缸数
+  // Number of cylinders in the engine
   cylinders: number;
   // ... other properties
-  // 引擎启动函数
+  // Engine start function
   start(): void;
-  // 引擎停止函数
+  // Engine stop function
   stop(): void;
   // ... other methods
 }
 ```
-接下来，供应商只需要按照引擎接口实现出具体的引擎即可，我们按照 `IEngine` 对引擎类的抽象，实现必要的接口：
+Next, suppliers only need to implement the specific engine according to the engine interface, and we implement the necessary interfaces for the engine class according to `IEngine`:
 ```typescript
 import { IEngine } from 'standard-engine-interface';
 
@@ -72,7 +72,7 @@ export class V8Engine implements IEngine {
 }
 
 ```
-接下来，同一种车型，我们就可以尝试装配不同的引擎了：
+Next, for the same car model, we can try to equip it with different engines:
 ```typescript
 import { IEngine } from 'standard-engine-interface';
 import { V8Engine, V9Engine } from 'vendor';
@@ -87,81 +87,81 @@ export class CarB {
 const carV9 = new CarB(new V9Engine());
 const carV8 = new CarB(new V8Engine());
 ```
-这便是面向对象程序设计中，经典的控制反转（IoC）原则：
-> 上层模块不应该依赖于下层模块，他们共同依赖于一个抽象，抽象不能够依赖于具体 ，具体必须依赖于抽象。
+This is the classic principle of Inversion of Control (IoC) in object-oriented program design:
+> High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details. Details should depend on abstractions.
 
-我们的造车工厂，不再具体依赖引擎的型号去装配，而是依赖引擎的设计标准。程序设计也是如此，实现不再依赖具体的实现，而是依赖抽象的接口，以至于在实例发生变化的时候，上层模块可以无感替换下层的模块，这样岂不美哉？再补一张 UML 结构示意图，就更能够清晰描述这样的设计在 OO 设计中结构的变化：
+Our car manufacturing factory no longer depends on the specific model of the engine for assembly, but on the design standard of the engine. Program design is also like this. Implementation no longer depends on specific implementations, but on abstract interfaces. When instances change, the upper-level modules can replace the lower-level modules without any awareness, which is wonderful, isn't it? A UML structure diagram can further clarify the structural changes in OO design:
 
-Before：`CarA` 与 `V8Engine` 类是紧耦合关系（直接耦合）。
+Before: `CarA` and `V8Engine` are tightly coupled (directly coupled).
 
 ![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640610305525-8cad0219-6098-48e4-9b42-032f288a3a7e.png#clientId=uc2a10a11-ad88-4&from=paste&height=130&id=Ap2dS&originHeight=260&originWidth=940&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23466&status=done&style=none&taskId=uaf97ab2f-dacb-4cfe-98aa-8cd598c8a72&title=&width=470)
 
-After：`CarA` 和 `V8Engine` 以及 `V9Engine`，共同依赖一个抽象接口，即 `IEngine`。<br />![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640610245291-3d9f12fc-9ef7-4415-8cb8-ff3c33d88249.png#clientId=uc2a10a11-ad88-4&from=paste&height=261&id=Yt1R3&originHeight=522&originWidth=1060&originalType=binary&ratio=1&rotation=0&showTitle=false&size=61712&status=done&style=none&taskId=uc8c5b732-8ca3-4e9a-b74a-21829f5b3e8&title=&width=530)
+After: `CarA`, `V8Engine`, and `V9Engine` all depend on an abstract interface, namely `IEngine`.<br />![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640610245291-3d9f12fc-9ef7-4415-8cb8-ff3c33d88249.png#clientId=uc2a10a11-ad88-4&from=paste&height=261&id=Yt1R3&originHeight=522&originWidth=1060&originalType=binary&ratio=1&rotation=0&showTitle=false&size=61712&status=done&style=none&taskId=uc8c5b732-8ca3-4e9a-b74a-21829f5b3e8&title=&width=530)
 
-这样做的好处在于未来的 Engine 类型，只要实现 IEngine 要求的接口，便可以兼容 CarA，CarA 也可以做到无感知替换具体的 Engine 类型。
+The benefit of this approach is that in the future, as long as the Engine type implements the interfaces required by IEngine, it can be compatible with CarA, and CarA can also replace the specific Engine type without any awareness.
 
-## 什么是依赖注入
+## What is Dependency Injection
 
-理解了 IoC，DI 也就更容易理解了。
+Once we understand IoC, DI becomes easier to understand.
 
-我们继续以造车为例，来讲述 IoC 和 DI 这对「**海尔兄弟**」是如何配合好，解决实际生产中的问题的。
+Let's continue with the car manufacturing example to explain how IoC and DI work together to solve practical production problems.
 
-设想在这个造车过程中，引擎（Engine）还会依赖发动机的轴承（Bearing），而轴承的规格也有许多种，因此当我们在生产一辆汽车（Car）的时候，我们不仅仅要上游制造出合理的引擎，上游的供应商还需要向它的上游索要依赖的轴承，轴承还需要向它的上游索要轴承的材料 ... 为此会形成一个复杂的生产关系，在程序设计中，我们叫它依赖网络（Dependency Network）。
+Imagine in the car manufacturing process, the engine (Engine) also depends on the bearings (Bearing) of the engine, and there are many specifications for bearings. Therefore, when we produce a car (Car), we not only need to manufacture a suitable engine upstream, but the upstream supplier also needs to request the required bearings from its upstream supplier, and so on. This creates a complex production relationship, which in program design, we call the dependency network.
 
-如果用代码做示意那便是：
+If we were to illustrate this with code, it would look like this:
 
 ```typescript
 const car = new CarA(new V8Engine(new Bearing(new BearingMaterial(), ... )));
 ```
 
-依赖注入主要意在帮我们系统性地分析依赖网络，将一个对象或者一个类的生产过程做了封装简化。依赖注入的框架也便是名副其实的是类或者对象的 **生产工厂**。
+Dependency injection mainly helps us systematically analyze the dependency network, encapsulating and simplifying the production process of an object or a class. The dependency injection framework is essentially a **production factory** for classes or objects.
 
-> 一个简单的 DI 系统，能够在程序的运行时中动态的解析出调用方需要的对象或者其它数据类型，在强类型的语言设计中，这是一种解耦合的重要实现方式。
+> A simple DI system can dynamically resolve the objects or other data types required by the caller at runtime. In strongly typed language design, this is an important way to achieve decoupling.
 
 
-如果我们使用 TS 来表示的话，就好比：
+In TS, it would be something like this:
 ```typescript
-// 依赖的提供方可以通过 bindDependency 方法提供引擎和轴承等等的构造函数（类）
-// 将具体的引擎、轴承的类，绑定到工厂的生产线上
+// The provider of the dependency can provide the constructor (class) of the engine and bearing through the bindDependency method
+// Bind the specific classes of the engine and bearing to the production line of the factory
 DIFactory.bindDependency('engine', V8Engine);
 DIFactory.bindDependency('bearing', Bearing);
 // ...
 
-// 当需要提车的时候(get)，工厂会按照实现绑定好的生产线开始造车流程
-// 复杂的「组装过程」：依赖分析、对象实例化 ... 等等都会交给这个依赖工厂函数去负责生成
+// When it's time to get the car (get), the factory will start the car manufacturing process according to the bound production line
+// The complex "assembly process": dependency analysis, object instantiation, etc. will be handled by this dependency factory function
 const car = DIFactory.get<ICar>('car');
 car.drive();
 ```
-我们将组装的过程做了封装，只需要一个轻松的 `get` 函数，就实现了将汽车零部件进行装配和组装，这个动态组合组装的过程（对象依赖网络实例化的过程），便是依赖注入的过程。
+We have encapsulated the assembly process, and with a simple `get` function, we have achieved the assembly and installation of car parts. This dynamic combination and assembly process (the process of instantiating the object dependency network) is the process of dependency injection.
 
-我们再展开细一点：
+Let's break it down a bit more:
 
-- `'engine'` 和 `'car'` 以及 `'bearing'` 这种标识符，我们一般叫做 **依赖注入 Token**，它们一般会被设计成全局唯一，用于标注唯一的类型。
-- `bindDependency` 函数，我们称之为** 依赖绑定**，即将类型实现（类、对象等）和控制反转容器（`IoCContainer`，部分框架中也叫做 `Injector` 依赖注入器）做关联。
-- `get` 函数，则是一个对象析出（分析依赖关系，组装生成对象）的过程，依赖注入框架会分析当前索要的依赖注入 Token 对应的类型，然后递归地分析它的依赖，最终实例化这些对象，完成最终对象的拼装。
+- The identifiers like `'engine'`, `'car'`, and `'bearing'` are generally called **dependency injection Tokens**. They are usually designed to be globally unique, used to mark unique types.
+- The `bindDependency` function is what we call **dependency binding**, which associates the type implementation (class, object, etc.) with the Inversion of Control container (`IoCContainer`, also called `Injector` in some frameworks).
+- The `get` function is a process of object resolution (analyzing dependency relationships, assembling and generating objects). The dependency injection framework analyzes the type corresponding to the requested dependency injection Token, recursively analyzes its dependencies, and finally instantiates these objects to complete the assembly of the final object.
 
-业界比较著名的控制反转框架，以 [Inversify](https://github.com/inversify/InversifyJS/) 为典型。
+A well-known Inversion of Control framework in the industry is [Inversify](https://github.com/inversify/InversifyJS/).
 
 :::info
-早期笔者分析了 Inversify 5.0 的实现原理，这里就不展开了，如果对依赖注入框架比较感兴趣可以阅读 [这篇文章](https://www.yuque.com/surfacew/daily-learn/gcl771) 深入，框架的实现中关键的类使用 UML 表示参考如下，可形成一种初步的印象。
+Earlier, I analyzed the implementation principle of Inversify 5.0. I won't go into detail here. If you are interested in dependency injection frameworks, you can read [this article](https://www.yuque.com/surfacew/daily-learn/gcl771) for in-depth understanding. The key classes used in the framework's implementation are referenced in the UML diagram below, which can provide a preliminary impression of the framework.
 :::
 
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640613165049-f03e09b6-a977-4be6-8877-b531d88b97d2.png#clientId=uc2a10a11-ad88-4&from=paste&height=533&id=U9IyJ&originHeight=1066&originWidth=1500&originalType=binary&ratio=1&rotation=0&showTitle=false&size=248533&status=done&style=none&taskId=u3aa58547-5ef8-4b67-a308-cbdebf9b9b1&title=&width=750)<br />图：Inversify 框架中主要的类和对象关系
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640613165049-f03e09b6-a977-4be6-8877-b531d88b97d2.png#clientId=uc2a10a11-ad88-4&from=paste&height=533&id=U9IyJ&originHeight=1066&originWidth=1500&originalType=binary&ratio=1&rotation=0&showTitle=false&size=248533&status=done&style=none&taskId=u3aa58547-5ef8-4b67-a308-cbdebf9b9b1&title=&width=750)<br />Figure: Main classes and object relationships in the Inversify framework
 
-## 最佳实践の探索
+## Exploring Best Practices
 
-理解了 DI 和 IoC，那么接下来我们一起来结合实际的案例，尝试在前端项目中找到 DI 和 IoC 目前的最佳实践，尤其在程序结构设计和工程上找到一种设计平衡。
+Having understood DI and IoC, let's combine practical cases and try to find the current best practices for DI and IoC in frontend projects, especially in terms of program structure design and engineering to find a design balance.
 
-### Angular 的实现机制
+### Angular's Implementation Mechanism
 
-> 该小节，对 Angular 不太熟悉的同学来说，可能会比较晦涩，可以跳到下一节阅读。
+> This section may be relatively obscure for those who are not familiar with Angular. You may skip to the next section.
 
 
-笔者一直觉得 Angular 是一个**最适合构筑复杂 Web UI 系统的框架**。它里面定义了一个非常完备的模块化（Modular）以及 DI 系统，尤其适合 OO 经验比较丰富的前端团队。以 Angular 12 定义的几个关键类型为例：
+I have always believed that Angular is a **framework most suitable for building complex Web UI systems**. It has a very complete modular (Modular) and DI system, especially suitable for frontend teams with rich OO experience. Taking several key types defined in Angular 12 as an example:
 
 ![](https://cdn.nlark.com/yuque/0/2021/jpeg/84679/1630331015420-797fb517-befd-4ec6-8f63-2fba57679ca7.jpeg)
 
-Angular 它的主要类型分为了上面的结构。可以看到服务（Service）作为 Angular 依赖注入系统的提供者（Provider），通过 `@injectable()` 装饰器注入到 Angular 的 `Injector`（依赖注入器） 中。而在 NgModule / Directive / Component 中可以通过声明式的方式将服务在类的装饰器（Decorator)上提供。Angular 的运行时实例化这些对象的时候，会使用内部的 `Injector` 析出符合配置要求的对象，在构造器函数中注入。
+Angular's main types are divided into the structure above. It can be seen that the service (Service), as a provider (Provider) of Angular's dependency injection system, is injected into Angular's `Injector` (dependency injector) through the `@injectable()` decorator. In NgModule / Directive / Component, the service can be provided in a declarative way on the class decorator (Decorator). When Angular's runtime instantiates these objects, it uses the internal `Injector` to resolve the objects that meet the configuration requirements and inject them into the constructor function.
 ```typescript
 import { Injectable } from '@angular/core';
 import { HEROES } from './mock-heroes';
@@ -178,32 +178,32 @@ export class CarService {
   }
 }
 ```
-> 其 DI 形式颇为优雅 😎 ~
+> Its DI form is quite elegant 😎 ~
 
 
 :::info
-笔者曾经就 Angular 12 的 DI 系统源代码做了简单分析，感兴趣的同学可以移步 [这篇文章](https://www.yuque.com/surfacew/daily-learn/osexp4#ZOmt5) 深入了解其设计和实现思路。
+I have previously analyzed the source code of Angular 12's DI system. Interested readers can move to [this article](https://www.yuque.com/surfacew/daily-learn/osexp4#ZOmt5) to gain an in-depth understanding of its design and implementation ideas.
 :::
 
-### 基于 Inversify 打造 DI 业务框架
+### Building a DI Business Framework Based on Inversify
 
-看完了 Angular 系统的设计，像阿里作为 React 大厂，如果期望在业务中实现一套类似的 DI 系统做好 IoC，又应该怎么去完成呢？笔者在这里，给出一些实战性的思考，也抛砖引玉，和大家一起探讨最佳的实践范式。
+After looking at the system design of Angular, for a big factory like Ali that uses React, how should we implement a similar DI system in the business to achieve IoC? Here, I will provide some practical thoughts and discuss the best practice paradigms with you.
 
-> 假定读者：
-> - 熟悉 [Typescript](https://www.typescriptlang.org/)，并熟悉 [Typescript Decorator](https://www.typescriptlang.org/docs/handbook/decorators.html) ，并开启相关的配置
-> - 了解了基本的 [Inversify](https://inversify.io/) 框架的 API。
+> Assumed readers:
+> - Familiar with [Typescript](https://www.typescriptlang.org/), and understand [Typescript Decorator](https://www.typescriptlang.org/docs/handbook/decorators.html), and have the related configuration turned on
+> - Have a basic understanding of the [Inversify](https://inversify.io/) framework's API.
 
 
-#### 1. 使用装饰器实现依赖注入系统
+#### 1. Using Decorators to Implement Dependency Injection System
 
 > 💍 Decorators to rule them all !
 
 
-得益于 Java 的 [注解系统](https://www.runoob.com/w3cnote/java-annotation.html)（Annotation）的设计，Typescript 给出了类似的 Decorator 方法，用于对类、类的构造器参数、属性等等，通过装饰器的方式，以清晰易懂，且侵入程度较低的方式实现了 DI 系统的要求，我们继续使用造车为例看一下 Inversify 的基础 API 使用：
+Thanks to the design of Java's [Annotation System](https://www.runoob.com/w3cnote/java-annotation.html), Typescript provides a similar Decorator method. This allows for the implementation of DI system requirements in a clear, understandable, and minimally invasive way through decorators for classes, constructor parameters, properties, etc. Let's continue to use the car manufacturing example to see the basic API usage of Inversify:
 ```typescript
 import { Container, injectable, inject } from "inversify";
 
-// 声明 V8Engine 是可以被依赖注入框架识别的
+// Declare that V8Engine can be recognized by the dependency injection framework
 @injectable()
 class V8Engine {
     public start() {
@@ -220,7 +220,7 @@ class V9Engine {
     }
 }
 
-// 声明 Car 类是可以被依赖注入框架识别的
+// Declare that the Car class can be recognized by the dependency injection framework
 @injectable()
 class Car implements ICar {
     private engine: V8Engine;
@@ -231,130 +231,33 @@ class Car implements ICar {
     public stop() { return this.engine.stop(); };
 }
 
-// 创建一个依赖注入容器
+// Create a dependency injection container
 const container = new Container();
-// 进行依赖绑定
+// Perform dependency binding
 container.bind<IEngine>(V8Engine).to(V8Engine);
 container.bind<IEngine>(V9Engine).to(V9Engine);
 container.bind<ICar>(Car).to(Car);
 
-// 解析 Car 实例，并将 V8Engine 实例化后传入 Car 的构造器函数中，作为参数初始化 Car 实例
+// Resolve the Car instance, and pass the V8Engine instance to the constructor of Car as a parameter to initialize the Car instance
 container.get(Car);
 ```
-我们可以看到整个 DI 过程通过 `@injectable()` 完成了 DI 框架的轻量侵入，使得编写及其少量的代码，就能够和框架产生关联。
+We can see that the entire DI process is completed by the `@injectable()` decorator, which lightly invades the DI framework, allowing us to associate with the framework with very little code.
 
-### 2. 对 IoC 容器的更进一步封装
+### 2. Further Encapsulation of the IoC Container
 
-> 🚀 Inversify 本身是一个好框架，但是各种花里胡哨的 API 使用，也给业务层带来更高的认知成本，我们可以考虑巧妙地封装部分方法，**提供给上层使用，以降低「认知成本」**。Inversify 还是有一定的学习成本的，光 API 就超过了 40+，直接使用对于新手和小白用户非常不友好，以 👇 的文档为例，理解 Inversify 的使用，至少要通读下面的文章，形成理解。
+> 🚀 Inversify itself is a good framework, but its various fancy API usages also bring a higher cognitive cost to the business layer. We can consider cleverly encapsulating some methods to **provide to the upper layer for use, in order to reduce the "cognitive cost"**. Inversify still has a certain learning cost, with over 40+ APIs. Directly using it can be very unfriendly to beginners and novice users. Taking the 👇 document as an example, understanding the usage of Inversify requires reading the following articles at least once to form an understanding.
 > ![image.png](https://cdn.nlark.com/yuque/0/2021/png/84679/1640618377740-53a093d4-9e58-4958-8de5-87f316fe77ad.png#clientId=u92fce47d-36d5-4&from=paste&height=589&id=kNRM8&originHeight=1178&originWidth=2146&originalType=binary&ratio=1&rotation=0&showTitle=false&size=632586&status=done&style=none&taskId=uc40e61a4-9b52-44d7-aae8-60d9881945c&title=&width=1073)
 
 
-Inversify 对提供了比较原始版本的 IoC 容器，它提供了最原子化的功能。**我们其实可以对它做进一步封装，来让使用者更好地使用，而不用关心其实现细节**。
+Inversify provides a relatively primitive version of the IoC container, offering the most atomic functions. **We can actually further encapsulate it to make it easier for users to use, without worrying about the implementation details**.
 
-这里举几个可行的设计规则：
+Here are a few feasible design rules:
 
-- 业务依赖注入框架中，**只能够析出对象类型**（单一类型析出，可以降低大量的理解成本，其实对象就已经可以 Cover 住 99% 的设计了，可以杜绝复杂的 API 使用带来的认知成本）
-- 将 `bind` 的过程，在业务框架中自动化掉，开发者不用关心 `bind` 过程
-- 在 IoC 容器层提供 `get` 过程中的稳定性保证，以至于解析出错的时候有 fallback （降级）的方案
-- 在 IoC 容器层内置统计 `IoC` 析出的性能分析插件，可以对高性能操作进行高静
-- 在 IoC 容器层提配置式的方式，来封装对 Inversify 的 API，让业务层框架使用者根本不用关心 Inversify 底层容器的实现
+- The business dependency injection framework should **only resolve object types** (single type resolution can reduce a lot of understanding cost. In fact, objects can cover 99% of designs, and can avoid the cognitive cost brought by complex API usage).
+- Automate the `bind` process in the business framework, so that developers do not have to worry about the `bind` process.
+- Provide stability guarantees for the `get` process in the IoC container layer, so that there are fallback (downgrade) solutions in case of resolution errors.
+- Integrate performance analysis plugins for `IoC` resolution in the IoC container layer, which can perform high-static analysis on high-performance operations.
+- Provide a configuration-based way in the IoC container layer to encapsulate the Inversify API, so that the business framework users do not need to care about the underlying implementation of the Inversify container.
 - ...
 
-IoC 容器在业务层可以做很多事情，来屏蔽底层的复杂度，对业务开发提供简单的解决方案。**对于使用者而言，他们只需要知道有 **`**get**`** 方法即可**。
-
-```typescript
-// di-framework.ts
-export class DIContainer {
-  get<T>(serviceIdentifier: Token): T;
-}
-export const container = new DIContainer();
-```
-
-#### 3. 依赖注入 Token 优化
-
-通过业务框架指定 token 的设计规则，我们可以简化依赖注入 token 带来的认知复杂度，为此我们可以做如下的规则限制：
-
-- Token 使用字符串保证唯一性，比如：`engine` 保证是忍者类型的全局唯一性
-- Token 可以是实现了 `toString` 方法的任何对象，该规则可以让后续依赖注入的解析 Token 和后续面向接口的设计整合在一起
-
-```typescript
-// tokens.ts
-import { createServiceIdentifier } from 'di-framework';
-export const Engine = createServiceIdentifier('engine');
-export const Tire = createServiceIdentifier('tire'); // 轮胎
-export const Car = createServiceIdentifier('car');
-```
-
-后续我们可以让 Engine 和 Car 等通过 `createServiceIdentifier`  这个 Token 的工厂函数，加工，实现 `toString()` 的方法，同时有可以承当具备「语义」的功能型 Decorator，稍后在最终效果中，可以看到其优雅地实现方式。
-
-#### 4. 封装 Provide 装饰器
-
-为了进一步收敛装饰器，我们对用户提供 `@provide` 装饰器，用于提供类或者对象。
-```typescript
-// impl.ts
-import { Engine, Car, Tire } from 'tokens';
-import { IEngine } from 'standard-engine-interface';
-
-// engine.v8.impl.ts
-@provide(Engine)
-class V8Engine implements IEngine {
-  start() {
-    // ... 🏁 V8 ...
-  }
-}
-
-// engine.v9.impl.ts
-@provide(Engine)
-class V9Engine implements IEngine {
-  start() {
-    // ... 🏁 V9 ...
-  }
-}
-```
-在不同的文件中使用 `@provide` 装饰器，提供不同的类来绑定 `Engine` Token，即可以实现对汽车引擎的无感知替换，只要实现了 `IEngine` 的引擎均可以。
-
-#### 5. 实现消费依赖关系
-
-在 `MyCar` 类 Constructor 中，我们可以直接在类构造函数中注入引擎和轮胎：
-```typescript
-// car.impl.ts
-import { container } from 'di-framework';
-import { Engine, Tire, Car } from 'tokens';
-
-// 直接实现
-import 'engine.v9.impl';
-
-@provide(Car)
-class MyCar {
-  constructor(
-    @Engine private engine: IEngine,
-    @Tire   private tire: ITire,
-  ) {
-    // init other parts ...
-  }
-  drive() {
-    this.engine.start();
-  }
-}
-
-// 最终我们只需要通过 Car Identifier 析出 Car 实例即可
-const car = container.get<MyCar>(Car);
-```
-可以看到，上述过程，将复杂的 Inversify 框架的用法，凝练为：
-
-- `createServiceIdentifier` 创建依赖注入的唯一 Token，同时也是构造器参数的装饰器（两用对象，具备语义）
-- `@provide(ServiceIdentifier)` 提供依赖注入的服务，并自动将 Token 和装饰的类做绑定
-- `@ServiceIdentifier` 具备装饰语义的构造器参数的装饰器，在类的构造函数中表示依赖注入关系
-- `container.get` 获取依赖分析，析出需要的对象，完成整个 DI 过程
-
-促使使用者（业务开发者）只需要掌握 4 个 API 就可以完成主要的 DI 系统设计，整体简化了依赖注入的理解成本，同时兼顾 DI 风格的优雅性。可以在实战过程中通过较低的成本封装 Inversify 实现。当然对于本身需求就比较简单的，也可以手撸一个简单版本的 Inversify 或者使用其它业界开源的 DI 框架辅助实现。
-## 小结
-
-聊了这么多，相信大家对 DI & IoC 应该会有更深层次的理解吧，我相信随着未来前端技术的规模化发展，**Web 应用必然会引入更多的复杂性，当大家面对自己的模块，在设计其模块化系统、依赖系统、扩展系统的时候，一定会发现 DI 和 IoC 的设计机制会在这里大放光彩**！
-
-## 参考
-
-- [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) wiki & [DI](https://en.wikipedia.org/wiki/Dependency_injection) wiki，维基百科官方定义
-- [Angular DI 系统的设计和实现分析](https://angular.io/guide/dependency-injection)：Angular 官方文档
-- [Inversify 框架介绍和使用指南](https://zhuanlan.zhihu.com/p/341567302)（中文）
-- [Inversify 框架设计思考](https://github.com/inversify/InversifyJS/) by [@Arno(surfacew)](/surfacew) 个人思考
+The IoC container can do a lot of things at the business layer to shield the underlying complexity and provide simple solutions for business development. **For the users, they only need to know that there is a `get` method.**
