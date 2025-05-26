@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import typography from '@tailwindcss/typography'
+import defaultTheme from 'tailwindcss/defaultTheme'
 
 export default {
   content: [
@@ -13,7 +14,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-graphik)'],
+        sans: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
       },
       typography: {
         quoteless: {

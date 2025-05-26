@@ -20,13 +20,16 @@ export async function generateMetadata({
     publishedAt: publishedTime,
     summary: description,
     image,
-    slug
+    slug,
+    tags
   } = post
-  const ogImage = image
+  const defaultImageUrl = 'https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20250526164830-wyxK0U7FPmPVfkNCdbXytJ2YOFTwnu.jpg'
+  const ogImage = image ? image : defaultImageUrl
 
   return {
     title,
     description,
+    keywords: tags,
     openGraph: {
       title,
       description,
@@ -84,6 +87,31 @@ export default async function BlogPost({ params }) {
     notFound()
   }
 
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://arno.surfacew.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Posts",
+        "item": "https://arno.surfacew.com/posts/topics"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://arno.surfacew.com/posts/${post.slug}`
+      }
+    ]
+  };
+
   return (
     <section>
       <script
@@ -91,6 +119,13 @@ export default async function BlogPost({ params }) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(post.structuredData)
+        }}
+      ></script>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbData)
         }}
       ></script>
       <h1 className="font-bold text-2xl tracking-tighter">

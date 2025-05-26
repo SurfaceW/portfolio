@@ -1,10 +1,27 @@
 import './global.css';
-
+import localFont from 'next/font/local'
 import clsx from 'clsx';
 
 import Sidebar from '@/components/sidebar';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+
+const inter = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Inter-roman.latin.var.woff2',
+      weight: '100 900',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Inter-italic.latin.var.woff2',
+      weight: '100 900',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://arno.surfacew.com'),
@@ -55,6 +72,7 @@ export default function RootLayout({
       lang="en"
       className={clsx(
         'text-black bg-white dark:text-white dark:bg-[#111010]',
+        inter.variable
       )}
     >
       <body className="antialiased max-w-4xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">

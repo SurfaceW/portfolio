@@ -33,7 +33,13 @@ const computedFields = {
       url: `https://arno.surfacew.com/posts/${doc._raw.flattenedPath}`,
       author: {
         '@type': 'Person',
-        name: 'Arno'
+        name: 'Arno',
+        url: 'https://arno.surfacew.com',
+        sameAs: [
+          'https://x.com/yeqingnan',
+          'https://github.com/SurfaceW',
+          'https://jike.city/arno'
+        ]
       }
     })
   }

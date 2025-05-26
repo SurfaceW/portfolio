@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import AvatarCard from '../components/AvatarCard/AvatarCard';
 import ManifestoCard from '../components/ManifestoCard/ManifestoCard';
 import WorkCard from '../components/WorkCard/WorkCard';
@@ -6,6 +7,34 @@ import BlogPostCard from '../components/BlogPostCard/BlogPostCard';
 import SocialMediaCard from '../components/SocialMediaCard/SocialMediaCard';
 // For animations and effects (optional - can be implemented later)
 // import { motion } from 'framer-motion';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "Arno's Portfolio & Blog | AI Developer, Engineer, Product Designer";
+  const description = "Explore Arno's work in AI development, software engineering, and product design. Read insightful tech articles on Next.js, React, AI tools, and developer productivity.";
+  const keywords = ['AI developer', 'portfolio', 'blog', 'Next.js', 'React', 'software engineering', 'product design', 'tech articles', 'Arno', 'developer productivity', 'AI tools'];
+  const ogImageUrl = 'https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20250526164830-wyxK0U7FPmPVfkNCdbXytJ2YOFTwnu.jpg';
+  const siteUrl = 'https://arno.surfacew.com';
+
+  return {
+    title,
+    description,
+    keywords,
+    openGraph: {
+      title,
+      description,
+      url: siteUrl,
+      images: [ogImageUrl],
+      type: 'website',
+      siteName: "Arno's Portfolio & Blog",
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
+  };
+}
 
 export default function RootPage() {
   const blogPosts = [
@@ -38,6 +67,41 @@ export default function RootPage() {
 
   return (
     <main className="p-4 md:p-5 min-h-screen">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "name": "Arno",
+                "url": "https://arno.surfacew.com",
+                "image": "https://avatars.githubusercontent.com/u/5323168?v=4",
+                "sameAs": [
+                  "https://x.com/yeqingnan",
+                  "https://github.com/SurfaceW",
+                  "https://jike.city/arno"
+                ],
+                "jobTitle": "AI Developer, Engineer, Product Designer"
+              },
+              {
+                "@type": "WebSite",
+                "url": "https://arno.surfacew.com",
+                "name": "Arno's Portfolio & Blog",
+                "description": "Explore Arno's work in AI development, software engineering, and product design. Read insightful tech articles on Next.js, React, AI tools, and developer productivity.",
+                "publisher": {
+                  "@type": "Person",
+                  "name": "Arno",
+                  "url": "https://arno.surfacew.com"
+                },
+                "inLanguage": "en-US"
+              }
+            ]
+          })
+        }}
+      ></script>
       {/* Apple-inspired Bento Grid container */}
       <div className="w-full max-w-[800px] mx-auto">
         {/* Hero section with title */}
