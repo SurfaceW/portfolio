@@ -61,5 +61,35 @@ export const quotes: QuoteCardProps[] = [
     date: "2023-12-15",
     image: "https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=2000&auto=format&fit=crop",
     link: "/quotes/8"
+  },
+  {
+    id: "9",
+    text: "The only way to learn a new programming language is by writing programs in it.",
+    author: "Dennis Ritchie",
+    date: "2024-01-05",
+    link: "/quotes/9"
+  },
+  {
+    id: "10",
+    text: "Programming isn't about what you know; it's about what you can figure out.",
+    author: "Chris Pine",
+    date: "2024-01-18",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2000&auto=format&fit=crop",
+    link: "/quotes/10"
+  },
+  {
+    id: "11",
+    text: "Code is like humor. When you have to explain it, it's bad.",
+    author: "Cory House",
+    date: "2024-02-10",
+    link: "/quotes/11"
+  },
+  {
+    id: "12",
+    text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+    author: "Antoine de Saint-Exupery",
+    date: "2024-03-01",
+    image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2000&auto=format&fit=crop",
+    link: "/quotes/12"
   }
 ]; 

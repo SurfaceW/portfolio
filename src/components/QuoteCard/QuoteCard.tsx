@@ -35,13 +35,13 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.5,
+        duration: 0.3,
         ease: "easeOut"
       }
     },
     hover: { 
-      y: -5,
-      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+      y: -3,
+      boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
       transition: { 
         duration: 0.2,
         ease: "easeInOut"
@@ -63,39 +63,46 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
   const gradientIndex = parseInt(id, 10) % gradients.length;
   const gradient = gradients[gradientIndex];
 
+  // Determine text length to display based on card size
+  const getDisplayText = () => {
+    if (isFeatured) return text.length > 100 ? `${text.substring(0, 100)}...` : text;
+    return text.length < 60 ? text : `${text.substring(0, 60)}...`;
+  };
+
   const CardContent = () => (
     <motion.div 
-      className={`h-full rounded-2xl bg-gradient-to-br ${gradient} border border-white/50 dark:border-white/10 overflow-hidden shadow-md dark:shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]`}
+      className={`h-full rounded-xl bg-gradient-to-br ${gradient} border border-white/50 dark:border-white/10 overflow-hidden shadow-md dark:shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]`}
       variants={cardVariants}
       initial="hidden"
       animate="visible"
+      whileHover="hover"
       layoutId={`quote-card-${id}`}
     >
-      <div className={`p-5 flex flex-col h-full ${isFeatured ? 'p-6' : 'p-4'}`}>
+      <div className={`flex flex-col h-full ${isFeatured ? 'p-4' : 'p-3'}`}>
         {/* Quote text */}
-        <div className={`mb-4 flex-grow ${isFeatured && variant === 'media' ? 'mb-6' : ''}`}>
-          <div className={`text-gray-400 dark:text-gray-500 mb-2 ${isFeatured ? 'text-4xl' : 'text-3xl'}`}>&ldquo;</div>
-          <p className={`text-gray-800 dark:text-gray-200 font-medium leading-relaxed ${isFeatured ? 'text-xl' : 'text-lg'}`}>
-            {isFeatured || text.length < 100 ? text : `${text.substring(0, 100)}...`}
+        <div className="flex-grow">
+          <div className={`text-gray-400 dark:text-gray-500 ${isFeatured ? 'text-2xl' : 'text-xl'} leading-none`}>&ldquo;</div>
+          <p className={`text-gray-800 dark:text-gray-200 font-medium leading-tight ${isFeatured ? 'text-base' : 'text-sm'} mt-1`}>
+            {getDisplayText()}
           </p>
-          <div className={`text-gray-400 dark:text-gray-500 text-right ${isFeatured ? 'text-4xl' : 'text-3xl'}`}>&rdquo;</div>
+          <div className={`text-gray-400 dark:text-gray-500 text-right ${isFeatured ? 'text-2xl' : 'text-xl'} leading-none`}>&rdquo;</div>
         </div>
 
-        {/* Media content */}
-        {image && (
-          <div className={`rounded-lg overflow-hidden ${isFeatured ? 'mb-6' : 'mb-4'}`}>
+        {/* Media content - only show if featured or explicitly media variant */}
+        {image && (isFeatured || variant === 'media') && (
+          <div className="rounded-lg overflow-hidden mt-2 mb-2">
             <Image 
               src={image} 
               alt="Quote image" 
-              width={isFeatured ? 800 : 500} 
-              height={isFeatured ? 500 : 300} 
+              width={isFeatured ? 600 : 300} 
+              height={isFeatured ? 300 : 150} 
               className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
             />
           </div>
         )}
 
-        {youtubeUrl && (
-          <div className={`rounded-lg overflow-hidden ${isFeatured ? 'mb-6' : 'mb-4'}`}>
+        {youtubeUrl && (isFeatured || variant === 'media') && (
+          <div className="rounded-lg overflow-hidden mt-2 mb-2">
             <YouTubeEmbed url={youtubeUrl} />
           </div>
         )}
@@ -103,12 +110,12 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
         {/* Author and date */}
         <div className="mt-auto">
           {author && (
-            <p className={`text-gray-600 dark:text-gray-400 font-medium ${isFeatured ? 'text-lg' : ''}`}>
+            <p className={`text-gray-600 dark:text-gray-400 font-medium ${isFeatured ? 'text-sm' : 'text-xs'}`}>
               — {author}
             </p>
           )}
           {date && (
-            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 dark:text-gray-500 text-xs">
               {new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short',
