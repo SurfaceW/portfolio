@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useMDXComponent } from 'next-contentlayer/hooks';
 import { TweetComponent } from '@/components/tweet/tweet-comp';
+import Outline from './Outline'; // Added import for Outline component
 
 const CustomLink = (props: any) => {
   const href = props.href;
@@ -105,12 +106,70 @@ const components = {
   StaticTweet: TweetComponent,
 };
 
+// Helper function to recursively extract text from children
+const getTextFromChildren = (children: React.ReactNode): string => {
+  let text = '';
+  React.Children.forEach(children, (child) => {
+    if (typeof child === 'string') {
+      text += child;
+    } else if (React.isValidElement(child) && child.props.children) {
+      // If the child is a React element and has children, recurse
+      text += getTextFromChildren(child.props.children);
+    }
+    // Note: This won't extract 'alt' text from images or other non-textual elements if they end up in headings.
+    // For typical MDX headings (text, links, inline code), this should be sufficient.
+  });
+  return text;
+};
+
+
+// Helper function to generate slugs (should be identical to the one in Outline.tsx,
+// minus the duplicate handling)
+const generateSlug = (children: React.ReactNode): string => {
+  const textContent = getTextFromChildren(children);
+  return textContent
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, ''); // Remove special characters (alphanumeric and hyphens allowed)
+};
+
+const CustomH1 = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
+  const slug = generateSlug(children);
+  return <h1 id={slug} {...props}>{children}</h1>;
+};
+
+const CustomH2 = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
+  const slug = generateSlug(children);
+  return <h2 id={slug} {...props}>{children}</h2>;
+};
+
+const CustomH3 = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
+  const slug = generateSlug(children);
+  return <h3 id={slug} {...props}>{children}</h3>;
+};
+
+const CustomH4 = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
+  const slug = generateSlug(children);
+  return <h4 id={slug} {...props}>{children}</h4>;
+};
+
+const componentsWithCustomHeadings = {
+  ...components, // Spread the existing components
+  h1: CustomH1,
+  h2: CustomH2,
+  h3: CustomH3,
+  h4: CustomH4,
+};
+
 export function Mdx({ code }: { code: string }) {
   const Component = useMDXComponent(code);
 
   return (
-    <article className="prose prose-quoteless prose-neutral dark:prose-invert">
-      <Component components={components} />
-    </article>
+    <div style={{ display: 'flex' }}> {/* Added a wrapper div for layout */}
+      <article className="prose prose-quoteless prose-neutral dark:prose-invert flex-grow"> {/* Added flex-grow to article */}
+        <Component components={componentsWithCustomHeadings} /> {/* Use components with custom headings */}
+      </article>
+      <Outline content={code} /> {/* Added the Outline component here */}
+    </div>
   );
 }

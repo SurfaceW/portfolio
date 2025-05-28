@@ -1,0 +1,93 @@
+/* Basic styles for the outline component */
+.outlineContainer {
+  position: fixed;
+  top: 120px; /* Increased top a bit */
+  right: 20px;
+  width: 280px; /* Default width for larger screens */
+  background-color: var(--card-background, #ffffff); /* Fallback: white */
+  border: 1px solid var(--border-color, #e2e8f0); /* Fallback: light gray */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  z-index: 1000;
+  max-height: calc(100vh - 140px); /* Adjusted for new top */
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out, right 0.3s ease-in-out; /* Added right for transitions */
+}
+
+.hiddenOutline {
+  transform: translateX(110%); /* Slide it off screen to the right */
+}
+
+/* For tablets and smaller desktops */
+@media (max-width: 1024px) {
+  .outlineContainer {
+    width: 220px;
+    top: 100px;
+    max-height: calc(100vh - 120px);
+  }
+}
+
+/* For mobile devices */
+@media (max-width: 767px) {
+  .outlineContainer {
+    width: 180px;
+    padding: 10px;
+    top: 80px;
+    right: 10px; /* Adjusted right for mobile */
+    max-height: calc(100vh - 100px);
+  }
+}
+
+.toggleButton {
+  background-color: var(--primary-color, #3b82f6); /* Fallback: blue */
+  color: var(--button-text-color, white); /* Fallback: white */
+  border: none;
+  padding: 10px 15px; /* Enhanced padding */
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 15px; /* Increased margin */
+  width: 100%;
+  text-align: center;
+  font-weight: 500; /* Medium font weight */
+  transition: background-color 0.2s ease-in-out;
+}
+
+.toggleButton:hover {
+  background-color: var(--primary-hover-color, #2563eb); /* Fallback: darker blue */
+}
+
+.headingList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.headingListItem {
+  margin-bottom: 8px;
+}
+
+.headingLink {
+  text-decoration: none;
+  color: var(--text-color, #1f2937); /* Fallback: dark gray */
+  display: block;
+  padding: 4px 0;
+  transition: color 0.2s ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headingLink:hover {
+  color: var(--primary-color, #3b82f6); /* Fallback: blue */
+  text-decoration: none; /* Color change is sufficient */
+}
+
+/* Indentation for different heading levels */
+.level1 { padding-left: 0px; font-weight: bold; }
+.level2 { padding-left: 15px; }
+.level3 { padding-left: 30px; }
+.level4 { padding-left: 45px; }
+
+.hidden {
+  display: none;
+}
