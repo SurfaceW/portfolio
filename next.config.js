@@ -7,7 +7,10 @@ const nextConfig = {
     serverActions: false,
   },
   images: {
-    domains: ['avatars.githubusercontent.com'],
+    domains: [
+      'avatars.githubusercontent.com',
+      'images.unsplash.com'
+    ],
   },
   typescript: {
     ignoreBuildErrors: true,

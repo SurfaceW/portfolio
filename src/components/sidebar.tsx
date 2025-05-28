@@ -15,6 +15,9 @@ const navItems = {
   '/idea': {
     name: 'IDEA',
   },
+  '/quotes': {
+    name: 'QUOTES',
+  },
   '/posts/rss': {
     name: 'RSS',
     target: '_blank'

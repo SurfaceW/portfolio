@@ -1,4 +1,5 @@
 import { allBlogs } from 'contentlayer/generated';
+import { quotes } from '@/data/quotes';
 
 export default async function sitemap() {
   const blogs = allBlogs.map((post) => ({
@@ -6,7 +7,12 @@ export default async function sitemap() {
     lastModified: post.publishedAt,
   }));
 
-  const routes = ['', '/posts/topics', '/rss', '/idea'].map(
+  const quotePages = quotes.map((quote) => ({
+    url: `https://arno.surfacew.com/quotes/${quote.id}`,
+    lastModified: quote.date || new Date().toISOString().split('T')[0],
+  }));
+
+  const routes = ['', '/posts/topics', '/rss', '/idea', '/about', '/quotes'].map(
     (route) => ({
       url: `https://arno.surfacew.com${route}`,
       lastModified: new Date().toISOString().split('T')[0],
@@ -45,5 +51,5 @@ export default async function sitemap() {
     });
   });
 
-  return [...routes, ...blogs, ...tagLangRoutes];
+  return [...routes, ...blogs, ...quotePages, ...tagLangRoutes];
 }

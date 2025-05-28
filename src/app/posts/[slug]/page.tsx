@@ -1,11 +1,10 @@
+import { Mdx } from '@/components/mdx'
+import { UVCardElaborationStudio } from '@/components/uv-card/uv-card'
+import { allBlogs } from 'contentlayer/generated'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Mdx } from '@/components/mdx'
-import { allBlogs } from 'contentlayer/generated'
-import Balancer from 'react-wrap-balancer'
-import { Suspense } from 'react'
 import Script from 'next/script'
-import { UVCardElaborationStudio } from '@/components/uv-card/uv-card'
+import Balancer from 'react-wrap-balancer'
 
 export async function generateMetadata({
   params
