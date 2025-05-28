@@ -77,12 +77,12 @@ export default function QuotePage({ params }: QuotePageProps) {
   const gradient = getGradient(params.id);
 
   return (
-    <section className="max-w-3xl mx-auto px-4">
+    <section className="max-w-3xl mx-auto px-4 w-full">
       <Link href="/quotes" className="text-sm text-blue-500 hover:text-blue-700 mb-6 block">
         ← Back to all quotes
       </Link>
       
-      <div className={`bg-gradient-to-br ${gradient} rounded-2xl p-8 shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300`}>
+      <div className={`w-full bg-gradient-to-br ${gradient} rounded-2xl p-8 shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300`}>
         <div className="mb-6">
           <div className="text-4xl text-gray-400 dark:text-gray-500 mb-4">&ldquo;</div>
           <p className="text-gray-800 dark:text-gray-200 text-2xl font-medium leading-relaxed">
