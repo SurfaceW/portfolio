@@ -145,30 +145,40 @@ export class ElaboratorService {
 * Precisely choose SQL or NoSQL DB type for your business features; selecting appropriate data persistence solutions is key for building scalable Next.js applications. Don't forget to add redundancy and backup for the data.
 * pick ORM or other DB service vendor to handle the data persistence like `Prisma` or `TypeORM` with migration and schema management
 * always start design your db considering the data scaling and data consistency, distributed db and sharding, etc, when you truly need it. e.g. your data-records is over 1M or 10M or 100M in 3 year, etc, they should plan to use different type of db technology and design the data model and data structure in the different ways.
-  * consider use `Serverless` DB to handle the data scaling and management, like `PlantScale`
+  * consider use `Serverless` DB to handle the data scaling and management, e.g. `[PlanetScale](https://planetscale.com/)`
+  * in the recent days, quick prototyping by using [Supabase](https://supabase.com/) is a good choice, but do not use it in the production environment.
 * carefully design the data model and data structure in the DB, make full use of the DB index and query optimization, but do not over optimize the db query.
 * follow the Community's SQL, table-creating, index-creating, query-optimization, etc, best practice guide. -> e.g. Alibaba's Java Developer Guide show some best practice guide for MySQL and DB.
-* use *transaction* and *isolation* to handle the data consistency and integrity for sensitive data and operations
-* use *sharding* and *partition* to handle the data scaling and performance
-* use *replication* and *backup* to handle the data redundancy and backup
+* Make full use of DB design and optimization strategies, such as:
+  * use *transaction* and *isolation* to handle the data consistency and integrity for sensitive data and operations
+  * use *sharding* and *partition* to handle the data scaling and performance
+  * use *replication* and *backup* to handle the data redundancy and backup
+  * use *index* and *query* optimization to handle the data query and performance
+  * use *schema* and *migration* to handle the data schema and data structure
+  * use *replication* and *backup* to handle the data redundancy and backup
 
 ### Next.js Framework: Best Practices for Performance and Scalability
 
 * use **turbo-pack** + **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo
+  * for AI Era, choose simple repo with shared code is better than npm dependency, which is more flexible and easy to maintain.
 * make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
   * ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) - read carefully and use it wisely 😎
 
 ![layered-cache-of-nextjs](https://nextjs.org/_next/image?url=https%3A%2F%2Fh8DxKfmAPhn8O0p3.public.blob.vercel-storage.com%2Fdocs%2Fdark%2Fcaching-overview.png&w=3840&q=75)
 
-* try to use *EdgeRuntime* for handling the static content and fetch related simple tasks
-* next.js 15 middleware can run both edge and node runtime, handle common request logic in `middleware` and use `next/server` to handle the request and response
-* use *Rust* + *WASM* for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
+* use *EdgeRuntime* for handling the static content and fetch related simple tasks, such as middleware, etc.
+* next.js > 15 middleware can run both edge and node runtime, handle common request logic in `middleware` and use `next/server` to handle the request and response
+* use *Rust* built *WASM* for high-performance computing tasks, e.g. calculate tokens of large data via *tiktoken*
 * separate the `ServerComponentData` / `ClientComponentData`, use it to handle the server-side rendering and client-side rendering cleverly (key aspects of Next.js server components and client components).
 * use library internal impl of basic component:
   * use CDN for static files and contents, use `next/image` etc. for resource optimizations
   * use `next/script` for script optimizations
+  * use `next/link` for link optimizations
+  * ... see the next.js official doc for more details
 * make use add `metadata` ability inset next.js pages for SEO and SNS sharing
-* boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism
+  * add `robots.txt` and `sitemap.ts` for SEO and SNS sharing, including open graph, twitter card, etc.
+  * integrate service to Google Analytics, Google Search Console, Google Tag Manager, etc. for SEO optimization
+* boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism for async components loading on demand
 * use `server` / `client` / `shared` folder to separate the code for different runtime
 * Check every possible config in `next.config.js` for optimizing Next.js app performance and security before you go to production.
 * **use `sever-action`** to avoid duplicated API route declare and seamlessly handle the server-side logic and client-side logic together (a powerful feature of the Next.js framework).
@@ -182,21 +192,19 @@ export class ElaboratorService {
 
 > `Supabase` in the recent years is a good example of using the best tools and libs in the Node / JavaScript Ecology to build a full-stack app.
 
-* Vercel's `ai` sdk is great way to handle the AI related tasks (llm, agentic app creator, etc)
+* Vercel's [ai-sdk](https://ai-sdk.dev/docs/introduction) is great way to handle the AI related tasks (llm, reAct, agentic app creator, etc)
 * DB layer can be presented by `Prisma` ORM or other db service vendor
 * use `Jest` or other testing service to handle the unit test and integration test
 * error / request trace with trace API & tools, such as `Sentry` / `Raygun`
 * logs with log API & tools including SLS / ELK for logging and debugging
 * consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
 * add unit tests to cover basic lib / tools and key business logic
-* use config middleware such as `Diamond`(Alibaba's config middleware) or Vercel `Configs` for app configs
-* use `Redis` or other memory shared to handle the cache and session shared by different server instances
+* use config middleware such as `Vercel Configs` for app configs sync and sync to different server instances
+* use `Redis` or other memory shared to handle the cache and session shared by different server instances (vercel kv, redis, etc)
 * consider use the AB Test service or Gray Release service to handle the feature release
-* use `Kafka` or other message queue to handle the async tasks and event-driven tasks
-* use `K8S` or other container service to handle the deployment and scaling
-* use `Prometheus` or other monitoring service to handle the monitoring and alerting
-* use `Grafana` or other dashboard service to handle the dashboard and visualization
-* use `Jenkins` or other CI/CD service (Github Actions or Vercel) to handle the CI/CD pipeline and production process
+* consider use right choice of message queue middlewares to handle the async tasks and event-driven tasks, for larger traffic
+* consider serverless first deployment and scaling, without the need of K8S or other container service to reduce the complexity and cost, unless you have a very complex and large scale application.
+* use Github Actions or Vercel to handle the CI/CD pipeline and production process for small and medium scale application in light-weight and simple way.
 * ...
 
 ### Recommended Directory Structure for Next.js Projects
@@ -217,6 +225,7 @@ A well-organized directory structure is vital for maintaining large Next.js proj
 ├── services
 ├── tailwind.config.ts
 ├── tsconfig.json
+├── .context             -> AI Era, use .context to handle the context of the app, system instructions for prd, tech, product, project, etc.
 └── types
 ```
 
@@ -312,8 +321,8 @@ My Practicing:
 
 Arno used to summary the React Best Practice Guide in the past 👇🏻
 
-* [React Best Practice Guide of Arno](/posts/en/react-bp)
-* [React State Management Best Practice of Arno](/posts/en/react-state-management)
+* [React Best Practice Guide of Arno](/posts/react-bp)
+* [React State Management Best Practice of Arno](/posts/react-state-management)
 
 ---
 
@@ -334,15 +343,17 @@ Arno used to summary the React Best Practice Guide in the past 👇🏻
 ### Logic Encapsulation
 
 Encapsulating client-side logic is one of the Next.js frontend best practices for building modular and testable web applications.
-* **Service** liked to the server service, client service and encapsulated apis to invoke by `useSwr` or `useQuery` or other API client.
+
+* **Service** similar to the server service, client service and encapsulated apis to invoke by `useSwr` or `useQuery` or other API client.
   * some typical examples are:
     * the db-service of local
     * the local-data-cache service
     * the Restful API service
   * service can encapsulate the logic and handle the error and response elegantly, which should not emit exceptions or errors
   * service can coordinate the different services or manager to handle the complex logic
+  * service can directly invoke *server-action* to handle the server-side logic and client-side logic together in a more simple and clear way
   * ...
-* **Manager** liked to the server manager, client manager and encapsulated business logic to be invoked by the service or component
+* **Manager** similar to the server manager, client manager and encapsulated business logic to be invoked by the service or component
   * some typical examples are:
     * the business logic manager
     * the logs manager
@@ -353,25 +364,25 @@ Encapsulating client-side logic is one of the Next.js frontend best practices fo
 
 ### Tips for Performance & Storage
 
-* use web worker to handle the heavy computing tasks
+* use web worker to handle the heavy computing tasks, running in a background thread
 * use *Rust* / *WASM* to handle the heavy computing tasks
 * use Service Worker to handle the offline and cache data and requests
-* use local-db such as `IndexedDB` to handle the local storage and cache
+* use local-db such as `IndexedDB` to handle the local storage and cache, use encapsulated manager to handle the local-db operations
 * use `localStorage` / `sessionStorage` to handle the local storage and cache for use preference and temporary data cache
 
 ### Network and Communication
 
 * use WebRTC / Websocket for more real-time and interactive tasks
 * use native `fetch` API first other than ajax or other network communication mechanism
-* use WebStream with Fetch API to handle the large data transfer and stream data
+* use HTTP stream with Fetch API to handle the large data transfer and stream data for AI Era streaming data, consider use ai-sdk's streaming data / UI RSC(React Server Component) to handle the streaming data and UI renderings
 
 ### Tips for UI & UX
 
-* use `TailwindCSS` or `ChakraUI` to handle the UI and layout
-* use `AntD` or `MaterialUI` with highly *customizable theme* and *complex logic and functionality encapsulated*
-* use `Storybook` or other UI testing service to handle the UI testing and visual testing
+* use `tailwindCSS` to handle the UI and layout
+* use `shadcn/ui` (shadcn/ui.com) or `AntD` (lobeUI) or `MaterialUI` with highly *customizable theme* and *complex logic and functionality encapsulated*
+* use `Storybook` or other UI testing service to handle the UI testing and visual testing for UI components
 * consider *compatibility* in different viewport, size, versions and more
-* follow the BP of Mobile Web App development principles
+* follow the BP of Mobile Web App development principles, such as *Responsive Design*, *Dark Scheme Compatibility*, *A11Y and I18N*, *Animation and Transition*, etc.
 * follow and apply some web dev guides of Google / Apple / Microsoft / Mozilla / W3C ...
 * consider obey the A11Y and I18N principles
 * add some reasonable animation and transition to make the UI more vivid and interactive
@@ -384,7 +395,7 @@ Encapsulating client-side logic is one of the Next.js frontend best practices fo
 
 Do not create the wheel again, use the domain specified technology to handle the domain specified tasks.
 
-* TextEditor / IDE / Code Formatter / Linter ...
+* TextEditor / Code Editor / Code Formatter / Linter ...
 * Chart / Graph / Data Visualization ...
 * Map / Location / Geo ...
 * Real-time Collaboration ...
@@ -392,6 +403,8 @@ Do not create the wheel again, use the domain specified technology to handle the
 * Audio / Video / Media ...
 * Web XR / VR / AR ...
 * ...
+
+> just ask AI with your scenarios to find those best options to use in your project, and do not reinvent the wheel.
 
 ## Native Client
 
@@ -453,9 +466,9 @@ This section outlines common design patterns and conventions crucial for effecti
 
 My Related Articles:
 
-* [Effective Full Stack Dev](https://arno.surfacew.com/posts/en/effective-fullstack-dev)
-* [AI Driven front-end development](https://arno.surfacew.com/posts/en/ai-driven-front-end)
-* [Cursor BP](/posts/en/cursor.bp)
+* [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
+* [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
+* [Cursor BP](/posts/cursor.bp)
 
 ### notes on this article
 
@@ -464,3 +477,4 @@ My Related Articles:
 * 2024-03-29: add directory naming conventions for components
 * 2024-10-21: upgrade recent server-action bp and add more details for the recent experience accumulated
 * 2025-05-13: keep updated with latest knowledge and version of next.js and other related technologies
+* 2025-05-29: database related topics and best practices updated, add more practical experience in AI Era
