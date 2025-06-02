@@ -18,7 +18,7 @@ body {
 }
 
 .prose {
-  max-width: fit-content !important;
+  max-width: 100%;
 }
 
 .prose .anchor {
@@ -49,6 +49,7 @@ body {
 
 .prose pre {
   @apply border border-neutral-800 bg-neutral-900;
+  overflow-x: auto;
 }
 
 .prose code {
@@ -63,6 +64,8 @@ body {
 .prose img {
   /* Don't apply styles to next/image */
   @apply m-0;
+  max-width: 100%;
+  height: auto;
 }
 
 .prose > :first-child {
