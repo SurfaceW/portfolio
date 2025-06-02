@@ -110,6 +110,10 @@ table {
   white-space: nowrap;
 }
 
+.prose table {
+  width: 100%;
+}
+
 .prose .callout > p {
   margin: 0 !important;
 }
