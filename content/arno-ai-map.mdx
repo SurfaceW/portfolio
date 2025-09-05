@@ -50,6 +50,8 @@ Let's take software development as an example:
 
 ### AI First, Human Assist in Async
 
+> ALL RUNNING in the background, passively and asynchronously.
+
 - Do market or product research using specialized AI tools.
 - Write unit-test and integration-test as part of an AI-driven development cycle.
 - Refactor modules, features, and functions, optimizing AI workflows.
@@ -62,9 +64,16 @@ Let's take software development as an example:
 
 This section explores various scenarios where AI can be applied, along with recommended AI tools and platforms that fit each AI workflow.
 
+### Meta Thoughts
+
+- use **Project / workspace** of OpenAI ChatGPT or Google's Notebook ML to organize related context info in a project.
+- use **thinking tool** driven for QA and guide AI to dive deeper, with search, deep-reasoning, and `Agentic` tools operations.
+- use **personal context engine** to build the context to co-work with AI tools, platforms and services.
+- define _SOP_ and use _Agentic Tool_ to batch execute the SOP.
+
 ### Daily QA
 
-> Daily general QA task -> **Gemini Pro 2.5**, deep understanding and reasoning -> **Open AI O3Pro**
+> Daily general QA task -> **Gemini Pro 2.5 / GPT5**, deep understanding and reasoning -> **Open AI O3Pro / GPT5**
 
 General knowledge and information retrieval.
 
@@ -88,50 +97,51 @@ dimension:
 
 Programming and coding tasks.
 
-- vibe-coding & code-generation
-- code-review
-- tabs engineering
-- software-development-lifecycle -> devops
+- vibe-coding & code-generation (codex, augment) for me, VSCode is the HUB for various of agentic tools and AI powered services and MCP
+- tabs engineering, quick editing contents as needed
+- software-development-lifecycle -> devops agentic tools
+- use workspace / project as context QA (in ChatGPT)
 
 ### AI for Research, Study & Learning: Enhancing Knowledge Discovery
 
 > Google Deep Research x Gemini Pro 2.5 x Google Artifact x Google Notebook ML (Knowledge based QA)
 
+or
+
+> OpenAI ChatGPT DeepResearch x OpenAI ChatGPT Agent Mode to co-work with content and QA research
+
 - public domain knowledge based
 - private domain knowledge based
 - professional & profound knowledge based
 - short v.s. long form of report (research, study, learning, etc.)
+- organize and produce content in one workspace or generate artifacts to share results in need
 
 ---
 
-- your thoughts, ideas, and experiences (Human First, AI Assist)
-- Google DeepResearch topic (shallow, deep x rich and poor context)
+Arno's SOP for research types of topics.
+
+- create workspace for context gathering and basic QA (in one workspace)
+- elaborate topics / problems with QA linked to **thinking models**, your thoughts, ideas, and experiences (Human First, AI Assist), ask interesting and deep questions and try to use AI to solve and combine your first-thoughts
+- DeepResearch topic (shallow, deep x rich and poor context)
 - generate basic Artifact (article + webpage)
 - DeepResearch + O3-Pro to research topic
 - integrate those results together -> Generate Final Artifact (WebPage or Article)
 - [optional] add all of those materials and generated content or cited source into a Google Notebook ML for further analysis and insights
 
-### AI-Assisted Article Writing & Content Creation
-
-> Cursor x Github x Markdown = Worked perfectly!
-
-- short form (text completion with cursor)
-- middle form (text generation / editing with cursor)
-- long form (`Agentic` approach with cursor)
-
 ### AI in Media Generation: Images, Video, and Audio
 
 > GPT4o x Midjourney x Google Video Generation
 
-- image generation
+- image generation -> GPT 4o
 - video generation
 - audio generation
 - 3D generation
 
 ### AI for Complex Problem Solving & Strategic Reasoning
 
-> Gemini Deep Research x Reasoning models x Context Engine (for context engineering)
-> Collaborate with GeminiCli (ClaudeCode) as a agentic scheduler x MCP servers
+> Deep Research x Reasoning models x Context Engine (for context engineering)
+> Agentic Tools for SOP defined
+> Think deep with **thinking-tools**
 
 - context engineering: KESW x data x info
 - complex reasoning
@@ -153,62 +163,60 @@ The following legend explains the icons used to categorize these AI technologies
 
 > Latest models recommendations till 2025-06-16
 
-| Model          | Speed  | Price  | Best For                                   | Limitations |
-| -------------- | ------ | ------ | ------------------------------------------ | ----------- |
-| O3-Pro         | Fast   | 👍🏻♥️💎 | Complex Question QA, Long-Context Logic QA |             |
-| Gemini Pro 2.5 | Fast   | 👍🏻♥️   | General tasks, with search context         | expensive   |
-| Claude 4       | Medium | 👍🏻💎   | Coding                                     |             |
+| Model          | Speed  | Price | Best For                           | Limitations |
+| -------------- | ------ | ----- | ---------------------------------- | ----------- |
+| GPT5           | Medium | 👍🏻     | General tasks                      |             |
+| Gemini Pro 2.5 | Fast   | 👍🏻♥️    | General tasks, with search context | expensive   |
+| Claude 4       | Medium | 👍🏻💎    | Coding                             |             |
+
 
 ### AI Development Tools for Software Engineering
 
-| Tool              | Type                    | Best For                                | Integration    | Feature |
-| ----------------- | ----------------------- | --------------------------------------- | -------------- | ------- |
-| Cursor            | IDE                     | Full-stack development                  | Git, AI models | 👍🏻      |
-| Github Copilot    | Code Assistant          | Real-time coding                        | IDE plugins    | 😿      |
-| V0                | Prototyping             | Quick app prototypes                    | Vercel         | 👍🏻      |
-| devv.ai           | Developer QA            | Code search & solutions                 | API            | 🔬      |
-| DeepWiki          | Knowledge Base          | AI run under repo and build knowledge   | API            | 🔬      |
-| Loveable          | Full-Stack Site Builder | Code search & solutions                 | WebSite        | 💎🔬    |
-| Augment           | IDE Extension           | Vibe Coding & Cursor competitor         | IDE plugins    | 💎👍🏻    |
-| Jules             | AI Agent                | Run in server-end to operate code tasks | WebApp         | 💎👍🏻♥️  |
-| OpenAI Codex      | Remote Container Mode   | Run in remote container                 | WebApp         | 🔬      |
-| Claude Code       | Cli Tool                | Vibe Coding & Cursor competitor         | CLI            | 💎👍🏻    |
-| Google Gemini Cli | Cli Tool                | Vibe Coding & Cursor competitor         | CLI            | 🆓👍🏻    |
+| Tool              | Type                  | Integration    | Feature                              |
+| ----------------- | --------------------- | -------------- | ------------------------------------ |
+| Augment           | IDE Extension         | IDE plugins    | 💎👍🏻♥️                                  |
+| OpenAI Codex      | Remote Container Mode | WebApp         | 👍🏻                                    |
+| Claude Code       | Cli Tool              | CLI            | 💎👍🏻                                   |
+| Google Gemini Cli | Cli Tool              | CLI            | 🆓👍🏻                                   |
+| DeepWiki          | Knowledge Base        | Docs           | 🔬 good for open-source project study |
+| Cursor            | IDE                   | Git, AI models | 😭 limitation grows                   |
+| Github Copilot    | Code Assistant        | IDE plugins    | 😿 just so so                         |
 
 For local IDE VibeCoding, Arno's recommendation is:
 
-Cursor ~= Augment > Windsurf = Microsoft Github Copilot
+Augment > Cursor > Windsurf = Microsoft Github Copilot
 
 ### AI Tools for General Purpose
 
-| Tool     | Type            | Best For                 | Integration | Feature |
-| -------- | --------------- | ------------------------ | ----------- | ------- |
-| Dia      | AI Web Browser  | Web browsing and context | API         | 🔬      |
-| GenSpark | General Purpose | General purpose          | API         | 🔬      |
+| Tool     | Type            | Best For                 | Integration | Feature                                              |
+| -------- | --------------- | ------------------------ | ----------- | ---------------------------------------------------- |
+| Dia      | AI Web Browser  | Web browsing and context | API         | 🔬 browser first assist                               |
+| GenSpark | General Purpose | General purpose          | API         | 🔬 almost a copy of ChatGPT without its core AI model |
 
 ### AI Tools for Research & Knowledge Management
 
 | Tool                 | Features                    | Best For                               | Tags |
 | -------------------- | --------------------------- | -------------------------------------- | ---- |
-| Google Deep Research | Advanced search, Insights   | Deep research                          | 👍🏻♥️ |
-| Google Notebook ML   | Knowledge organization      | Research synthesis                     | 👍🏻   |
-| Manus                | Research & General Usages   | AutoRun tasks                          | 💎🔬 |
-| Flowith              | AI-powered agentic workflow | Parallel tree like ai-powered workflow | 🔬   |
+| Google Deep Research | Advanced search, Insights   | Deep research                          | 👍🏻♥️   |
+| Google Notebook ML   | Knowledge organization      | Research synthesis                     | 👍🏻    |
+| ChatGPT Research     | Research & General Usages   | AutoRun tasks                          | 👍🏻    |
+| Manus                | Research & General Usages   | AutoRun tasks                          | 💎🔬   |
+| Flowith              | AI-powered agentic workflow | Parallel tree like ai-powered workflow | 🔬    |
 
 ### AI Creative & Design Tools
 
-| Tool       | Type              | Best For          | Tags |
-| ---------- | ----------------- | ----------------- | ---- |
-| Midjourney | Image Generation  | High-quality art  | 💎   |
-| JiMeng     | Image Generation  | Chinese style art | 💎   |
-| Figma Make | AI Design & Impl. | Automated design  | 💎   |
+| Tool       | Type              | Best For         | Tags |
+| ---------- | ----------------- | ---------------- | ---- |
+| Midjourney | Image Generation  | High-quality art | 💎    |
+| GPT4o      | Image Generation  | Daily use        | 💎    |
+| Figma Make | AI Design & Impl. | Automated design | 💎    |
 
 ### AI Deployment & Infrastructure Platforms
 
 | Platform   | Purpose     | Features         | Tags |
 | ---------- | ----------- | ---------------- | ---- |
-| Vercel     | Deployment  | Serverless, Edge | 👍🏻   |
-| OpenRouter | API Gateway | Multiple models  | 👍🏻   |
+| Vercel     | Deployment  | Serverless, Edge | 👍🏻    |
+| OpenRouter | API Gateway | Multiple models  | 👍🏻    |
 
 ### idea that sparks
 
@@ -223,3 +231,4 @@ WIP -> new article to write
 - 2025-04-20: initial version
 - 2025-05-10: upgrade some more details and scenarios for AI to use and mapping to the tools and models
 - 2025-05-23: add `AI Working Procedure` for better understanding of the AI working procedure and how to use the tools and models
+- 2025-09-05: upgrade to the recent tools / platforms / services
