@@ -7,8 +7,6 @@ tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 
 > this document shall keep evolving and updating for the best practice of Vibe Coding !!!
 
-# Vibe Coding BP for full-stack developer
-
 > Happy VibeCoding ~
 
 VibeCoding is the best way to create MVP and do PMF in AI's app development era.
@@ -69,19 +67,21 @@ e.g. you can see the `react.bp.md` appendix for example.
 ### Full-Stack Web
 
 * choose well-known tech stack for quick-start projects -> such as [next.js](/posts/nextjs-architecture)
+* use devOPS platforms like *Vercel* for quick integrations and iterations
 
 ### iOS / MacOS Dev
 
 * xcode + vscode + agentic tools together, vibe-coding in vscode and debug in xcode
+* use XCodeCloud for faster integrations and beta testings
 
-## Tips & Guidelines
-
-1. commits often for controlling ai modifications in smaller chunks
-2. template for prompt-engineering context files
-3. use AI to generate l1 ~ l2 design docs
-4. don't hesitate to use more `@` symbol to add context for your ai prompts
 
 ## Core SOP
+
+### 0. Setup project's context engineering
+
+* write project's manifest first, tell AI the basic idea about this project, and how to obey the key rules of this project.
+* setup dir such as `.context` to store the context files for AI to understand and generate code.
+* carefully write the `README.md` for both human and AI friendly.
 
 ### 1. Design L0 Architecture
 
@@ -97,17 +97,36 @@ for example, any BP for tech-stack or directory structure for or etc.?
 do the research and give me the best practice for full-stack developer.
 '''
 
+> co-work with AI in deep-thinking for the following documents are nice choices:
+
 - Product L0 Design document
 - Market L0 Design document
 - Tech L0 Design document, I used to write an article about the [effective full-stack tech dev](/posts/effective-fullstack-dev)
+  - tech architecture specifications
+  - BP for tech frameworks / programming / software engineering
+
+> update these core files often when you iterate your products
+
+### 2. Feature powered iterations, bugfix and refactoring
+
+use _AgenticTools_ with rich context specifications to do quickly development and iterations for features, bugfix, refactor, etc.
+
+Generate L1 Design context documents about feature iterations, techs and related context via AI in brief and simple way, they can perform an all-in-one document structure for your project, better within a specific folder in root project like `.context` or in your AI tools' conventional rules / instructions folder.
+
+write *Release* logs for key-features.
 
 
-## Techniques
+## Tips x Techniques
 
+- commits often for controlling ai modifications in smaller chunks
+- template for prompt-engineering context files
+- use AI to generate l1 ~ l2 design docs
+- don't hesitate to use more `@` symbol to add context for your ai prompts
 - technology adoption for good models to understand and abstract -> use next.js for example (the guide can be publicly exposed to gain insights and values) -> organize the repo in good shape
 - write prompt by `markdown` can use the tab and completion of code-gen and even make AI finish the related content writing, that's the best practice for writing prompt
 - choose the right models (LLM) to do the right things. e.g. for now Claude is good at handle 0 -> 1 crafting the whole project, but GPT5 in thinking mode is good for complex bugfix and multiple cross files analysis.
 - make AI manage your context docs, every-time they finish the 0->1 or 1->10 iteration tasks
+- co-work and combine with different tools of usage quota to operate different types of tasks to save money. e.g. use Augment for complex agentic task instead of simple QA.
 
 ## Reference
 
