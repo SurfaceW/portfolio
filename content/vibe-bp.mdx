@@ -1,0 +1,166 @@
+---
+title: '🪄 Arno Vibe Coding BP for Developers 2025'
+publishedAt: '2025-09-10'
+summary: 'A comprehensive guide to Vibe Coding best practices for full-stack developers, covering prompt engineering, tool-specific context, human oversight, proactive quality management, and continuous learning.'
+tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
+---
+
+> this document shall keep evolving and updating for the best practice of Vibe Coding !!!
+
+# Vibe Coding BP for full-stack developer
+
+> Happy VibeCoding ~
+
+VibeCoding is the best way to create MVP and do PMF in AI's app development era.
+
+## Principles
+
+- **Think and act in a [Systematic](/posts/systematic-systemic) way**, do good design in system architecture, software architecture, product architecture, etc.
+- **Balance and understand the boundary of Human and AI**, know which jobs and tasks are suitable for AI and which are better handled by humans. Understand the three patterns of AI x Human, they are **Human First, AI Assist**, **AI First, Human Assist in Sync** and **AI First, Human Assist in Async**.
+- **Strategic prompting engineering** is the basic skills to master, be a prompt master! [prompt-guide](/posts/arno-write-best-prompts), make sure you can craft clear, contextual and iterative prompts with AI. **Context engineering** play a vital role here, provide precise and accurate to reduce the illusion of AI. When provide context for ai, make sure the **observability for AI** is well concerned.
+- **Divide and conquer**, break down complex tasks into manageable tasks and instruct AI to do the job that is with less ambiguity. Human do high-level first design and AI do the low-level tasks. Make *Atomic* changes per task, and write key-tests for core features and tasks.
+- **Small and simple is powerful -> less is more** try to keep the complexity of your project in a _AI can control_ way, use better modular and software engineering techniques to manage the complexity.
+- **Iterate fast, fail fast** find the way to success fast, it's all about **Speed**. Do VibeCoding often with best AI Models and tools and try **Automate everything you can find with AI**.
+- **Make outcomes legible**. Add explicit success criteria (first “Aha”) and wire metrics early (TTFR/TTFA), define and create your *Aha* moments ~
+
+## Project Context Engineering
+
+Layered your context with files:
+
+- `l0`: general human-first design docs, usually focus on the blue-print of the product, architecture, marketing strategies, etc.
+- `l1`: semi-human design docs, focus on core-features, essential design details.
+- `l2`: ai-first design docs, focus on the details of the implementation, code-gen, demo, etc.
+
+> prefer *markdown* and *mdx* first, pure text pipe is a UNIX philosophy.
+
+### Files
+
+- `[feature].lx.prd.md` files for production feature specification
+- `[tech].lx.tech.md` files for production tech-stack specification
+- `release.logs.md` add release logs for iteration specific context
+
+e.g. you can see the `react.bp.md` appendix for example.
+
+## Tools to co-work
+
+- General Chat with workspace: ChatGPT workspace (projects), Claude Project ...
+- Agentic powered IDE: VSCode x Augment, Cursor ...
+- Agentic Cli: Gemini Cli, Codex Cli, Claude Code ...
+- Agentic Background TaskRunner: Codex Remote, Cursor Background Tasks ...
+- MCP the leverages: more context and operations (actions) to external services and tools.
+
+> general ai-first tools compare and experience [guide](/posts/arno-ai-map)
+
+## Classic Scenarios
+
+- _tab-engineer_ tab, tab, tab for code modifications
+- _0 -> 1 generation_ code generation, and project setups
+  - choose boilerplate with AI context specifications first
+  - use images to guide UI implementation
+- _1 -> 10 generation_ feature iterations
+  - make all _context_ ready to work
+  - use images to guide UI implementation (image with instructions directly on those captures shall be ok)
+- _code refactor_ feel the bad smell code and refactor them always
+- _tests generation and coverage_ all for stable and reliable code
+- _code review_ act like experts to review code and find bugs
+- _commit msgs generation_ with comprehensive msg in commits
+- _code qa_ ask questions and learn code-repos
+
+### Full-Stack Web
+
+* choose well-known tech stack for quick-start projects -> such as [next.js](/posts/nextjs-architecture)
+
+### iOS / MacOS Dev
+
+* xcode + vscode + agentic tools together, vibe-coding in vscode and debug in xcode
+
+## Tips & Guidelines
+
+1. commits often for controlling ai modifications in smaller chunks
+2. template for prompt-engineering context files
+3. use AI to generate l1 ~ l2 design docs
+4. don't hesitate to use more `@` symbol to add context for your ai prompts
+
+## Core SOP
+
+### 1. Design L0 Architecture
+
+use _DeepResearch_ first to understand what you are creating and design, about marketing, production, etc.
+
+do deep-research first:
+
+'''
+I want to find the BP for VibeCoding in Cursor or Github Copilot, what is the best practice for full-stack developer?
+for example, how to make full use of Cursor or Github Copilot to do the full-stack development?
+for example, how to write the BP guide for necessary prompt for Cursor or Github Copilot?
+for example, any BP for tech-stack or directory structure for or etc.?
+do the research and give me the best practice for full-stack developer.
+'''
+
+- Product L0 Design document
+- Market L0 Design document
+- Tech L0 Design document, I used to write an article about the [effective full-stack tech dev](/posts/effective-fullstack-dev)
+
+
+## Techniques
+
+- technology adoption for good models to understand and abstract -> use next.js for example (the guide can be publicly exposed to gain insights and values) -> organize the repo in good shape
+- write prompt by `markdown` can use the tab and completion of code-gen and even make AI finish the related content writing, that's the best practice for writing prompt
+- choose the right models (LLM) to do the right things. e.g. for now Claude is good at handle 0 -> 1 crafting the whole project, but GPT5 in thinking mode is good for complex bugfix and multiple cross files analysis.
+- make AI manage your context docs, every-time they finish the 0->1 or 1->10 iteration tasks
+
+## Reference
+
+### React.bp.md
+
+```markdown
+# React App Development Instructions
+
+## Core Principles
+
+- Design first, then implement
+- Use appropriate state management (zustand recommended)
+- Decompose UI into View, Business, and Basic components
+- Enforce data immutability
+- Maintain component orthogonality (separation of responsibilities)
+- Use object-oriented paradigm with TypeScript for complex business logic
+
+## Performance Optimization
+
+- Prevent unnecessary re-renders:
+
+  - Don't create component classes in render functions
+  - Pass state to leaf nodes when possible
+  - Pass children as props
+  - Use React.memo to prevent downward updates
+  - Use useMemo/useCallback for expensive operations
+  - Use unique keys for lists
+  - Use useMemo for Context values
+  - Separate data and API methods in Context
+  - Use multiple Context providers instead of one
+  - Implement Context Selectors
+
+- Decompose components to minimize render scope
+- Implement appropriate caching strategies
+- Use RenderHighlight in React DevTools to detect render issues
+- Optimize package size with TreeShaking
+
+## Stability Guidelines
+
+- Use mature libraries with version locks
+- Prevent circular dependencies in Hooks
+- Implement XSS protection
+- Add ErrorBoundary for error handling
+
+## Maintainability Guidelines
+
+- Unify code style with linters
+- Standardize directory and project organization
+- Apply design patterns and principles
+- Strictly separate views and logic
+- Limit file length to 500 lines maximum
+```
+
+### trace
+
+* 2025-09-10 initial version marked
