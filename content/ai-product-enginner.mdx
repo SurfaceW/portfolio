@@ -12,6 +12,19 @@ tags: ['Wiki', 'AI', 'Product', 'Engineer', 'en']
 * AI fundamentals
 * LLM fundamentals
 
+Basic Theory and Patterns Evolution
+
+| Stage   | Technical Focus           | Capability Shift                        | Core Architectural Constraint                 |
+| ------- | ------------------------- | --------------------------------------- | --------------------------------------------- |
+| Stage 1 | Transformers / MoE        | Large-scale language processing         | Lack of intent alignment or reasoning         |
+| Stage 2 | Instruction Fine-Tuning   | Improved alignment with user goals      | Brittle across diverse or novel tasks         |
+| Stage 3 | RLHF                      | Human-centric value alignment           | Highly dependent on human evaluation          |
+| Stage 4 | Tool Integration          | Active capability via external APIs     | Lack of autonomous planning/memory            |
+| Stage 5 | RAG                       | Real-time factual grounding             | Static knowledge and grounding issues         |
+| Stage 6 | Single-Agent Autonomy     | Autonomous planning and execution       | Limited to sequential, linear problem-solving |
+| Stage 7 | Multi-Agent Collaboration | Distributed, specialized orchestration  | High coordination and state complexity        |
+| Stage 8 | Persistent Expert Agents  | Long-term learning and domain expertise | Ongoing research into self-evolving memory    |
+
 ## LLM Train
 
 * MLOps
@@ -63,26 +76,51 @@ SOP
 
 ## LLM Prompting Engineering
 
-> Context Engineering
-
-* prompting engineering BP for human
+* prompting engineering BP for human -> write the best prompts for your tasks
   * classic patterns: one / few shots, chain-of-thought, self-consistency, reAct etc.
-* context summary and chunking
-* prompt compression (information compression)
+* prompt management (version, testing, validation, safety, etc.)
+* AI driven prompting optimization (prompting refine by AI and auto.)
+  * DSPy, textGuard, promptWizard, GRAD-SUM, ell, StarGo ...
+
+> Agentic System Context Engineering
+
+* write context
+  * memories
+  * state
+  * scratch-pad
+  * ...
+* select context
+  * tools retrieval
+  * docs / knowledge retrieval
+  * memory retrieval
+  * ...
+* compress context
+  * prompt compression (information compression)
+  * summary by LLM
+  * trim by rules
+  * ...
+* isolate context
+  * in state
+  * hold in environment / sandbox
+  * partition among agents
+  * ...
+
+> Make agent select tools to organize and mange its runtime context (CURD operation is maintained by agent itself)
+
+## LLM Select
+
 * pick and compose right LLMs for the task
   * model family selection
     * open-source LLMs family
     * commercial LLMs family
   * latency, cost, throughput, quality, etc.
 * LLM parameters (tokens, top-p, temperature, etc.)
-* prompt management (version, testing, validation, safety, etc.)
-* AI driven prompting optimization (prompting refine by AI and auto.)
-  * DSPy, textGuard, promptWizard, GRAD-SUM, ell, StarGo ...
 
 ## LLM Agentic Systems
 
 * basic patterns:
   * CoT
+  * BDI = Belief, Desire, Intention
   * ReAct
   * passive goal creator
   * proactive goal creator
@@ -97,6 +135,9 @@ SOP
   * tool execution sandbox
   * agent evaluator
   * multi-modal guardrails
+  * serial v.s. parallel tool execution
+  * plan and execute framework
+  * graph-based control flow
   * ...
 * basic principles for agent build
 * human-in-loop
@@ -105,6 +146,7 @@ SOP
     * graph-based v.s. tree-based
     * vector store v.s. graph db v.s. relational db
     * file systems
+  * A-MEM: Dynamic and Self-Evolving memory
 * context-sizing control
 * tool-call and skills management
   * code execution
@@ -120,6 +162,7 @@ SOP
   * ReAct agent
   * reflection x planning x action
   * RPA loop: perception x reasoning x action loop
+  * Effective HITL (Human in the Loop)
   * ...
 * user-interface customization
 * knowledge and RAG enhancements
@@ -136,8 +179,10 @@ SOP
   * reranking before generation, response compression, approximate search tuning
   * distillation/routing to small models; speculative decoding
   * SLAs with adaptive quality tiers, cost/perf dashboards
-* agentic mesh
+  * prompting cache (prompt cache)
+* agentic mesh / multiple agent system (MAS)
   * memory share and management among agents
+    * Blackboard Model architecture
   * centralized control v.s. de-centralized and self-organized
   * hierarchical v.s. flatten
   * serial v.s. parallel
@@ -173,8 +218,20 @@ practical patterns:
 ### Frameworks
 
 * ai-sdk (node / javascript)
-* LangChain (python)
-* LangGraph (python)
+* LangChain (python) / LangGraph (python)
+* AutoGPT
+* AgentOps
+* MetaGPT
+* CrewAI
+* ...
+
+| Feature          | CrewAI                      | LangGraph                     | AutoGen                        |
+| ---------------- | --------------------------- | ----------------------------- | ------------------------------ |
+| Primary Approach | Role-based / Team structure | Graph-based / State machine   | Conversation-based interaction |
+| State Management | Central Orchestrator        | Strong-typed Stateful Graphs  | Contextual Memory Engine       |
+| Task Allocation  | Bidding Mechanism / Role    | Predefined Node Transitions   | Iterative Agent Dialogue       |
+| Complexity Level | Intuitive / Low-to-Moderate | Advanced / High Control       | Modular / Moderate-to-High     |
+| Best Use Case    | Cross-functional projects   | Supply chain / Data pipelines | Software development / Coding  |
 
 ### Platforms
 
@@ -188,8 +245,9 @@ LLM Orchestration Platforms:
 * OpenAI Agent Builder
 * Dify / Coze
 * n8n
+* Gumloop (AgentHub)
 
-Observation
+Observation: Monitoring real-time agent actions, including tool usage and reasoning paths.
 
 * LangSmith
 
@@ -259,3 +317,12 @@ OpenSource research:
 ## Reference
 
 * [LLM dev stack guide](https://zhuanlan.zhihu.com/p/694428893)
+<<<<<<< HEAD
+=======
+
+---
+
+trace
+
+* (26-01-04) add more products and frameworks to the wiki
+>>>>>>> 220fd38 (feat: enhance AI product engineering documentation with detailed theory, patterns evolution, and agentic system frameworks)
