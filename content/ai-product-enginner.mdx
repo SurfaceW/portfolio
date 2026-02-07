@@ -1,6 +1,6 @@
 ---
 title: '💠 AI First Product Engineer Wiki'
-publishedAt: '2025-12-02'
+publishedAt: '2026-02-07'
 summary: "A wiki for AI First Product Engineer to learn and grow."
 tags: ['Wiki', 'AI', 'Product', 'Engineer', 'en']
 ---
@@ -25,11 +25,21 @@ Basic Theory and Patterns Evolution
 | Stage 7 | Multi-Agent Collaboration | Distributed, specialized orchestration  | High coordination and state complexity        |
 | Stage 8 | Persistent Expert Agents  | Long-term learning and domain expertise | Ongoing research into self-evolving memory    |
 
+## LLM Ops
+
+* MLOps: Abstract out the common computing/storage layer, taking care of capacity, scheduling, scaling, and load balancing.
+  * compute layer: GPU cluster setup and management to fully utilize the hardware
+  * Scaling: Automatic and seamless scaling up and down, from on-premise to cloud when needed
+  * Scaling: Support multiple models with dynamic model loading
+  * Operations: Monitor usage of computing resources, and status of training and inference jobs
+  * Operations: Generate data for usage stats and metrics dashboard, and alert when anomaly detected
+  * Platform: Training / Fine-tuning: improve training throughput, reliability and efficiency
+  * Platform: Inference: Leverage the latest and most efficient open source framework for LLM inference to reduce latency and improve throughput
+  * Platform: Evaluation and Benchmarking: automatically evaluate models' performance on datasets of interests
+  * Platform: A/B Testing: capability for online A/B testing to compare features
+* Unified AI Gateway: Abstract out the common API/SDK layer, taking care of authentication, authorization, rate limiting, error handling, logging, monitoring, and alerts.
+
 ## LLM Train
-
-* MLOps
-
----
 
 * pre-training
 * post-training
@@ -323,3 +333,4 @@ OpenSource research:
 trace
 
 * (26-01-04) add more products and frameworks to the wiki
+* (26-02-07) add more details about LLM Ops and Infra.
