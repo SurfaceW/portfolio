@@ -17,12 +17,14 @@ export async function PostListServer({
     params.lang = 'en'
   }
 
+  const decodedTag = params.tag ? decodeURIComponent(params.tag) : undefined
+
   return (
     <section>
       <h1 hidden={!!listOnly} className="font-bold text-2xl mb-4 tracking-tighter">
         POSTS from ARNO
-        {params?.tag && (
-          <span className="text-gray-700 mt-4 text-lg block">#{params?.tag}</span>
+        {decodedTag && (
+          <span className="text-gray-700 mt-4 text-lg block">#{decodedTag}</span>
         )}
       </h1>
       {allBlogs
@@ -35,8 +37,8 @@ export async function PostListServer({
         
         })
         .filter((post: any) => {
-          if (params.tag) {
-            return post.tags?.includes(params.tag)
+          if (decodedTag) {
+            return post.tags?.includes(decodedTag)
           }
           return true
         })
