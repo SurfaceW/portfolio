@@ -1,0 +1,224 @@
+---
+title: '🧭 Spec-Kit + Spec-Driven Design (SDD) — Simple BP Guide'
+publishedAt: '2026-02-26'
+summary: 'A simple guide to Spec-Kit + Spec-Driven Design (SDD) for spec-driven development.'
+tags: ['Spec-Kit', 'Spec-Driven', 'Design', 'BP', 'en']
+---
+
+## Spec-Kit + Spec-Driven Design (SDD) — Simple BP Guide 🧭
+
+### 0) What it’s for (1 sentence)
+
+Use Spec-kit + SDD to make AI-assisted development **reliable and maintainable** by turning “chat context” into **versioned, reviewable artifacts** (spec/plan/tasks) stored in Git. 🧠➡️📁
+
+---
+
+## 1) When to use it ✅ / when to skip it ❌
+
+### Use it when ✅
+
+* A feature will live **> 3 months** or has non-trivial business rules
+* Multiple contributors (or future-you) need to understand “why”
+* You’ve seen AI break existing behavior while adding new features
+* The work needs architecture boundaries (modules, aggregates, invariants)
+
+### Skip (or lighten) when ❌
+
+* Quick demos, throwaway scripts, “one-night hack”
+* Tiny bugfix / UI tweak (“5-minute change”)
+* Pure CRUD/static pages with little domain logic
+
+**Rule of thumb:** Spec-kit is a **heavy tool**—use it for **complexity**, not ceremony. ⚖️
+
+---
+
+## 2) Core idea (the mental model) 🧩
+
+AI has:
+
+* **Limited session memory**
+* **High variance output**
+* **Risky refactors across unrelated files**
+
+Spec-kit adds:
+
+* **Context anchors**: `spec.md`, `plan.md` (stable, re-usable)
+* **Constraints**: `constitution.md` (non-negotiable principles)
+* **Isolation**: one feature = one folder (and usually one branch)
+
+---
+
+## 3) Minimal workflow (Spec → Plan → Tasks → Code) 🏗️
+
+### Step A — Create a feature “room”
+
+* Run `/speckit.specify "<Feature Title>"`
+* It creates a `specs/<id-or-name>/` directory (and commonly a branch)
+
+### Step B — Write `spec.md` (the “contract”)
+
+Keep it short but specific:
+
+* Problem & goals
+* Non-goals
+* Requirements (functional + non-functional)
+* Domain model vocabulary (entities, aggregates, invariants)
+* Edge cases (the top 10 “ways this breaks”)
+
+### Step C — Write `plan.md` (the “blueprint”)
+
+* Architecture choices (APIs, storage, boundaries)
+* File/module touch list (what will change, what must not)
+* Migration strategy (if needed)
+* Testing approach
+* **Constitution check** (explicitly state compliance)
+
+### Step D — Write `tasks.md` (the “execution checklist”)
+
+* Small, verifiable steps
+* Each task produces a diff you can review
+* Include tests + rollout steps
+
+### Step E — Implement + review
+
+* Code generation/edits should follow tasks
+* Human reviews: architecture boundary + requirements coverage
+* Merge when spec/plan and code align
+
+---
+
+## 4) “Constitution” (project-wide guardrails) 🏛️
+
+Use `.specify/memory/constitution.md` as hard rules, e.g.:
+
+* Layering rules (Service cannot call DB directly)
+* Error handling conventions
+* Logging & observability requirements
+* Security constraints (authn/authz, secrets, encryption)
+* Performance budgets (latency, caching requirements)
+
+**Treat it like law:** if constitution changes, it’s an “architecture change event,” not a casual edit. ⚠️
+
+---
+
+## 5) Preventing the common failures (quick playbook) 🧯
+
+### Failure: “Docs drift / wolf-cry” 📉
+
+Fix:
+
+* Run `/speckit.analyze` regularly (audit spec/plan vs code)
+* When code changes faster than docs: **reverse-update docs using AI**
+* If a spec is dead: mark it `[DEPRECATED]` or create `*-v2` instead of patching forever
+
+### Failure: “AI breaks old features when adding new ones” 💥
+
+Fix:
+
+* Keep features physically isolated (folder + branch)
+* In plan, list **protected files** / “do-not-touch zones”
+* Use small tasks with narrow diffs (reduce blast radius)
+
+### Failure: “Too much process for small work” 🐌
+
+Fix:
+
+* Establish a “免死金牌” policy:
+
+  * small fix → normal PR
+  * complex feature → Spec-kit flow
+
+---
+
+## 6) Brownfield adoption (existing legacy project) 🏚️➡️🏠
+
+Pick one:
+
+1. **Forward-only (recommended)**
+
+* Don’t backfill old code
+* Start using Spec-kit for **new complex features**
+
+2. **Crown jewel backfill**
+
+* Only reverse-spec the modules you repeatedly touch
+* Generate a spec from code using AI (no refactor required)
+
+3. **Baseline snapshot (rare)**
+
+* Create `000-initial-baseline` with high-level architecture only
+* Useful before major refactors or compliance audits
+
+---
+
+## 7) Handling big changes (feature v2 vs edit in place) 🔁
+
+Prefer **new spec folder** when changes are meaningful:
+
+* `specs/001-oauth/` (v1)
+* `specs/008-oauth-pkce-support/` (increment)
+* `specs/015-oauth-ui-redesign/` (major change)
+
+Edit-in-place only for:
+
+* typos
+* truly minor adjustments
+* clarifications that don’t rewrite history
+
+**Principle:** specs are closer to an **immutable ledger** than a wiki. 📜
+
+---
+
+## 8) Parallel development (multi-threading) 🧵
+
+* Feature A = its own branch + spec folder
+* Feature B = separate branch + spec folder
+* Before switching: **commit WIP** (save state), then switch
+
+If B depends on A:
+
+* Define contracts early (interfaces)
+* In B’s plan: declare dependency on A
+* Optionally branch B off A if needed
+
+---
+
+## 9) Naming strategy (keep it simple) 🏷️
+
+Two safe patterns:
+
+### Conservative (max compatibility)
+
+* `001-JIRA-1234-short-name`
+* Keeps numeric prefix tooling happy
+
+### Custom (more invasive)
+
+* `dev-JIRA-1234-short-name`
+* Requires updating scripts that assume `^[0-9]{3}-`
+
+**Recommendation:** start conservative; go custom only if you’ll maintain the tooling long-term.
+
+---
+
+## 10) “Good enough” templates (copy mental structure) 🧾
+
+### spec.md (minimum)
+
+* Goal
+* Scope / Non-goals
+* Requirements (must/should)
+* Domain terms
+* Edge cases
+
+### plan.md (minimum)
+
+* Architecture approach
+* Impacted files/modules
+* Data + API changes
+* Testing plan
+* Constitution check
+
+### tasks.md (minimum)
+
+* Task list (each with expected diff + tests)

@@ -1,6 +1,6 @@
 ---
-title: '🪄 Arno Vibe Coding BP for Developers 2025'
-publishedAt: '2025-09-10'
+title: '🪄 Arno Vibe Coding BP for Developers 2026'
+publishedAt: '2026-02-26'
 summary: 'A comprehensive guide to Vibe Coding best practices for full-stack developers, covering prompt engineering, tool-specific context, human oversight, proactive quality management, and continuous learning.'
 tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 ---
@@ -20,7 +20,104 @@ tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 - **Iterate fast, fail fast** find the way to success fast, it's all about **Speed**. Do VibeCoding often with best AI Models and tools and try **Automate everything you can find with AI**.
 - **Make outcomes legible**. Add explicit success criteria (first “Aha”) and wire metrics early (TTFR/TTFA), define and create your *Aha* moments ~
 
+> let's take Cursor and Claude Code co-work together for spec-driven development as an illustration.
+
+## Setup your tools
+
+### Claude Code
+
+* init `CLAUDE.md` file to setup your agentic system prompt and context, you can use `/init` command to do this.
+* use `/plugins`, `/mcp` and `/skills` to add your favorited plugins, and your own skills and rules.
+* use `/model` to switch models for proper tasks.
+
+### Cursor
+
+* setup your models in Cursor, from tier 1 to tier 3 models of different strengths and capabilities.
+* add *plugins* for third-party services: *Vercel*, *Slack*, *Github*, *Prisma* ... (bundle the Skills, Rules, MCPs, Hooks combination for specific tasks and operations)
+* enable *Browser Automation* for Cursor to do the web browsing and data scraping tasks, debug and trace the operations with *Logs*.
+
 ## Project Context Engineering
+
+### Specs driven development
+
+Layered your context with files:
+
+- `l0`: general human-first design docs, usually focus on the blue-print of the product, architecture, strategies, etc.
+
+e.g. `project.md`, `product.md`, `tech.md`, `release.md` ...
+e.e. or you can briefly use `project.md` to rule them all.
+
+> you can instruct AI to generate this file with the following content:
+
+```markdown
+# AGENT.md
+
+[desc about this file]
+
+## Product
+
+[general description about the product]
+
+[optional][specific SOP guide for this repository if you use spec-driven development]
+
+## Core Philosophy
+
+[core philosophy for the product]
+
+e.g.
+
+* Design first, then implement
+* Simplicity is beauty
+* Concise and clear code is good
+* Keep it simple and stupid
+* Data driven UI
+* Explicit is better than implicit
+* Do not do quickly patch, find root-cause and fix it
+* ...
+
+## CodeRepo
+
+### Commands
+
+[commands for the code repository]
+
+### Tech Stack
+
+[tech stack for the code repository]
+
+### Project Structure
+
+[project structure for the code repository]
+
+* current repo
+* cross-project repo (if in one workspace)
+
+## Tech Best Practices
+
+[tech bp for the code repository]
+
+* general software engineering bp, for OO, FP, etc.
+* programming language or specific tech bp, framework bp, etc.
+* security and privacy bp, etc.
+* ...
+
+[add optional reference for bp of tool, framework, platform,etc.]
+
+* read `electron.bp.md` if you are writing code using `Electron` framework.
+* read `react.bp.md` if you are writing code using `React` framework.
+* read `next.js.bp.md` if you are writing code using `Next.js` 
+* ...
+
+## KeyRules and Principles
+
+[rules for the code repository]
+```
+
+for `Claude Code` and `Cursor` case, we duplicate the `Claude.md` and sync it to cursor global rule.
+
+- `l1`: semi-human design docs, focus on core-features, core-modules, essential design details.
+
+e.g. create *Skill* for complex business workflow or SOPs extraction and organization.
 
 ```
 Business workflow → SOP extraction  → Specs docs → Skills enhancement → Code generation → Knowledge accumulation
@@ -28,53 +125,24 @@ Business workflow → SOP extraction  → Specs docs → Skills enhancement → 
    └──────────────────── Continuous Improvement ←────────────────────────────┘
 ```
 
-### Specs driven development
+> You can optionally use [OpenSpecs](https://github.com/Fission-AI/OpenSpec) or SpecKit or similar tool to help organize specs in project context.
 
-Layered your context with files:
+you can see the [Spec-Kit + Spec-Driven Design (SDD) — Simple BP Guide](/posts/spec-driven-dev) for more details.
 
-- `l0`: general human-first design docs, usually focus on the blue-print of the product, architecture, marketing strategies, etc.
-- `l1`: semi-human design docs, focus on core-features, essential design details.
-- `l2`: ai-first design docs, focus on the details of the implementation, code-gen, demo, etc.
+- `l2`: ai-first design docs, focus on the details of the implementation, code-gen, demo, production specs, etc.
 
 > prefer *markdown* and *mdx* first, pure text pipe is a UNIX philosophy.
 
-or you can use [OpenSpecs](https://github.com/Fission-AI/OpenSpec) similar tool to help organize specs in project context.
+> always instruct AI to write **clean** and **simple** specs, avoid redundant and unnecessary details.
 
-* PRD (FRD) files for production feature specification
-* Tech Specs files for production tech-stack specification
-* Release Logs files for iteration specific context
-* SOP files for specific tasks and operations
 
-## Tools to co-work
-
-- `AI first IDE`: Cursor, VSCode, etc. for daily coding and development with AI
-- `Cli`: Claude Code, Gemini Code, etc. for complex tasks and operations with AGENT.md
-- `MCP` the leverages: more context and operations (actions) to external services and tools.
-  - `Context7` for versioned SDK docs provided
-  - knowledge-base for external services and tools (SOP extracting and organizing)
-- `ClaudeSkill` leverages: progressively disclosure the capabilities of AI for SOPs and tasks.
-
-> general ai-first tools compare and experience [guide](/posts/arno-ai-map)
-
-## Classic Scenarios
-
-- _tab-engineer_ tab, tab, tab for code modifications
-- _0 -> 1 generation_ code generation, and project setups
-  - choose boilerplate with AI context specifications first
-  - use images to guide UI implementation
-- _1 -> 10 generation_ feature iterations
-  - make all _context_ ready to work
-  - use images to guide UI implementation (image with instructions directly on those captures shall be ok)
-- _code refactor_ feel the bad smell code and refactor them always
-- _tests generation and coverage_ all for stable and reliable code
-- _code review_ act like experts to review code and find bugs
-- _commit msgs generation_ with comprehensive msg in commits
-- _code qa_ ask questions and learn code-repos
+## Deep into real-world scenarios
 
 ### Full-Stack Web
 
 * choose well-known tech stack for quick-start projects -> such as [next.js](/posts/nextjs-architecture)
-* use devOPS platforms like *Vercel* for quick integrations and iterations
+* use devOPS platforms like *Vercel* for quick integrations and iterations with plugins and rules.
+* use *Prisma* for database and its plugin cooperation with AI.
 
 ### iOS / MacOS Dev
 
@@ -107,7 +175,7 @@ do the research and give me the best practice for full-stack developer.
 > co-work with AI in deep-thinking for the following documents are nice choices:
 
 - Product L0 Design document
-- Market L0 Design document
+- Market / Business L0 Design document
 - Tech L0 Design document, I used to write an article about the [effective full-stack tech dev](/posts/effective-fullstack-dev)
   - tech architecture specifications
   - BP for tech frameworks / programming / software engineering
@@ -122,18 +190,17 @@ Generate L1 Design context documents about feature iterations, techs and related
 
 write *Release* logs for key-features.
 
-
-## Tips x Techniques
+## Other Tips x Techniques
 
 - commits often for controlling ai modifications in smaller chunks
-- template for prompt-engineering context files
-- use AI to generate l1 ~ l2 design docs
+- let AI first approach to write the specs in *clean* and *simple* way, avoid redundant and unnecessary details.
+- use AI to generate l1 ~ l2 design docs, human to craft l0 design docs.
 - don't hesitate to use more `@` symbol to add context for your ai prompts
 - technology adoption for good models to understand and abstract -> use next.js for example (the guide can be publicly exposed to gain insights and values) -> organize the repo in good shape
 - write prompt by `markdown` can use the tab and completion of code-gen and even make AI finish the related content writing, that's the best practice for writing prompt
 - choose the right models (LLM) to do the right things. e.g. for now Claude is good at handle 0 -> 1 crafting the whole project, but GPT5 in thinking mode is good for complex bugfix and multiple cross files analysis.
 - make AI manage your context docs, every-time they finish the 0->1 or 1->10 iteration tasks
-- co-work and combine with different tools of usage quota to operate different types of tasks to save money. e.g. use Augment for complex agentic task instead of simple QA.
+- co-work and combine with different tools of usage quota to operate different types of tasks to save money. e.g. use Cursor / Claude Code for complex agentic task instead of simple QA.
 - vibe-coding sometimes go astray, let's fallback to original coding experience with AI guide in more detailed operations way.
 - more logs for debugging and tracing the AI's operations (instruct for AI to write logs)
 
@@ -193,3 +260,4 @@ write *Release* logs for key-features.
 
 * 2025-09-10 initial version marked
 * 2026-02-04 add new fresh docs and BP from recently learnt and used in practice
+* (26-02-26) add spec-driven BP and co-work with Cursor and Cla
