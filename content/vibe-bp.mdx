@@ -36,13 +36,15 @@ tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 * add *plugins* for third-party services: *Vercel*, *Slack*, *Github*, *Prisma* ... (bundle the Skills, Rules, MCPs, Hooks combination for specific tasks and operations)
 * enable *Browser Automation* for Cursor to do the web browsing and data scraping tasks, debug and trace the operations with *Logs*.
 
+> for Cursor, `CLAUDE.md` is compatible, just use it as your global rules and instructions.
+
 ## Project Context Engineering
 
-### Specs driven development
+### L0 Design Docs
 
 Layered your context with files:
 
-- `l0`: general human-first design docs, usually focus on the blue-print of the product, architecture, strategies, etc.
+`l0`: general human-first design docs, usually focus on the blue-print of the product, architecture, strategies, etc.
 
 e.g. `project.md`, `product.md`, `tech.md`, `release.md` ...
 e.e. or you can briefly use `project.md` to rule them all.
@@ -113,9 +115,9 @@ e.g.
 [rules for the code repository]
 ```
 
-for `Claude Code` and `Cursor` case, we duplicate the `Claude.md` and sync it to cursor global rule.
+### L1 Design Docs
 
-- `l1`: semi-human design docs, focus on core-features, core-modules, essential design details.
+`l1`: semi-human design docs, focus on core-features, core-modules, essential design details.
 
 e.g. create *Skill* for complex business workflow or SOPs extraction and organization.
 
@@ -129,7 +131,9 @@ Business workflow → SOP extraction  → Specs docs → Skills enhancement → 
 
 you can see the [Spec-Kit + Spec-Driven Design (SDD) — Simple BP Guide](/posts/spec-driven-dev) for more details.
 
-- `l2`: ai-first design docs, focus on the details of the implementation, code-gen, demo, production specs, etc.
+### L2 Design Docs
+
+`l2`: ai-first design docs, focus on the details of the implementation, code-gen, demo, production specs, etc.
 
 > prefer *markdown* and *mdx* first, pure text pipe is a UNIX philosophy.
 
