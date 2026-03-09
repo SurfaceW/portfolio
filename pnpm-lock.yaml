@@ -26,6 +26,9 @@ importers:
       dotenv:
         specifier: ^16.3.1
         version: 16.5.0
+      esbuild-wasm:
+        specifier: ^0.27.3
+        version: 0.27.3
       framer-motion:
         specifier: ^10.16.4
         version: 10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1542,6 +1545,11 @@ packages:
 
   esast-util-from-js@2.0.1:
     resolution: {integrity: sha512-8Ja+rNJ0Lt56Pcf3TAmpBZjmx8ZcK5Ts4cAzIOjsjevg9oSXJnl6SUQ2EevU8tv3h6ZLWmoKL5H4fgWvdvfETw==}
+
+  esbuild-wasm@0.27.3:
+    resolution: {integrity: sha512-AUXuOxZ145/5Az+lIqk6TdJbxKTyDGkXMJpTExmBdbnHR6n6qAFx+F4oG9ORpVYJ9dQYeQAqzv51TO4DFKsbXw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
@@ -5355,6 +5363,8 @@ snapshots:
       acorn: 8.14.1
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.2
+
+  esbuild-wasm@0.27.3: {}
 
   esbuild@0.18.20:
     optionalDependencies:
