@@ -44,9 +44,9 @@ export default function RootPage() {
       slug: "/posts/nextjs-architecture",
     },
     {
-      title: "✨ VibeCoding x Cursor Best Practice",
+      title: "✨ VibeCoding / Agentic Coding x Cursor Best Practice",
       description: "Arno's best practices for VibeCoding and Cursor.",
-      slug: "/posts/cursor.bp",
+      slug: "/posts/vibe.bp",
     },
     {
       title: "🗺️ Arno AI Map",
@@ -59,10 +59,10 @@ export default function RootPage() {
       slug: "/posts/mac-master",
     },
     {
-      title: "📝 Explore React Project Best Practice",
-      description: "Arnold's React Project Best Practice Guide",
-      slug: "/posts/react-bp",
-    },
+      title: "🧠 Thinking tools and Mental Models",
+      description: "Arno's Thinking tools for AI and human.",
+      slug: "/posts/models",
+    }
   ];
 
   return (
@@ -128,7 +128,7 @@ export default function RootPage() {
 
           {/* Career Journey - Full width on mobile */}
           <div className="col-span-1 sm:col-span-2 row-span-1 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/30 dark:hover:to-orange-800/30">
-            <CareerCard careerSteps={["Baidu and Zhihu Intern.", "Alibaba EI team", "Alibaba DingTalk x Yida"]} />
+            <CareerCard careerSteps={["Baidu and Zhihu Intern.", "Alibaba EI team", "Alibaba DingTalk x Yida", "Zoom"]} />
           </div>
 
           {/* Social Media Hub - Full width on mobile */}
