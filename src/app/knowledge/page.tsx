@@ -1,95 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { transformJSX, buildHTMLDoc, buildJSXDoc } from './_lib/transform'
 
 type Mode = 'html' | 'jsx'
-
-let esbuildInitPromise: Promise<void> | null = null
-
-async function initEsbuild() {
-  if (!esbuildInitPromise) {
-    const esbuild = await import('esbuild-wasm')
-    esbuildInitPromise = esbuild.initialize({
-      wasmURL: '/esbuild.wasm',
-      worker: true,
-    })
-  }
-  await esbuildInitPromise
-}
-
-function preprocessJSX(code: string): { code: string; name: string } {
-  let processed = code
-  let name = '__App__'
-
-  const fnMatch = code.match(/export\s+default\s+function\s+(\w+)/)
-  const clsMatch = code.match(/export\s+default\s+class\s+(\w+)/)
-  const arrowMatch = code.match(/(?:export\s+default\s+)?(?:const|let)\s+(\w+)\s*=.*?(?:=>|\bfunction\b)/)
-
-  if (fnMatch) {
-    name = fnMatch[1]
-    processed = processed.replace(
-      /export\s+default\s+function\s+(\w+)/,
-      'function $1'
-    )
-  } else if (clsMatch) {
-    name = clsMatch[1]
-    processed = processed.replace(
-      /export\s+default\s+class\s+(\w+)/,
-      'class $1'
-    )
-  } else if (arrowMatch) {
-    name = arrowMatch[1]
-    processed = processed.replace(/export\s+default\s+/, '')
-  } else {
-    const idMatch = code.match(/export\s+default\s+(\w+)/)
-    if (idMatch) {
-      name = idMatch[1]
-      processed = processed.replace(/export\s+default\s+\w+/, '')
-    }
-  }
-
-  processed += `\n\nReactDOM.createRoot(document.getElementById('root')).render(React.createElement(${name}, null));\n`
-  return { code: processed, name }
-}
-
-async function transformJSX(rawCode: string): Promise<string> {
-  await initEsbuild()
-  const esbuild = await import('esbuild-wasm')
-  const { code } = preprocessJSX(rawCode)
-  const result = await esbuild.transform(code, {
-    loader: 'jsx',
-    jsx: 'transform',
-    jsxFactory: 'React.createElement',
-    jsxFragment: 'React.Fragment',
-    target: 'es2017',
-  })
-  return result.code
-}
-
-function buildHTMLDoc(html: string): string {
-  const trimmed = html.trim()
-  if (/^<!doctype|^<html/i.test(trimmed)) return html
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${html}</body></html>`
-}
-
-function buildJSXDoc(transformedCode: string): string {
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-</head>
-<body>
-  <div id="root"></div>
-  <script>
-${transformedCode}
-  </script>
-</body>
-</html>`
-}
 
 export default function KnowledgePage() {
   const [mode, setMode] = useState<Mode>('jsx')
@@ -111,12 +25,11 @@ export default function KnowledgePage() {
     setError(null)
     setProcessing(true)
     try {
-      if (currentMode === 'html') {
-        setSrcDoc(buildHTMLDoc(value))
-      } else {
-        const transformed = await transformJSX(value)
-        setSrcDoc(buildJSXDoc(transformed))
-      }
+      const doc =
+        currentMode === 'html'
+          ? buildHTMLDoc(value)
+          : buildJSXDoc(await transformJSX(value))
+      setSrcDoc(doc)
       setGeneration((g) => g + 1)
     } catch (e: any) {
       const msg = e?.message ?? String(e)
@@ -148,8 +61,10 @@ export default function KnowledgePage() {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e]" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}>
-      {/* top bar */}
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e]"
+      style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
+    >
       <div className="flex items-center gap-3 px-4 h-10 border-b border-white/[0.06] shrink-0">
         <div className="flex gap-0.5 rounded-md bg-white/[0.04] p-0.5">
           {(['html', 'jsx'] as Mode[]).map((m) => (
@@ -186,9 +101,7 @@ export default function KnowledgePage() {
         )}
       </div>
 
-      {/* split pane */}
       <div className="flex flex-1 overflow-hidden">
-        {/* editor */}
         <div className="w-1/2 flex flex-col border-r border-white/[0.06]">
           <textarea
             className="flex-1 bg-transparent text-[12.5px] leading-relaxed text-white/50 p-4 resize-none focus:outline-none placeholder-white/[0.1]"
@@ -206,7 +119,6 @@ export default function KnowledgePage() {
           />
         </div>
 
-        {/* preview */}
         <div className="w-1/2 relative overflow-hidden bg-white">
           {srcDoc ? (
             <iframe
