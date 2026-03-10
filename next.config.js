@@ -31,18 +31,38 @@ const nextConfig = {
         permanent: true,
       },
     ];
-  }
+  },
+  async headers() {
+    return [
+      {
+        source: '/esbuild.wasm',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ]
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = [...(config.externals || []), 'esbuild-wasm']
+    }
+    return config
+  },
 }
 
 // https://nextjs.org/docs/advanced-features/security-headers
 const ContentSecurityPolicy = `
     default-src 'self' vercel.live;
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live unpkg.com cdn.tailwindcss.com;
     style-src 'self' 'unsafe-inline';
     img-src * blob: data:;
     media-src 'none';
     connect-src *;
     font-src 'self' data:;
+    worker-src blob:;
 `
 
 const securityHeaders = [
