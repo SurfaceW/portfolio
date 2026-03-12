@@ -18,6 +18,9 @@ const navItems = {
   '/quotes': {
     name: 'QUOTES',
   },
+  '/knowledge': {
+    name: 'KNOWLEDGE',
+  },
   '/posts/rss': {
     name: 'RSS',
     target: '_blank'
@@ -47,6 +50,9 @@ export default function Navbar() {
                 let isActive = path === pathname;
                 if (path === '/posts') {
                   isActive = pathname.startsWith('/posts');
+                }
+                if (path === '/knowledge') {
+                  isActive = pathname.startsWith('/knowledge');
                 }
                 return (
                   <Link

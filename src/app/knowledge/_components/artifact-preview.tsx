@@ -53,7 +53,7 @@ export default function ArtifactPreview({ code, mode, slug }: Props) {
           href="/knowledge"
           className="text-white/20 hover:text-white/45 text-[11px] transition-colors shrink-0"
         >
-          ← editor
+          ← knowledge
         </a>
         <div className="h-3.5 w-px bg-white/[0.06] shrink-0" />
         <span className="text-[11px] text-white/20 truncate min-w-0">
