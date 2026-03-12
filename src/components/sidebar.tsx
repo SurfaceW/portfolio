@@ -33,6 +33,8 @@ export default function Navbar() {
 
   const { lang } = useParams<{ lang: string }>();
 
+  if (pathname.startsWith('/knowledge')) return null;
+
   if (pathname.includes('/blog/')) {
     pathname = '/blog';
   }

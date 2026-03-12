@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Arno's interactive knowledge base — visual guides, demos, and living documents built with HTML and JSX.",
   openGraph: {
     title: 'Knowledge | Arno',
-    description: "Interactive knowledge base — visual guides, demos, and living documents.",
+    description: 'Interactive knowledge base — visual guides, demos, and living documents.',
     url: 'https://arno.surfacew.com/knowledge',
     siteName: 'Arno',
     type: 'website',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Knowledge | Arno',
-    description: "Interactive knowledge base — visual guides, demos, and living documents.",
+    description: 'Interactive knowledge base — visual guides, demos, and living documents.',
   },
   robots: {
     index: true,
@@ -34,54 +34,54 @@ export default function KnowledgeDashboard() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="flex items-start justify-between mb-10">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight mb-1">Knowledge</h1>
-          <p className="text-neutral-500 dark:text-neutral-400 text-sm">
-            Interactive visual guides, demos, and living documents.
-          </p>
-        </div>
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e] overflow-hidden"
+      style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
+    >
+      <div className="flex items-center justify-between px-5 h-10 border-b border-white/[0.06] shrink-0">
+        <span className="text-[11px] text-white/40 tracking-widest uppercase">Knowledge</span>
         <Link
           href="/knowledge/playground"
-          className="text-[11px] text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 border border-neutral-200 dark:border-neutral-800 rounded-md px-3 py-1.5 transition-colors shrink-0 mt-1"
+          className="text-[11px] text-white/20 hover:text-white/45 transition-colors"
         >
-          Playground →
+          playground →
         </Link>
       </div>
 
-      {sections.size === 0 && (
-        <p className="text-neutral-400 text-sm">No artifacts found.</p>
-      )}
+      <div className="flex-1 overflow-y-auto px-5 py-6">
+        {sections.size === 0 && (
+          <p className="text-white/20 text-xs">No artifacts found.</p>
+        )}
 
-      {Array.from(sections.entries()).map(([section, items]) => (
-        <section key={section} className="mb-10">
-          <h2 className="text-[11px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-4 font-medium">
-            {section.charAt(0).toUpperCase() + section.slice(1)}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {items.map((item) => (
-              <Link
-                key={item.key}
-                href={`/knowledge/${item.key}`}
-                className="group flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 px-4 py-3.5 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all"
-              >
-                <span className="text-2xl leading-none mt-0.5 shrink-0">{item.meta.emojiIcon}</span>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100 group-hover:text-black dark:group-hover:text-white transition-colors truncate">
-                    {item.meta.title}
-                  </p>
-                  {item.meta.desc && (
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 leading-relaxed line-clamp-2">
-                      {item.meta.desc}
+        {Array.from(sections.entries()).map(([section, items]) => (
+          <section key={section} className="mb-8">
+            <p className="text-[9px] uppercase tracking-widest text-white/20 mb-3">
+              {section}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {items.map((item) => (
+                <Link
+                  key={item.key}
+                  href={`/knowledge/${item.key}`}
+                  className="group flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12] px-4 py-3 transition-all"
+                >
+                  <span className="text-xl leading-none mt-0.5 shrink-0">{item.meta.emojiIcon}</span>
+                  <div className="min-w-0">
+                    <p className="text-[12px] text-white/60 group-hover:text-white/85 transition-colors truncate">
+                      {item.meta.title}
                     </p>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
+                    {item.meta.desc && (
+                      <p className="text-[11px] text-white/25 mt-0.5 leading-relaxed line-clamp-2">
+                        {item.meta.desc}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   )
 }
