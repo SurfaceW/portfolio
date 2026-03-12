@@ -1,139 +1,86 @@
-'use client'
+import Link from 'next/link'
+import type { Metadata } from 'next'
+import { getArtifactsWithMeta } from './_lib/artifacts'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { transformJSX, buildHTMLDoc, buildJSXDoc } from './_lib/transform'
+export const metadata: Metadata = {
+  title: 'Knowledge',
+  description: "Arno's interactive knowledge base — visual guides, demos, and living documents built with HTML and JSX.",
+  openGraph: {
+    title: 'Knowledge | Arno',
+    description: 'Interactive knowledge base — visual guides, demos, and living documents.',
+    url: 'https://arno.surfacew.com/knowledge',
+    siteName: 'Arno',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Knowledge | Arno',
+    description: 'Interactive knowledge base — visual guides, demos, and living documents.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
-type Mode = 'html' | 'jsx'
+export default function KnowledgeDashboard() {
+  const artifacts = getArtifactsWithMeta()
 
-export default function KnowledgePage() {
-  const [mode, setMode] = useState<Mode>('jsx')
-  const [code, setCode] = useState('')
-  const [srcDoc, setSrcDoc] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [processing, setProcessing] = useState(false)
-  const [generation, setGeneration] = useState(0)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
-  const modeRef = useRef(mode)
-  modeRef.current = mode
-
-  const compile = useCallback(async (value: string, currentMode: Mode) => {
-    if (!value.trim()) {
-      setSrcDoc('')
-      setError(null)
-      return
-    }
-    setError(null)
-    setProcessing(true)
-    try {
-      const doc =
-        currentMode === 'html'
-          ? buildHTMLDoc(value)
-          : buildJSXDoc(await transformJSX(value))
-      setSrcDoc(doc)
-      setGeneration((g) => g + 1)
-    } catch (e: any) {
-      const msg = e?.message ?? String(e)
-      setError(msg.replace(/\[esbuild-wasm\]?\s*/gi, '').trim())
-      setSrcDoc('')
-    } finally {
-      setProcessing(false)
-    }
-  }, [])
-
-  const handleChange = useCallback(
-    (value: string) => {
-      setCode(value)
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-      debounceRef.current = setTimeout(() => compile(value, modeRef.current), 600)
-    },
-    [compile]
-  )
-
-  useEffect(() => {
-    if (code.trim()) compile(code, mode)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode])
-
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-    }
-  }, [])
+  const sections = new Map<string, typeof artifacts>()
+  for (const artifact of artifacts) {
+    const section = artifact.slug[0] ?? 'misc'
+    if (!sections.has(section)) sections.set(section, [])
+    sections.get(section)!.push(artifact)
+  }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e]"
+      className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e] overflow-hidden"
       style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
     >
-      <div className="flex items-center gap-3 px-4 h-10 border-b border-white/[0.06] shrink-0">
-        <div className="flex gap-0.5 rounded-md bg-white/[0.04] p-0.5">
-          {(['html', 'jsx'] as Mode[]).map((m) => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className={`px-3 py-0.5 text-xs rounded transition-all ${
-                mode === m
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/25 hover:text-white/45'
-              }`}
-            >
-              {m.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        <div className="h-3.5 w-px bg-white/[0.08]" />
-
-        {processing && (
-          <span className="text-[10px] text-white/20 tracking-widest uppercase">
-            compiling
-          </span>
-        )}
-        {!processing && error && (
-          <span className="text-[11px] text-red-400/70 truncate max-w-lg leading-tight">
-            {error}
-          </span>
-        )}
-        {!processing && !error && srcDoc && (
-          <span className="text-[10px] text-emerald-500/40 tracking-widest uppercase">
-            ready
-          </span>
-        )}
+      <div className="flex items-center justify-between px-5 h-10 border-b border-white/[0.06] shrink-0">
+        <span className="text-[11px] text-white/40 tracking-widest uppercase">Knowledge</span>
+        <Link
+          href="/knowledge/playground"
+          className="text-[11px] text-white/20 hover:text-white/45 transition-colors"
+        >
+          playground →
+        </Link>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/2 flex flex-col border-r border-white/[0.06]">
-          <textarea
-            className="flex-1 bg-transparent text-[12.5px] leading-relaxed text-white/50 p-4 resize-none focus:outline-none placeholder-white/[0.1]"
-            placeholder={
-              mode === 'html'
-                ? 'Paste HTML here…'
-                : 'Paste JSX here…\n\nexport default function App() {\n  return (\n    <div className="p-8">\n      <h1>Hello</h1>\n    </div>\n  )\n}'
-            }
-            value={code}
-            onChange={(e) => handleChange(e.target.value)}
-            spellCheck={false}
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-          />
-        </div>
+      <div className="flex-1 overflow-y-auto px-5 py-6">
+        {sections.size === 0 && (
+          <p className="text-white/20 text-xs">No artifacts found.</p>
+        )}
 
-        <div className="w-1/2 relative overflow-hidden bg-white">
-          {srcDoc ? (
-            <iframe
-              key={generation}
-              className="w-full h-full border-0"
-              srcDoc={srcDoc}
-              sandbox="allow-scripts"
-              title="preview"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full bg-[#fafafa] text-slate-300 text-sm select-none">
-              {mode === 'html' ? 'paste HTML to preview' : 'paste JSX to preview'}
+        {Array.from(sections.entries()).map(([section, items]) => (
+          <section key={section} className="mb-8">
+            <p className="text-[9px] uppercase tracking-widest text-white/20 mb-3">
+              {section}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {items.map((item) => (
+                <Link
+                  key={item.key}
+                  href={`/knowledge/${item.key}`}
+                  className="group flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12] px-4 py-3 transition-all"
+                >
+                  <span className="text-xl leading-none mt-0.5 shrink-0">{item.meta.emojiIcon}</span>
+                  <div className="min-w-0">
+                    <p className="text-[12px] text-white/60 group-hover:text-white/85 transition-colors truncate">
+                      {item.meta.title}
+                    </p>
+                    {item.meta.desc && (
+                      <p className="text-[11px] text-white/25 mt-0.5 leading-relaxed line-clamp-2">
+                        {item.meta.desc}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
             </div>
-          )}
-        </div>
+          </section>
+        ))}
       </div>
     </div>
   )

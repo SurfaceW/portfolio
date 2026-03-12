@@ -1,5 +1,6 @@
 import { allBlogs } from 'contentlayer/generated';
 import { quotes } from '@/data/quotes';
+import { getArtifactsWithMeta } from './knowledge/_lib/artifacts';
 
 export default async function sitemap() {
   const blogs = allBlogs.map((post) => ({
@@ -12,12 +13,17 @@ export default async function sitemap() {
     lastModified: quote.date || new Date().toISOString().split('T')[0],
   }));
 
-  const routes = ['', '/posts/topics', '/rss', '/idea', '/about', '/quotes'].map(
+  const routes = ['', '/posts/topics', '/rss', '/idea', '/about', '/quotes', '/knowledge', '/knowledge/playground'].map(
     (route) => ({
       url: `https://arno.surfacew.com${route}`,
       lastModified: new Date().toISOString().split('T')[0],
     })
   );
+
+  const knowledgeArtifacts = getArtifactsWithMeta().map((artifact) => ({
+    url: `https://arno.surfacew.com/knowledge/${artifact.key}`,
+    lastModified: new Date().toISOString().split('T')[0],
+  }));
 
   const languageTags = new Set<string>();
   const contentTags = new Set<string>();
@@ -51,5 +57,5 @@ export default async function sitemap() {
     });
   });
 
-  return [...routes, ...blogs, ...quotePages, ...tagLangRoutes];
+  return [...routes, ...blogs, ...quotePages, ...tagLangRoutes, ...knowledgeArtifacts];
 }

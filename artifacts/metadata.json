@@ -1,0 +1,17 @@
+{
+  "demo/agentic-skills-guide": {
+    "title": "Agentic Skills Guide",
+    "emojiIcon": "🤖",
+    "desc": "A visual guide to modern agentic AI skills, capabilities, and architectural patterns."
+  },
+  "demo/ragdoll-cat-guide": {
+    "title": "Ragdoll Cat Guide",
+    "emojiIcon": "🐱",
+    "desc": "A comprehensive illustrated guide to ragdoll cat care, personality traits, and characteristics."
+  },
+  "demo/hello": {
+    "title": "Hello World",
+    "emojiIcon": "👋",
+    "desc": "A simple hello world interactive demo — the starting point of every great journey."
+  }
+}

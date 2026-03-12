@@ -3,6 +3,18 @@ import path from 'path'
 
 export type ArtifactMode = 'html' | 'jsx'
 
+export type ArtifactMeta = {
+  title: string
+  emojiIcon: string
+  desc: string
+}
+
+export type ArtifactEntry = {
+  slug: string[]
+  key: string
+  meta: ArtifactMeta
+}
+
 const ARTIFACTS_DIR = path.join(process.cwd(), 'artifacts')
 
 export function scanArtifacts(): { slug: string[] }[] {
@@ -26,6 +38,33 @@ export function scanArtifacts(): { slug: string[] }[] {
 
   walk(ARTIFACTS_DIR, [])
   return results
+}
+
+export function readMetadata(): Record<string, ArtifactMeta> {
+  const metaPath = path.join(ARTIFACTS_DIR, 'metadata.json')
+  if (!fs.existsSync(metaPath)) return {}
+  try {
+    return JSON.parse(fs.readFileSync(metaPath, 'utf-8'))
+  } catch {
+    return {}
+  }
+}
+
+export function getArtifactsWithMeta(): ArtifactEntry[] {
+  const artifacts = scanArtifacts()
+  const metadata = readMetadata()
+  return artifacts.map(({ slug }) => {
+    const key = slug.join('/')
+    return {
+      slug,
+      key,
+      meta: metadata[key] ?? {
+        title: slug[slug.length - 1].replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        emojiIcon: '📄',
+        desc: '',
+      },
+    }
+  })
 }
 
 export function resolveArtifact(
