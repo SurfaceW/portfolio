@@ -14,7 +14,7 @@ tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 
 - **Think and act in a [Systematic](/posts/systematic-systemic) way**, do good design in system architecture, software architecture, product architecture, etc.
 - **Balance and understand the boundary of Human and AI**, know which jobs and tasks are suitable for AI and which are better handled by humans. Understand the three patterns of AI x Human, they are **Human First, AI Assist**, **AI First, Human Assist in Sync** and **AI First, Human Assist in Async**.
-- **Strategic prompting engineering** is the basic skills to master, be a prompt master! [prompt-guide](/posts/arno-write-best-prompts), make sure you can craft clear, contextual and iterative prompts with AI. **Context engineering** play a vital role here, provide precise and accurate to reduce the illusion of AI. When provide context for ai, make sure the **observability for AI** is well concerned.
+- **Prompts -> Context engineering** its all about prompt properly and manage context in a good way. Make full use of `AGENTS.md`, `SKILLS.md` (skills for knowledge and SOP / workflow definition), `TOOLs / MCPs / Hooks` for enhancements the capabilities of AI.
 - **Divide and conquer**, break down complex tasks into manageable tasks and instruct AI to do the job that is with less ambiguity. Human do high-level first design and AI do the low-level tasks. Make *Atomic* changes per task, and write key-tests for core features and tasks.
 - **Small and simple is powerful -> less is more** try to keep the complexity of your project in a _AI can control_ way, use better modular and software engineering techniques to manage the complexity.
 - **Iterate fast, fail fast** find the way to success fast, it's all about **Speed**. Do VibeCoding / Agentic coding often with best AI Models and tools and try **Automate everything you can find with AI**.
@@ -26,9 +26,11 @@ tags: ['Agentic', 'VibeCoding', 'Software', 'AI', 'en']
 
 ### Claude Code
 
-* init `CLAUDE.md` file to setup your agentic system prompt and context, you can use `/init` command to do this.
-* use `/plugins`, `/mcp` and `/skills` to add your favorited plugins, and your own skills and rules.
+* init `CLAUDE.md` or `AGENTS.md` file to setup your agentic system prompt and context, you can use `/init` command to do this.
+* use `/plugins`, `/mcp` and `/skills` to add your favorite plugins, and your own skills and rules.
 * use `/model` to switch models for proper tasks.
+
+Here are the [Claude Code BP](/knowledge/ai/claude-code-bp) before you start.
 
 ### Cursor
 
@@ -199,7 +201,7 @@ write *Release* logs for key-features.
 - commits often for controlling ai modifications in smaller chunks
 - let AI first approach to write the specs in *clean* and *simple* way, avoid redundant and unnecessary details.
 - use AI to generate l1 ~ l2 design docs, human to craft l0 design docs.
-- don't hesitate to use more `@` symbol to add context for your ai prompts
+- don't hesitate to use more `@` symbol to add accurate context for your ai prompts
 - technology adoption for good models to understand and abstract -> use next.js for example (the guide can be publicly exposed to gain insights and values) -> organize the repo in good shape
 - write prompt by `markdown` can use the tab and completion of code-gen and even make AI finish the related content writing, that's the best practice for writing prompt
 - choose the right models (LLM) to do the right things. e.g. for now Claude is good at handle 0 -> 1 crafting the whole project, but GPT5 in thinking mode is good for complex bugfix and multiple cross files analysis.
@@ -265,3 +267,4 @@ write *Release* logs for key-features.
 * 2025-09-10 initial version marked
 * 2026-02-04 add new fresh docs and BP from recently learnt and used in practice
 * (26-02-26) add spec-driven BP and co-work with Cursor and Cla
+* (26-03-15) better inspired by Claude Code BP and Cursor BP, and add more content and examples.

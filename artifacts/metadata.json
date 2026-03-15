@@ -1,13 +1,23 @@
 {
-  "demo/agentic-skills-guide": {
+  "ai/agentic-skills-guide": {
     "title": "Agentic Skills Guide",
     "emojiIcon": "🤖",
     "desc": "A visual guide to modern agentic AI skills, capabilities, and architectural patterns."
+  },
+  "ai/claude-code-bp": {
+    "title": "Claude Code BP",
+    "emojiIcon": "🌟",
+    "desc": "A practical guide to building stable Claude Code workflows."
   },
   "demo/ragdoll-cat-guide": {
     "title": "Ragdoll Cat Guide",
     "emojiIcon": "🐱",
     "desc": "A comprehensive illustrated guide to ragdoll cat care, personality traits, and characteristics."
+  },
+  "demo/agentic-skill-guide": {
+    "title": "Agentic Skill Guide",
+    "emojiIcon": "🤖",
+    "desc": "A comprehensive guide to agentic skills, capabilities, and architectural patterns."
   },
   "demo/hello": {
     "title": "Hello World",
