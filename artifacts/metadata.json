@@ -19,6 +19,26 @@
     "emojiIcon": "🤖",
     "desc": "A comprehensive guide to agentic skills, capabilities, and architectural patterns."
   },
+  "business/growth": {
+    "title": "Business Growth",
+    "emojiIcon": "🚀",
+    "desc": "A comprehensive guide to growth, its principles, thinking with Arno."
+  },
+  "wisdom/dao": {
+    "title": "Dao of Dao",
+    "emojiIcon": "☯️",
+    "desc": "A comprehensive guide to the Dao of Dao, its principles, and how to apply them in daily life."
+  },
+  "wealth/etf-funds": {
+    "title": "Investment Outlook of ETF Funds",
+    "emojiIcon": "💰",
+    "desc": "A comprehensive guide to ETF funds, their characteristics, and how to invest in them."
+  },
+  "wealth/good-company": {
+    "title": "Good Company",
+    "emojiIcon": "🏢",
+    "desc": "A comprehensive guide to good companies, their characteristics, and how to invest in them."
+  },
   "demo/hello": {
     "title": "Hello World",
     "emojiIcon": "👋",

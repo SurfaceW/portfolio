@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《道德经》精粹摘录与品读</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: #fdfbf7;
+      color: #3f3c36;
+    }
+
+    .nav-link {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-link.active,
+    .nav-link:hover {
+      color: #fdfbf7;
+      background-color: #4a5568;
+    }
+
+    .content-section {
+      display: none;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    .interactive-card {
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      cursor: pointer;
+    }
+
+    .is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    .concept-item:hover .concept-icon {
+      transform: scale(1.1);
+    }
+
+    .concept-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .quote-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #2d3748;
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      border-left: 4px solid #4299e1;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .commentary-text {
+      color: #4a5568;
+      line-height: 1.7;
+      text-indent: 2em;
+    }
+
+    .chapter-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .treasure-item {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 6px solid #f6ad55;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+  <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">《道德经》</h1>
+      <p class="text-xl text-gray-600">精粹摘录与品读</p>
+      <p class="text-sm text-gray-500 mt-2">融合典藏版与帛书版核心笔记，揭示老子哲学的深邃智慧</p>
+    </header>
+
+    <nav
+      class="flex justify-center bg-white/70 backdrop-blur-sm rounded-full shadow-md p-2 mb-12 sticky top-4 z-10 overflow-x-auto">
+      <a data-target="home"
+        class="nav-link active text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">总览</a>
+      <a data-target="dao"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">论"道"</a>
+      <a data-target="dialectic"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">辩证之智</a>
+      <a data-target="virtue"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">处世之道</a>
+      <a data-target="wuwei"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">无为之用</a>
+      <a data-target="cultivation"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">修身之明</a>
+      <a data-target="reflection"
+        class="nav-link text-gray-700 font-medium py-2 px-3 md:px-4 rounded-full whitespace-nowrap">对俗世的反思</a>
+    </nav>
+
+    <main id="main-content">
+      <!-- Home Section -->
+      <section id="home" class="content-section active">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">万物之始，为而不争的道法精髓</h2>
+          <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            这份摘录融合了《道德经》典藏版与帛书版的核心笔记，旨在揭示老子哲学的深邃智慧。文案将笔记内容归纳为六大核心主题，并附上点评，以期更清晰地展现《道德经》"为而不争"、"顺其自然"的道法精髓。</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-blue-50/50 p-6 rounded-xl border border-blue-200">
+              <h3 class="text-xl font-semibold text-blue-800 mb-2">论"道"</h3>
+              <p class="text-gray-600">万物之始，言语之末</p>
+            </div>
+            <div class="bg-purple-50/50 p-6 rounded-xl border border-purple-200">
+              <h3 class="text-xl font-semibold text-purple-800 mb-2">辩证之智</h3>
+              <p class="text-gray-600">对立相生，无为而治</p>
+            </div>
+            <div class="bg-green-50/50 p-6 rounded-xl border border-green-200">
+              <h3 class="text-xl font-semibold text-green-800 mb-2">处世之道</h3>
+              <p class="text-gray-600">上善若水，不争之德</p>
+            </div>
+            <div class="bg-orange-50/50 p-6 rounded-xl border border-orange-200">
+              <h3 class="text-xl font-semibold text-orange-800 mb-2">无为之用</h3>
+              <p class="text-gray-600">顺势而为，知足知止</p>
+            </div>
+            <div class="bg-teal-50/50 p-6 rounded-xl border border-teal-200">
+              <h3 class="text-xl font-semibold text-teal-800 mb-2">修身之明</h3>
+              <p class="text-gray-600">自知者强，返璞归真</p>
+            </div>
+            <div class="bg-red-50/50 p-6 rounded-xl border border-red-200">
+              <h3 class="text-xl font-semibold text-red-800 mb-2">对俗世的反思</h3>
+              <p class="text-gray-600">大道废，有仁义</p>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200">
+            <h3 class="text-xl font-semibold text-amber-800 mb-2 text-center">总评</h3>
+            <p class="commentary-text">
+              通过这些摘录与品读，我们可以看到《道德经》并非一部消极遁世的空谈，而是一部充满深刻洞见与实践指导的智慧宝典。它教导我们以一种更宏大、更圆融的视角看待世界与自我，通过"不争"、"无为"的方式，顺应自然，最终达到内心的宁静与外在的和谐，成就真正的强大与长久。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第一章：论"道" -->
+      <section id="dao" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第一章：论"道"</h2>
+            <p class="text-lg opacity-90">万物之始，言语之末</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "道可道，非常道。名可名，非常名。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "人法地，地法天，天法道，道法自然。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "道生一，一生二，二生三，三生万物。万物负阴而抱阳，冲气以为和。" <span class="text-sm text-gray-500">（典藏版 & 帛书版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">这是《道德经》的总纲。开篇即点明"道"的超越性与根源性——它是宇宙的终极实在，无法用固定的言语和概念去完全定义。一旦能被言说，就已偏离其永恒的本质。</p>
+            <p class="mb-4">"道"并非某种神秘力量，而是"自然"而然的规律，是天地万物运行的基础。从"道"的虚无中诞生出阴阳对立的"一"与"二"，再由对立的交互融合（冲气以为和）而生发出万物。</p>
+            <p>这揭示了宇宙从简单到复杂、从统一到多样的创生过程，充满了朴素的辩证法思想。</p>
+          </div>
+
+          <!-- 交互式道的演化图 -->
+          <div class="mt-8 p-6 bg-gray-50 rounded-xl">
+            <h4 class="text-xl font-semibold text-center mb-6">道的演化过程</h4>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+              <div class="text-center">
+                <div
+                  class="w-16 h-16 bg-black rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-2">
+                  道</div>
+                <p class="text-sm text-gray-600">虚无本源</p>
+              </div>
+              <div class="text-2xl text-gray-400">→</div>
+              <div class="text-center">
+                <div
+                  class="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-2">
+                  一</div>
+                <p class="text-sm text-gray-600">太极</p>
+              </div>
+              <div class="text-2xl text-gray-400">→</div>
+              <div class="text-center">
+                <div class="flex space-x-2 justify-center mb-2">
+                  <div
+                    class="w-12 h-12 bg-white border-2 border-gray-400 rounded-full flex items-center justify-center font-bold">
+                    阴</div>
+                  <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold">
+                    阳</div>
+                </div>
+                <p class="text-sm text-gray-600">二仪</p>
+              </div>
+              <div class="text-2xl text-gray-400">→</div>
+              <div class="text-center">
+                <div
+                  class="w-16 h-16 bg-gradient-to-r from-blue-400 to-green-400 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-2">
+                  万物</div>
+                <p class="text-sm text-gray-600">冲气以为和</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第二章：辩证之智 -->
+      <section id="dialectic" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第二章：辩证之智</h2>
+            <p class="text-lg opacity-90">对立相生，无为而治</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "天下皆知美之为美，斯恶已。皆知善之为善，斯不善已。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "有无相生，难易相成，长短相形，高下相倾……恒也。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "曲则全，枉则直，洼则盈，敝则新，少则多，多则惑。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "祸，福之所倚。福，祸之所伏。" <span class="text-sm text-gray-500">（帛书版）</span>
+            </div>
+            <div class="quote-text">
+              "大成若缺，其用不弊。大盈若冲，其用不穷。" <span class="text-sm text-gray-500">（典藏版 & 帛书版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">老子思想的精髓在于其深刻的辩证法。美与丑、善与恶、有与无、难与易，这些概念都不是孤立存在的，而是在相互对立与比较中才得以成立。这种认知打破了世俗的绝对化、非黑即白的思维定式。</p>
+            <p class="mb-4">进一步地，"曲则全"、"大成若缺"等观点，更是将这种智慧引向了为人处世的实践。它教导我们，真正的圆满往往看起来有所欠缺，最正直的道路有时看似曲折。</p>
+            <p>这种"反向思维"提醒我们，要看到事物的两面性与转化可能，不应被表面的、一时的得失所迷惑。</p>
+          </div>
+
+          <!-- 交互式辩证卡片 -->
+          <div class="mt-8">
+            <h4 class="text-xl font-semibold text-center mb-6">辩证法的智慧：对立与转化</h4>
+            <p class="text-center text-gray-600 mb-6">点击下方的卡片，体验"祸福相依"与"柔弱胜刚强"的深刻哲理</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="interactive-card h-48" id="dialectic-1">
+                <div
+                  class="card-face absolute w-full h-full flex flex-col justify-center items-center bg-red-100 text-red-800 rounded-xl p-4 shadow-md">
+                  <span class="text-5xl font-serif">祸</span>
+                  <p class="mt-2 text-center">灾祸之中，潜藏着福分的种子</p>
+                </div>
+                <div
+                  class="card-back absolute w-full h-full flex flex-col justify-center items-center bg-green-100 text-green-800 rounded-xl p-4 shadow-md">
+                  <span class="text-5xl font-serif">福</span>
+                  <p class="mt-2 text-center">福分之中，也埋伏着灾祸的根源</p>
+                </div>
+              </div>
+              <div class="interactive-card h-48" id="dialectic-2">
+                <div
+                  class="card-face absolute w-full h-full flex flex-col justify-center items-center bg-gray-700 text-white rounded-xl p-4 shadow-md">
+                  <span class="text-5xl font-serif">刚强</span>
+                  <p class="mt-2 text-center">看似强大的，往往是脆弱和僵硬的</p>
+                </div>
+                <div
+                  class="card-back absolute w-full h-full flex flex-col justify-center items-center bg-blue-100 text-blue-800 rounded-xl p-4 shadow-md">
+                  <span class="text-5xl font-serif">柔弱</span>
+                  <p class="mt-2 text-center">看似柔弱的，反而蕴含着最强的生命力</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第三章：处世之道 -->
+      <section id="virtue" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第三章：处世之道</h2>
+            <p class="text-lg opacity-90">上善若水，不争之德</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "上善若水。水善利万物而不争，处众人之所恶，故几于道。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "夫唯不争，故天下莫能与之争。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "我有三宝，持而保之。一曰慈，二曰俭，三曰不敢为天下先。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "善为士者，不武；善战者，不怒；善胜敌者，不与……是谓不争之德。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">"水"是老子最为推崇的人格象征。它的品格在于：滋养万物却从不索取回报；甘愿居于低处，包容万物。这种"不争"并非消极避世，而是一种至高的智慧和力量。</p>
+            <p class="mb-4">因为不与人争，反而没有人能与之相争，最终成就了江海般的宏大。老子提出的"慈、俭、不敢为天下先"三件法宝，正是"不争之德"的具体体现。</p>
+            <p>它告诫我们，真正的强大，源于内心的慈爱、生活的节制和姿态的谦卑，而非锋芒毕露的争强好胜。</p>
+          </div>
+
+          <!-- 三宝展示 -->
+          <div class="mt-8">
+            <h4 class="text-xl font-semibold text-center mb-6">老子三宝</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="treasure-item text-center">
+                <div class="text-4xl mb-3">❤️</div>
+                <h5 class="text-xl font-semibold mb-2">慈</h5>
+                <p class="text-gray-700">内心的慈爱与慈悲，是一切德行的根本</p>
+              </div>
+              <div class="treasure-item text-center">
+                <div class="text-4xl mb-3">🍃</div>
+                <h5 class="text-xl font-semibold mb-2">俭</h5>
+                <p class="text-gray-700">生活的节制与朴素，远离奢华与浮躁</p>
+              </div>
+              <div class="treasure-item text-center">
+                <div class="text-4xl mb-3">🙏</div>
+                <h5 class="text-xl font-semibold mb-2">不敢为天下先</h5>
+                <p class="text-gray-700">谦卑的姿态，不争强好胜，后发制人</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第四章：无为之用 -->
+      <section id="wuwei" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第四章：无为之用</h2>
+            <p class="text-lg opacity-90">顺势而为，知足知止</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "为无为，则无不治。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "道常无为而无不为。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "故有之以为利，无之以为用。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "治大国，若烹小鲜。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "为学者日益，闻道者日损。损之又损，以至于无为，无为而无不为。" <span class="text-sm text-gray-500">（帛书版）</span>
+            </div>
+            <div class="quote-text">
+              "功遂身退，天之道也。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "知足不辱，知止不殆，可以长久。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">
+              "无为"是《道德经》中最易被误解的概念之一。它并非指无所作为，而是指"不妄为"、"不强为"。正如"治大国若烹小鲜"，治理国家如同煎小鱼，不能随意翻动，要减少主观意志的干扰，顺应事物自身的规律。</p>
+            <p class="mb-4">
+              笔记中"为学者日益，闻道者日损"的对比尤为精妙：求取知识是做加法，而体悟大道则是做减法，不断减少自己的主观偏见和私心杂念，直至达到"无为"的境界。此时，便能"无不为"，因为行动完全契合于"道"。</p>
+            <p>同时，"知足知止"、"功遂身退"的智慧，更是提醒人们在物欲和权势面前保持清醒，懂得在恰当的时候停止，这才是长久之道。</p>
+          </div>
+
+          <!-- 无为与有为的对比 -->
+          <div class="mt-8 p-6 bg-gray-50 rounded-xl">
+            <h4 class="text-xl font-semibold text-center mb-6">无为与有为的智慧对比</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white p-4 rounded-lg border-2 border-blue-200">
+                <h5 class="text-lg font-semibold text-blue-800 mb-3">为学者日益</h5>
+                <ul class="text-gray-700 space-y-2">
+                  <li>• 求取知识</li>
+                  <li>• 做加法</li>
+                  <li>• 增加技能</li>
+                  <li>• 外在积累</li>
+                </ul>
+              </div>
+              <div class="bg-white p-4 rounded-lg border-2 border-green-200">
+                <h5 class="text-lg font-semibold text-green-800 mb-3">闻道者日损</h5>
+                <ul class="text-gray-700 space-y-2">
+                  <li>• 体悟大道</li>
+                  <li>• 做减法</li>
+                  <li>• 减少偏见</li>
+                  <li>• 内在净化</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第五章：修身之明 -->
+      <section id="cultivation" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第五章：修身之明</h2>
+            <p class="text-lg opacity-90">自知者强，返璞归真</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "知人者智，自知者明。胜人者有力，自胜者强。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "知其雄，守其雌……复归于婴儿。知其荣，守其辱……复归于朴。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "信言不美，美言不信。善者不辩，辩者不善。知者不博，博者不知。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "知不知，尚矣；不知知，病也。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">《道德经》的智慧最终落脚于个体的内在修为。真正的"明"与"强"，并非源于对他人的洞察和战胜，而是对自我的清醒认知和超越。</p>
+            <p class="mb-4">老子推崇一种"守雌"、"守辱"、"守黑"的姿态，即在了解刚强、荣耀、显白的同时，安于柔弱、卑下、暗昧的位置，以此保持谦卑和包容，回归到如婴儿般纯粹、如原木般质朴的本初状态。</p>
+            <p>对于知识和言辞，老子也保持着高度警惕，认为华美的言辞往往不真实，真正的智者从不夸夸其谈。能认识到自己的无知，才是最高的智慧；自以为无所不知，则是一种病态。</p>
+          </div>
+
+          <!-- 修身四重境界 -->
+          <div class="mt-8">
+            <h4 class="text-xl font-semibold text-center mb-6">修身四重境界</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+                <h5 class="text-lg font-semibold text-blue-800 mb-2">知人者智</h5>
+                <p class="text-gray-700">能够洞察他人，这是智慧</p>
+              </div>
+              <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+                <h5 class="text-lg font-semibold text-green-800 mb-2">自知者明</h5>
+                <p class="text-gray-700">能够认识自己，这是明智</p>
+              </div>
+              <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                <h5 class="text-lg font-semibold text-purple-800 mb-2">胜人者有力</h5>
+                <p class="text-gray-700">能够战胜他人，这是有力</p>
+              </div>
+              <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200">
+                <h5 class="text-lg font-semibold text-orange-800 mb-2">自胜者强</h5>
+                <p class="text-gray-700">能够战胜自己，这是强大</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第六章：对俗世的反思 -->
+      <section id="reflection" class="content-section">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="chapter-header">
+            <h2 class="text-3xl font-bold mb-2">第六章：对俗世的反思</h2>
+            <p class="text-lg opacity-90">大道废，有仁义</p>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4">核心摘录</h3>
+          <div class="space-y-4">
+            <div class="quote-text">
+              "大道废，有仁义；智慧出，有大伪；六亲不和，有孝慈；国家昏乱，有忠臣。" <span class="text-sm text-gray-500">（典藏版）</span>
+            </div>
+            <div class="quote-text">
+              "故失道而后德，失德而后仁，失仁而后义，失义而后礼。夫礼者，忠信之薄，而乱之首。" <span class="text-sm text-gray-500">（典藏版 & 帛书版）</span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-semibold text-gray-700 mb-4 mt-8">品读与点评</h3>
+          <div class="commentary-text">
+            <p class="mb-4">这是《道德经》中极具批判性的一章。老子犀利地指出，我们所标榜的"仁义"、"孝慈"、"忠臣"等道德规范，恰恰是在"大道"废弛、社会失序之后才出现的产物。它们是补救措施，而非理想状态。
+            </p>
+            <p class="mb-4">帛书版的笔记更清晰地排列了"道、德、仁、义、礼"的递降次序，认为"礼"是忠信最浅薄的表现，甚至是祸乱的开端。</p>
+            <p>这并非全盘否定道德，而是提醒世人不要舍本逐末，与其在下游用各种规矩去修补，不如回归源头，遵循那朴素自然的"大道"。</p>
+          </div>
+
+          <!-- 道德层次递降图 -->
+          <div class="mt-8">
+            <h4 class="text-xl font-semibold text-center mb-6">道德层次的递降过程</h4>
+            <div class="flex flex-col space-y-4">
+              <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-yellow-100 to-yellow-200 rounded-lg">
+                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                  道</div>
+                <div class="flex-1">
+                  <h5 class="font-semibold">大道</h5>
+                  <p class="text-sm text-gray-600">自然而然的最高境界</p>
+                </div>
+              </div>
+              <div class="text-center text-gray-400">↓ 失道而后德</div>
+              <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">德
+                </div>
+                <div class="flex-1">
+                  <h5 class="font-semibold">德</h5>
+                  <p class="text-sm text-gray-600">道的体现与显现</p>
+                </div>
+              </div>
+              <div class="text-center text-gray-400">↓ 失德而后仁</div>
+              <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-100 to-green-200 rounded-lg">
+                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">仁
+                </div>
+                <div class="flex-1">
+                  <h5 class="font-semibold">仁</h5>
+                  <p class="text-sm text-gray-600">仁爱与慈悲</p>
+                </div>
+              </div>
+              <div class="text-center text-gray-400">↓ 失仁而后义</div>
+              <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-100 to-purple-200 rounded-lg">
+                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                  义</div>
+                <div class="flex-1">
+                  <h5 class="font-semibold">义</h5>
+                  <p class="text-sm text-gray-600">正义与道德准则</p>
+                </div>
+              </div>
+              <div class="text-center text-gray-400">↓ 失义而后礼</div>
+              <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-red-100 to-red-200 rounded-lg">
+                <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-bold">礼
+                </div>
+                <div class="flex-1">
+                  <h5 class="font-semibold">礼</h5>
+                  <p class="text-sm text-gray-600">忠信之薄，而乱之首</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 思想影响辐射图 -->
+          <div class="mt-12">
+            <h4 class="text-xl font-semibold text-center mb-6">《道德经》思想影响辐射图</h4>
+            <p class="text-center text-gray-600 mb-6">《道德经》的思想渗透到中国文化的方方面面，并在今天展现出新的价值</p>
+            <div class="chart-container">
+              <canvas id="influenceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('.content-section');
+
+      function navigateTo(targetId) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.dataset.target === targetId);
+        });
+        sections.forEach(section => {
+          section.classList.toggle('active', section.id === targetId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateTo(e.target.dataset.target);
+        });
+      });
+
+      // 辩证卡片交互
+      document.getElementById('dialectic-1').addEventListener('click', function () {
+        this.classList.toggle('is-flipped');
+      });
+      document.getElementById('dialectic-2').addEventListener('click', function () {
+        this.classList.toggle('is-flipped');
+      });
+
+      // 影响力图表
+      const influenceCtx = document.getElementById('influenceChart');
+      if (influenceCtx) {
+        new Chart(influenceCtx, {
+          type: 'bar',
+          data: {
+            labels: ['哲学思想', '宗教信仰\n(道教)', '文学艺术', '政治军事', '养生修身', '现代启示\n(生态/心理/管理)'],
+            datasets: [{
+              label: '思想影响力（权重估算）',
+              data: [100, 95, 90, 85, 88, 75],
+              backgroundColor: [
+                'rgba(74, 85, 104, 0.7)',
+                'rgba(213, 161, 75, 0.7)',
+                'rgba(77, 128, 133, 0.7)',
+                'rgba(192, 73, 73, 0.7)',
+                'rgba(67, 146, 113, 0.7)',
+                'rgba(66, 153, 225, 0.7)'
+              ],
+              borderColor: [
+                'rgba(74, 85, 104, 1)',
+                'rgba(213, 161, 75, 1)',
+                'rgba(77, 128, 133, 1)',
+                'rgba(192, 73, 73, 1)',
+                'rgba(67, 146, 113, 1)',
+                'rgba(66, 153, 225, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#333',
+                titleFont: { size: 14 },
+                bodyFont: { size: 12 },
+                padding: 10,
+                cornerRadius: 4,
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              y: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+    });
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5110GVDD9J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-5110GVDD9J');
+  </script>
+</body>
+
+</html>
