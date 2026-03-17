@@ -1,7 +1,7 @@
 ---
 title: '💠 AI First Product Engineer Wiki'
 publishedAt: '2026-02-07'
-summary: "A wiki for AI First Product Engineer to learn and grow."
+summary: 'A wiki for AI First Product Engineer to learn and grow.'
 tags: ['Wiki', 'AI', 'Product', 'Engineer', 'en']
 ---
 
@@ -9,10 +9,10 @@ tags: ['Wiki', 'AI', 'Product', 'Engineer', 'en']
 
 ## Theory and Foundation Layer
 
-* math fundamentals
-* CS and programming fundamentals
-* AI fundamentals
-* LLM fundamentals
+- math fundamentals
+- CS and programming fundamentals
+- AI fundamentals
+- LLM fundamentals
 
 Basic Theory and Patterns Evolution
 
@@ -29,213 +29,195 @@ Basic Theory and Patterns Evolution
 
 ## LLM Ops
 
-* MLOps: Abstract out the common computing/storage layer, taking care of capacity, scheduling, scaling, and load balancing.
-  * compute layer: GPU cluster setup and management to fully utilize the hardware
-  * Scaling: Automatic and seamless scaling up and down, from on-premise to cloud when needed
-  * Scaling: Support multiple models with dynamic model loading
-  * Operations: Monitor usage of computing resources, and status of training and inference jobs
-  * Operations: Generate data for usage stats and metrics dashboard, and alert when anomaly detected
-  * Platform: Training / Fine-tuning: improve training throughput, reliability and efficiency
-  * Platform: Inference: Leverage the latest and most efficient open source framework for LLM inference to reduce latency and improve throughput
-  * Platform: Evaluation and Benchmarking: automatically evaluate models' performance on datasets of interests
-  * Platform: A/B Testing: capability for online A/B testing to compare features
-* Unified AI Gateway: Abstract out the common API/SDK layer, taking care of authentication, authorization, rate limiting, error handling, logging, monitoring, and alerts.
+- MLOps: Abstract out the common computing/storage layer, taking care of capacity, scheduling, scaling, and load balancing.
+  - compute layer: GPU cluster setup and management to fully utilize the hardware
+  - Scaling: Automatic and seamless scaling up and down, from on-premise to cloud when needed
+  - Scaling: Support multiple models with dynamic model loading
+  - Operations: Monitor usage of computing resources, and status of training and inference jobs
+  - Operations: Generate data for usage stats and metrics dashboard, and alert when anomaly detected
+  - Platform: Training / Fine-tuning: improve training throughput, reliability and efficiency
+  - Platform: Inference: Leverage the latest and most efficient open source framework for LLM inference to reduce latency and improve throughput
+  - Platform: Evaluation and Benchmarking: automatically evaluate models' performance on datasets of interests
+  - Platform: A/B Testing: capability for online A/B testing to compare features
+- Unified AI Gateway: Abstract out the common API/SDK layer, taking care of authentication, authorization, rate limiting, error handling, logging, monitoring, and alerts.
 
 ## LLM Train
 
-* pre-training
-* post-training
+- pre-training
+- post-training
 
 ---
 
-* LLM knowledge distillation
+- LLM knowledge distillation
 
 ## LLM Inference
 
-* GPU resource management
-* API / SDK encapsulation
-* rate limiting
-* error handling
-* logging
-* monitoring
-* alerts
-* notifications
+- GPU resource management
+- API / SDK encapsulation
+- rate limiting
+- error handling
+- logging
+- monitoring
+- alerts
+- notifications
 
 ## LLM Fine-tune
 
-* prefix fine-tuning, prompt tuning, variants
-* SFT
-* RLHF / RLAIF / DPO variants
-* LoRA and QLoRA variants
+- prefix fine-tuning, prompt tuning, variants
+- SFT
+- RLHF / RLAIF / DPO variants
+- LoRA and QLoRA variants
 
 ## LLM RAG
 
 basic patterns
 
-* dense vector-based RAG
-* sparse vector-based RAG
-* graph-based RAG
+- dense vector-based RAG
+- sparse vector-based RAG
+- graph-based RAG
 
 SOP
 
-* ingest documents, chunking and embedding (structured data) with strategies
-* recall with hybrid search
-* format, references and citations
-* re-rank, query-rewriting, multi-hop, graph or table augmentation
-* composable and modular RAG system architecture
-* domain-specific retrieval pipelines; continuous ingestion
-* quality metrics, evals and quality dashboards
+- ingest documents, chunking and embedding (structured data) with strategies
+- recall with hybrid search
+- format, references and citations
+- re-rank, query-rewriting, multi-hop, graph or table augmentation
+- composable and modular RAG system architecture
+- domain-specific retrieval pipelines; continuous ingestion
+- quality metrics, evals and quality dashboards
 
 ## LLM Prompting Engineering
 
-* prompting engineering BP for human -> write the best prompts for your tasks
-  * classic patterns: one / few shots, chain-of-thought, self-consistency, reAct etc.
-* prompt management (version, testing, validation, safety, etc.)
-* AI driven prompting optimization (prompting refine by AI and auto.)
-  * DSPy, textGuard, promptWizard, GRAD-SUM, ell, StarGo ...
+- prompting engineering BP for human -> write the best prompts for your tasks
+  - classic patterns: one / few shots, chain-of-thought, self-consistency, reAct etc.
+- prompt management (version, testing, validation, safety, etc.)
+- AI driven prompting optimization (prompting refine by AI and auto.)
+  - DSPy, textGuard, promptWizard, GRAD-SUM, ell, StarGo ...
 
 > Agentic System Context Engineering
 
-* write context
-  * memories
-  * state
-  * scratch-pad
-  * ...
-* select context
-  * tools retrieval
-  * docs / knowledge retrieval
-  * memory retrieval
-  * ...
-* compress context
-  * prompt compression (information compression)
-  * summary by LLM
-  * trim by rules
-  * ...
-* isolate context
-  * in state
-  * hold in environment / sandbox
-  * partition among agents
-  * ...
+- write context
+  - memories
+  - state
+  - scratch-pad
+  - ...
+- select context
+  - tools retrieval
+  - docs / knowledge retrieval
+  - memory retrieval
+    - [memo0](https://mem0.ai/) example for long-term memory management
+  - ...
+- compress context
+  - prompt compression (information compression)
+  - summary by LLM
+  - trim by rules
+  - ...
+- isolate context
+  - in state
+  - hold in environment / sandbox
+  - partition among agents
+  - ...
 
 > Make agent select tools to organize and mange its runtime context (CURD operation is maintained by agent itself)
 
 ## LLM Select
 
-* pick and compose right LLMs for the task
-  * model family selection
-    * open-source LLMs family
-    * commercial LLMs family
-  * latency, cost, throughput, quality, etc.
-* LLM parameters (tokens, top-p, temperature, etc.)
+- pick and compose right LLMs for the task
+  - model family selection
+    - open-source LLMs family
+    - commercial LLMs family
+  - latency, cost, throughput, quality, etc.
+- LLM parameters (tokens, top-p, temperature, etc.)
 
 ## LLM Agentic Systems
 
-* basic patterns:
-  * CoT
-  * BDI = Belief, Desire, Intention
-  * ReAct
-  * passive goal creator
-  * proactive goal creator
-  * prompt / response optimizer
-  * RAG
-  * single / multi path plan generator
-  * self-reflection and refinement
-  * cross-reflection
-  * human reflection
-  * voting / role / debate based cooperation
-  * tool / agent registry
-  * tool execution sandbox
-  * agent evaluator
-  * multi-modal guardrails
-  * serial v.s. parallel tool execution
-  * plan and execute framework
-  * graph-based control flow
-  * ...
-* basic principles for agent build
-* human-in-loop
-* memory
-  * short-term memory v.s. long-term memory
-    * graph-based v.s. tree-based
-    * vector store v.s. graph db v.s. relational db
-    * file systems
-  * A-MEM: Dynamic and Self-Evolving memory
-* context-sizing control
-* tool-call and skills management
-  * code execution
-  * html / web-page (stack) generation
-  * browser-use
-  * vm use
-  * web search
-  * ...
-* multi-step workflow
-  * traditional multi-step workflow
-  * claude skills (fixed patterns as sub-agent in similarity)
-* agentic-flow prompting
-  * ReAct agent
-  * reflection x planning x action
-  * RPA loop: perception x reasoning x action loop
-  * Effective HITL (Human in the Loop)
-  * ...
-* user-interface customization
-* knowledge and RAG enhancements
-* continuous learning loop (telemetry → evals → prompt/knowledge updates)
-* metrics (cost, latency, throughput, prompting logs, tool-call logs, etc.)
-* agent Hallucination prevention and mitigation
-* safety, security, compliance, governance
-  * content filters, PII redaction, secure key management
-  * prompt injection defenses, retrieval hygiene, tool permissioning
-  * policy layers (allow/deny lists), sensitive actions with human approval
-  * compliance processes (data retention, audit trails), red-team exercises
-* performance and cost optimization
-  * token budgeting, caching, short prompts
-  * reranking before generation, response compression, approximate search tuning
-  * distillation/routing to small models; speculative decoding
-  * SLAs with adaptive quality tiers, cost/perf dashboards
-  * prompting cache (prompt cache)
-* agentic mesh / multiple agent system (MAS)
-  * memory share and management among agents
-    * Blackboard Model architecture
-  * centralized control v.s. de-centralized and self-organized
-  * hierarchical v.s. flatten
-  * serial v.s. parallel
-  * supervisor v.s. none-supervisor
-  * communication protocol
-    * end-to-end
-    * broadcast
-    * shared-memory-channels
-  * state-based v.s. memory-based
-    * short-term memory v.s. long-term memory
-    * graph-based v.s. tree-based
-    * vector store v.s. graph db v.s. relational db
-  * tool invocation protocol -> MCP (model context protocol)
-  * human interfere in agentic loop
-    * human as supervisor
-    * human as part of the loop
-    * human as meta-agent
+### Core Patterns
 
-practical patterns:
+- reasoning: CoT · BDI (Belief, Desire, Intention) · ReAct
+- goal: passive goal creator · proactive goal creator
+- planning: single / multi-path plan generator · plan and execute framework · graph-based control flow
+- retrieval: RAG · knowledge and RAG enhancements
+- reflection: self-reflection and refinement · cross-reflection · human reflection
+- cooperation: voting / role / debate based · tool / agent registry
+- execution: serial vs. parallel tool execution · tool execution sandbox · agent evaluator · multi-modal guardrails
+- optimization: prompt / response optimizer
 
-* [12-factor-agents](https://github.com/humanlayer/12-factor-agents)
+reference practical patterns:
+
+- [12-factor-agents](https://github.com/humanlayer/12-factor-agents)
+
+### Memory
+
+- short-term vs. long-term memory
+  - storage backends: vector store · graph DB · relational DB · file systems
+  - structure: graph-based vs. tree-based
+- A-MEM: Dynamic and Self-Evolving memory
+- context-sizing control
+
+### Tools & Skills
+
+- tool-call and skills management
+  - code execution · html / web-page generation · browser-use · VM use · web search
+- multi-step workflow
+  - traditional multi-step workflow
+  - agent skills (fixed patterns as sub-agents) — [skills BP for engineering](/knowledge/ai/agentic-skills-guide)
+
+### Agentic Flow & Interface
+
+- agentic-flow prompting
+  - ReAct agent
+  - reflection × planning × action
+  - RPA loop: perception × reasoning × action
+  - Effective HITL (Human in the Loop)
+- user-interface customization
+- continuous learning loop (telemetry → evals → prompt / knowledge updates)
+
+### Reliability & Safety
+
+- human-in-loop (HITL) · basic principles for agent build
+- hallucination prevention and mitigation
+- safety, security, compliance, governance
+  - content filters · PII redaction · secure key management
+  - prompt injection defenses · retrieval hygiene · tool permissioning
+  - policy layers (allow/deny lists) · sensitive actions with human approval
+  - compliance: data retention · audit trails · red-team exercises
+
+### Performance & Cost
+
+- metrics: cost · latency · throughput · prompting logs · tool-call logs
+- token budgeting · caching · short prompts · prompt cache
+- reranking before generation · response compression · approximate search tuning
+- distillation / routing to small models · speculative decoding
+- SLAs with adaptive quality tiers · cost/perf dashboards
+
+### Multi-Agent Systems (MAS)
+
+- topology: centralized vs. decentralized · hierarchical vs. flat · serial vs. parallel · supervisor vs. peer
+- memory sharing: Blackboard Model · state-based vs. memory-based
+  - storage: vector store · graph DB · relational DB
+- communication protocol: end-to-end · broadcast · shared-memory channels
+- tool invocation protocol: MCP (Model Context Protocol)
+- human roles in the agentic loop: supervisor · loop participant · meta-agent
 
 ## LLM Product Engineering
 
 ### Classic Protocols
 
-* MCP (Model Context Protocol)
-* A2A (Agentic to Agentic Protocol) with ADK
-* [A2UI Protocol](https://github.com/google/A2UI/) widgets and components render from AI
-* Ag-UI (Agentic UI Protocol)
-* Agent to Editor (Client) Protocol
+- MCP (Model Context Protocol)
+- A2A (Agentic to Agentic Protocol) with ADK
+- [A2UI Protocol](https://github.com/google/A2UI/) widgets and components render from AI
+- Ag-UI (Agentic UI Protocol)
+- Agent to Editor (Client) Protocol
 
 ### Frameworks
 
-* ai-sdk (node / javascript)
-* LangChain (python) / LangGraph (python)
-* AutoGPT
-* AgentOps
-* MetaGPT
-* CrewAI
-* ...
+- ai-sdk (node / javascript)
+- LangChain (python) / LangGraph (python)
+- AutoGPT
+- AgentOps
+- MetaGPT
+- CrewAI
+- ...
 
 | Feature          | CrewAI                      | LangGraph                     | AutoGen                        |
 | ---------------- | --------------------------- | ----------------------------- | ------------------------------ |
@@ -249,24 +231,24 @@ practical patterns:
 
 Model Services Vendors:
 
-* Open Router
-* Claude / Gemini / Grok / OpenAI / DeepSeek / ...
+- Open Router
+- Claude / Gemini / Grok / OpenAI / DeepSeek / ...
 
 LLM Orchestration Platforms:
 
-* OpenAI Agent Builder
-* Dify / Coze
-* n8n
-* Gumloop (AgentHub)
+- OpenAI Agent Builder
+- Dify / Coze
+- n8n
+- Gumloop (AgentHub)
 
 Observation: Monitoring real-time agent actions, including tool usage and reasoning paths.
 
-* LangSmith
+- LangSmith
 
 Test and Evaluation
 
-* Langfuse
-* PromptFoo
+- Langfuse
+- PromptFoo
 
 ## LLM Deep Scenarios
 
@@ -274,12 +256,12 @@ Test and Evaluation
 
 ### VibeCoding
 
-* basic principles and manifesto
+- basic principles and manifesto
 
 OpenSource research:
 
-* Gemini CLI
-* Cursor
+- Gemini CLI
+- Cursor
 
 [Arno's BP for VibeCoding](/posts/vibe-bp)
 
@@ -287,52 +269,53 @@ OpenSource research:
 
 patterns:
 
-* monolithic
-* pipeline sub-systems
-* multi-agent sub-systems (MoA)
-* hybrid mixed
+- monolithic
+- pipeline sub-systems
+- multi-agent sub-systems (MoA)
+- hybrid mixed
 
 info resources:
 
-* domain-specific / public information retrieval
+- domain-specific / public information retrieval
 
 context:
 
-* memory management
-* context management / compress and optimize
+- memory management
+- context management / compress and optimize
 
 plan strategies
 
-* static workflow
-* intent to plan
-* unified intent planning
+- static workflow
+- intent to plan
+- unified intent planning
 
 OpenSource research:
 
-* OpenManus
+- OpenManus
 
 ### DeepResearch
 
-* OpenResearch
+- OpenResearch
 
 ### NoteBook
 
-* Google Notebook ML
+- Google Notebook ML
 
 ### MultiModal
 
-* Gen Image
-* Gen Video
-* Gen Audio
-* Gen 3D objects
+- Gen Image
+- Gen Video
+- Gen Audio
+- Gen 3D objects
 
 ## Reference
 
-* [LLM dev stack guide](https://zhuanlan.zhihu.com/p/694428893)
+- [LLM dev stack guide](https://zhuanlan.zhihu.com/p/694428893)
 
 ---
 
 trace
 
-* (26-01-04) add more products and frameworks to the wiki
-* (26-02-07) add more details about LLM Ops and Infra.
+- (26-01-04) add more products and frameworks to the wiki
+- (26-02-07) add more details about LLM Ops and Infra.
+- (26-03-17) provide clean structure and content for the agentic section.
