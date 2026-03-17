@@ -43,5 +43,10 @@
     "title": "Good Company",
     "emojiIcon": "🏢",
     "desc": "A comprehensive guide to good companies, their characteristics, and how to invest in them."
+  },
+  "career/big-five": {
+    "title": "Big Five",
+    "emojiIcon": "👨🏻‍⚖️",
+    "desc": "Big Five personality dimensions in English and Chinese: Openness, Extraversion, Emotionality, Agreeableness, Conscientiousness."
   }
 }
