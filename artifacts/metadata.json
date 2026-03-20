@@ -48,5 +48,20 @@
     "title": "Big Five",
     "emojiIcon": "👨🏻‍⚖️",
     "desc": "Big Five personality dimensions in English and Chinese: Openness, Extraversion, Emotionality, Agreeableness, Conscientiousness."
+  },
+  "design/wabi-sabi": {
+    "title": "Wabi-Sabi",
+    "emojiIcon": "🍂",
+    "desc": "A comprehensive guide to Wabi-Sabi, its principles, and how to apply them in product design and philosophy of life."
+  },
+  "wealth/intrinsic-value": {
+    "title": "Intrinsic Value",
+    "emojiIcon": "📈",
+    "desc": "A visual guide to understanding intrinsic value, cash flows, and the true worth of a business."
+  },
+  "wealth/ai-investment-view-points": {
+    "title": "AI Investment View Points",
+    "emojiIcon": "🧠",
+    "desc": "A visual brief of 2026 AI investing signals, company theses, winners, and risk exposure."
   }
 }
