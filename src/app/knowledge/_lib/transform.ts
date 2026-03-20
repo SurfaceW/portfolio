@@ -16,17 +16,20 @@ const SUPPORTED_BARE_IMPORTS = new Set([
 
 const IMPORT_RE = /(?:import|export)\s+(?:[^'";]+?\s+from\s+)?["']([^"']+)["']/g
 
-let esbuildInitPromise: Promise<void> | null = null
+// Use globalThis to survive HMR module re-evaluation in dev mode.
+// In production modules are evaluated once so this is a no-op.
+declare const globalThis: { __esbuildInitPromise?: Promise<void> }
 
 async function initEsbuild() {
-  if (!esbuildInitPromise) {
-    const esbuild = await import('esbuild-wasm')
-    esbuildInitPromise = esbuild.initialize({
-      wasmURL: '/esbuild.wasm',
-      worker: true
-    })
+  if (!globalThis.__esbuildInitPromise) {
+    // Assign synchronously before any await so concurrent callers
+    // (e.g. React 18 StrictMode double-effect) share the same promise
+    // instead of each racing to call initialize().
+    globalThis.__esbuildInitPromise = import('esbuild-wasm').then((esbuild) =>
+      esbuild.initialize({ wasmURL: '/esbuild.wasm', worker: true })
+    )
   }
-  await esbuildInitPromise
+  await globalThis.__esbuildInitPromise
 }
 
 function detectUnsupportedImports(code: string) {
@@ -184,6 +187,9 @@ function createEsbuildPlugins(esbuild: Awaited<typeof import('esbuild-wasm')>) {
                   export const Fragment = React.Fragment;
                   export const createElement = React.createElement;
                   export const cloneElement = React.cloneElement;
+                  export const createContext = React.createContext;
+                  export const createRef = React.createRef;
+                  export const isValidElement = React.isValidElement;
                   export const Children = React.Children;
                   export const Component = React.Component;
                   export const PureComponent = React.PureComponent;
@@ -192,6 +198,7 @@ function createEsbuildPlugins(esbuild: Awaited<typeof import('esbuild-wasm')>) {
                   export const forwardRef = React.forwardRef;
                   export const memo = React.memo;
                   export const lazy = React.lazy;
+                  export const startTransition = React.startTransition;
                   export const useCallback = React.useCallback;
                   export const useContext = React.useContext;
                   export const useDebugValue = React.useDebugValue;
