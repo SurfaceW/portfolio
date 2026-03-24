@@ -24,8 +24,13 @@
     "emojiIcon": "☯️",
     "desc": "A comprehensive guide to the Dao of Dao, its principles, and how to apply them in daily life."
   },
-  "wisdom/investment-framework": {
-    "title": "Investment Framework",
+  "design/apple-design-principle": {
+    "title": "Apple Design Principle",
+    "emojiIcon": "🍎",
+    "desc": "A comprehensive guide to the Apple Design Principle, its principles, and how to apply them in product design and philosophy of life."
+  },
+  "wealth/arno-investment-framework": {
+    "title": "Arno's Investment Framework",
     "emojiIcon": "💰",
     "desc": "A comprehensive guide to the Investment Framework, its principles, and how to apply them in Arno's investment journey."
   },
