@@ -9,11 +9,6 @@
     "emojiIcon": "🌟",
     "desc": "A practical guide to building stable Claude Code workflows."
   },
-  "demo/agentic-skill-guide": {
-    "title": "Agentic Skill Guide",
-    "emojiIcon": "🤖",
-    "desc": "A comprehensive guide to agentic skills, capabilities, and architectural patterns."
-  },
   "business/growth": {
     "title": "Business Growth",
     "emojiIcon": "🚀",

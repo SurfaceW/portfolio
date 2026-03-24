@@ -144,6 +144,52 @@ export default function AgenticSkillsGuidePage() {
     { name: "skill-orchestrator", desc: "Multi-skill DAG orchestration + VIGIL self-healing" }
   ]
 
+  const contentPatterns = [
+    {
+      id: "P1",
+      name: "Tool Wrapper",
+      bestFor: "Library-specific expertise on demand",
+      keyIdea: "Keep SKILL.md thin; load conventions from references/ only when keywords match.",
+      cevfFit: "C: trigger words + scope; V: rule-citation checks"
+    },
+    {
+      id: "P2",
+      name: "Generator",
+      bestFor: "Stable, template-based outputs",
+      keyIdea: "SKILL.md orchestrates: load style guide + template, ask missing variables, then fill all sections.",
+      cevfFit: "E: fixed phase flow; V: template-completeness gate"
+    },
+    {
+      id: "P3",
+      name: "Reviewer",
+      bestFor: "Rubric-driven audits and PR review",
+      keyIdea: "Separate checklist (what to check) from protocol (how to check), grouped by severity.",
+      cevfFit: "V: severity schema + evidence requirements"
+    },
+    {
+      id: "P4",
+      name: "Inversion",
+      bestFor: "Ambiguous tasks needing requirement discovery",
+      keyIdea: "Agent interviews first, one question at a time. No synthesis until required answers are complete.",
+      cevfFit: "C: hard no-build gate; E: phased interview"
+    },
+    {
+      id: "P5",
+      name: "Pipeline",
+      bestFor: "High-stakes multi-step workflows",
+      keyIdea: "Strict sequential steps with explicit checkpoints and stop conditions between phases.",
+      cevfFit: "E: deterministic step order; V: checkpoint pass/fail"
+    }
+  ]
+
+  const patternRouter = [
+    { need: "Make agent expert in one framework/library", pattern: "Tool Wrapper", signal: "references/conventions.md loaded on trigger" },
+    { need: "Generate consistent docs/reports", pattern: "Generator", signal: "template sections always complete" },
+    { need: "Score code or artifact quality", pattern: "Reviewer", signal: "severity-bucketed findings + fixes" },
+    { need: "Clarify requirements before execution", pattern: "Inversion", signal: "question phases enforced before output" },
+    { need: "Prevent skipped steps in complex flow", pattern: "Pipeline", signal: "cannot proceed without checkpoint approval" }
+  ]
+
   const creationSteps = [
     { step: "01", title: "Define Requirements", time: "30 min", desc: "One-sentence goal, current pain point, expected outcome, frequency, users, risk level." },
     { step: "02", title: "Define Scope", time: "20 min", desc: "scope_out first: generated files, third-party code, non-target types. Use the 3-step scope_out checklist." },
@@ -387,6 +433,44 @@ export default function AgenticSkillsGuidePage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      {/* ── Content Design Patterns ── */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">5 Content Design Patterns</h2>
+        <p className="text-slate-500 text-sm mb-7">
+          SKILL.md format is now standardized. The real leverage is the inner workflow design.
+          Choose a pattern first, then implement CEVF gates around it.
+        </p>
+        <div className="space-y-3">
+          {contentPatterns.map((p) => (
+            <div key={p.id} className="bg-white border border-slate-200 rounded-2xl p-5">
+              <div className="flex items-baseline gap-3 mb-1.5">
+                <span className="bg-violet-100 text-violet-700 text-xs font-bold px-2 py-1 rounded-lg font-mono">{p.id}</span>
+                <h3 className="font-semibold text-slate-900">{p.name}</h3>
+                <span className="text-xs text-slate-400">{p.bestFor}</span>
+              </div>
+              <p className="text-sm text-slate-600 leading-relaxed mb-2">{p.keyIdea}</p>
+              <p className="text-xs text-emerald-700">CEVF fit: {p.cevfFit}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 bg-violet-50 border border-violet-200 rounded-2xl p-5">
+          <p className="text-sm font-semibold text-violet-800 mb-3">Pattern Router</p>
+          <div className="grid md:grid-cols-2 gap-3">
+            {patternRouter.map((r, i) => (
+              <div key={i} className="bg-white border border-violet-200 rounded-xl p-4">
+                <p className="text-sm text-slate-700 mb-1">{r.need}</p>
+                <p className="text-xs font-mono text-violet-700 mb-1.5">{r.pattern}</p>
+                <p className="text-xs text-slate-500">{r.signal}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-violet-700 mt-4">
+            Patterns compose: e.g., Inversion → Generator, or Pipeline + Reviewer final gate.
+          </p>
         </div>
       </section>
 
