@@ -1,7 +1,7 @@
 ---
 title: '💠 AI First Product Engineer Wiki'
-publishedAt: '2026-02-07'
-summary: 'A wiki for AI First Product Engineer to learn and grow.'
+publishedAt: '2026-03-25'
+summary: 'A wiki for AI-first product engineers: foundations, ops, RAG, context engineering, and agent architecture (loop, harness, tools, memory, evals).'
 tags: ['Wiki', 'AI', 'Product', 'Engineer', 'en']
 ---
 
@@ -96,29 +96,26 @@ SOP
 
 > Agentic System Context Engineering
 
-- write context
-  - memories
-  - state
-  - scratch-pad
-  - ...
-- select context
-  - tools retrieval
-  - docs / knowledge retrieval
-  - memory retrieval
-    - [memo0](https://mem0.ai/) example for long-term memory management
-  - ...
-- compress context
-  - prompt compression (information compression)
-  - summary by LLM
-  - trim by rules
-  - ...
-- isolate context
-  - in state
-  - hold in environment / sandbox
-  - partition among agents
-  - ...
+**Why it matters:** attention cost grows with context length; when noise dominates, decision quality drops—often called **context rot**. Many “model weakness” issues trace to **how** context is packed, not raw window size.
 
-> Make agent select tools to organize and mange its runtime context (CURD operation is maintained by agent itself)
+- **Layer by stability and frequency** (keep each layer doing one job):
+  - **Resident**: identity, project rules, hard prohibitions—short, stable, executable every turn.
+  - **On-demand**: skills and domain playbooks—index in prompt, load full text only when matched.
+  - **Runtime inject**: time, channel IDs, user prefs—append after stable prefixes.
+  - **Memory**: cross-session facts (e.g. `MEMORY.md`)—retrieve, do not dump everything by default.
+  - **System / hooks**: deterministic checks (linters, guards)—**not** repeated prose in the prompt.
+- **Write context**: memories · state · scratch-pad · file-backed artifacts for large tool JSON (filesystem as the context interface).
+- **Select context**: tools retrieval · docs / knowledge retrieval · memory retrieval
+  - [memo0](https://mem0.ai/) example for long-term memory management
+- **Compress context** (pick strategy for the failure mode):
+  - sliding window (cheap, loses early decisions)
+  - LLM summary / branch summarization (keep architecture decisions, open work, constraints)
+  - tool-result compaction (replace bulky outputs with pass/fail + pointers; preserve identifiers verbatim)
+- **Prompt caching**: stable prefixes (system prompt, tool defs, long docs) cache best; put volatile content **after** stable blocks; volatile tool sets hurt hit rate.
+- **Skills descriptors**: treat them as **routing conditions**, not marketing copy—**Use when / Don’t use when**, concrete counterexamples; load **one** skill when clearly matched.
+- **Isolate context**: in state · environment / sandbox · partitions among agents
+
+> Make agents select tools to organize and manage runtime context (CRUD can be agent-driven, but deterministic rules stay in code or hooks).
 
 ## LLM Select
 
@@ -130,6 +127,12 @@ SOP
 - LLM parameters (tokens, top-p, temperature, etc.)
 
 ## LLM Agentic Systems
+
+### Runtime shape: loop, workflow, and control
+
+- **Minimal agent loop**: perceive → decide → act → feedback until the model stops with plain text. In mature stacks, the loop stays thin; new behavior is added via **tools + handlers**, **prompt structure**, and **externalized state** (files/DB), not by bloating the loop into a hand-written state machine. Let the model reason; let the harness own boundaries and state.
+- **Workflow vs. agent**: if execution paths are **fixed in code**, you have a **workflow**; if the **LLM chooses the next step**, you have an **agent**. Labels are often blurred in products—pick the control model that fits risk and clarity, not hype.
+- **Common control patterns** (usually combined): **prompt chaining** (linear stages + optional code gates); **routing** (classify input → specialized handlers/models); **parallelization** (shard work or run multiple samples for consensus); **orchestrator–workers** (decompose, delegate, merge); **evaluator–optimizer** (generate → score → revise until a quality bar is met).
 
 ### Core Patterns
 
@@ -148,14 +151,31 @@ reference practical patterns:
 
 ### Memory
 
+- **Functional layers** (not just storage media):
+  - **Working memory**: current `messages[]` / window—tight, actively curated.
+  - **Procedural memory**: skills and SOPs—loaded on demand, not all at once.
+  - **Episodic memory**: append-only session logs (e.g. JSONL)—full trace for replay and search.
+  - **Semantic memory**: durable facts the agent curates (e.g. `MEMORY.md`)—injected when relevant.
 - short-term vs. long-term memory
   - storage backends: vector store · graph DB · relational DB · file systems
   - structure: graph-based vs. tree-based
+- **Consolidation**: when summarizing or compacting, **archive originals** and only advance pointers—failed consolidation should be recoverable, not a silent loss of evidence.
 - A-MEM: Dynamic and Self-Evolving memory
 - context-sizing control
 
+### Harness, verification, and autonomy
+
+- **Harness** (often beats “just use a bigger model” for code-like tasks): **acceptance baselines** (what “done” means), **execution boundaries** (sandbox, paths, permissions), **feedback signals** (tests, linters, traces), and **rollback / retry** paths. Push work toward **clear goals + automatable checks**; ambiguous goals with strong automation just fail faster in the wrong direction.
+- **Agent-first engineering habits** (OpenAI-style): keep **ground truth in the repo** (short `AGENTS.md` index + deep docs), encode rules in **CI/linters/types** instead of hoping prompts are read, aim for **end-to-end autonomous repair loops** where the agent can verify its own changes against telemetry.
+- **Long tasks**: externalize progress—structured files (JSON feature lists, progress logs), **initializer vs. coding agent** splits, **one `in_progress` task at a time**, resume from disk after crashes. **Slow I/O**: offload to background work + inject results between turns instead of blocking the core loop.
+- **Security before features**: allowlists, workspace path checks, audited shell, **prompt-injection aware design** (mark untrusted content, minimize dangerous tools, confirm sensitive sinks), provider fallbacks for outages.
+
 ### Tools & Skills
 
+- **Tool design (ACI / agent-computer interface)**: shape tools around **agent goals**, not raw REST surface area—fewer, higher-level actions beat many micro-calls. Pair schemas with **concrete examples**; return **structured errors** with fix hints, not opaque strings.
+- **Evolving tool stacks**: static giant tool dumps → **tool search / discovery** → **programmatic orchestration** (code glues tools; intermediate data stays out of the LLM) → **example-rich definitions** for reliability.
+- **Debugging order**: when tools misfire, **fix descriptions and boundaries first**, then revisit model choice. Trim tools that are better as shell, static docs, or skills.
+- **Framework vs. LLM messages**: keep rich internal events **out of the model transcript**; filter to standard roles/content before each API call.
 - tool-call and skills management
   - code execution · html / web-page generation · browser-use · VM use · web search
 - multi-step workflow
@@ -176,6 +196,11 @@ reference practical patterns:
 
 - human-in-loop (HITL) · basic principles for agent build
 - hallucination prevention and mitigation
+- **Evaluation discipline**
+  - Objects: **task** (what to do) · **trial** (one run) · **grader** (how to score); separate **transcript** (what was said/done in the loop) from **outcome** (what changed in the environment). Cover both to catch “talked success” vs. real effects.
+  - **Pass@k** (capability probing with multiple samples) vs **Pass^k** (regression-style repeated checks)—don’t mix interpretations.
+  - Prefer **code graders** when answers are checkable; use model/human judges where semantics matter; **calibrate** automated judges with human spot checks.
+  - **If scores move oddly, debug the harness first** (flaky environments, grader bugs, stale tasks) before rewriting the agent—bad evals send you chasing ghosts.
 - safety, security, compliance, governance
   - content filters · PII redaction · secure key management
   - prompt injection defenses · retrieval hygiene · tool permissioning
@@ -189,10 +214,22 @@ reference practical patterns:
 - reranking before generation · response compression · approximate search tuning
 - distillation / routing to small models · speculative decoding
 - SLAs with adaptive quality tiers · cost/perf dashboards
+- **Tracing & observability**: persist full prompts, messages, tool calls/results, optional reasoning traces, tokens, and latency per run. Emit **events** (`tool_start` / `tool_end` / `turn_end`) once and fan out to logs, UI, and eval queues. Blend **human sampling** (to learn failure modes) with **LLM-based trace scoring** (for scale), using the former to calibrate the latter.
+
+### Anti-patterns (engineering)
+
+- mega system prompt as the knowledge base instead of skills/files
+- tool sprawl and overlapping names → routing confusion
+- no verifiable “done” definition per task class
+- multi-agent without isolation, protocols, or worktrees—un-debuggable state drift
+- skipping memory consolidation on long sessions
+- shipping changes without evals; letting the suite saturate without harder cases
+- constraints only in prose—use hooks, tools, and automated checks
 
 ### Multi-Agent Systems (MAS)
 
 - topology: centralized vs. decentralized · hierarchical vs. flat · serial vs. parallel · supervisor vs. peer
+- **Collaboration mechanics**: agree on a **structured protocol** (append-only JSONL inboxes, explicit statuses) + **task graph** + **isolation** (worktrees) **before** optimizing parallelism. Sub-agents should return **summaries** to parents; keep search/debug chatter in the child context to avoid cross-agent hallucination cascades—add **cross-checks** (second agent, tests, compilers) where stakes are high.
 - memory sharing: Blackboard Model · state-based vs. memory-based
   - storage: vector store · graph DB · relational DB
 - communication protocol: end-to-end · broadcast · shared-memory channels
@@ -319,3 +356,4 @@ trace
 - (26-01-04) add more products and frameworks to the wiki
 - (26-02-07) add more details about LLM Ops and Infra.
 - (26-03-17) provide clean structure and content for the agentic section.
+- (26-03-25) absorb agent architecture notes: loop vs workflow, harness, context layers, ACI tools, memory/consolidation, evals/traces, multi-agent protocols. [post from X](https://x.com/hitw93/status/2034627967926825175)
