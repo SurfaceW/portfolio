@@ -54,6 +54,11 @@
     "emojiIcon": "🍂",
     "desc": "A comprehensive guide to Wabi-Sabi, its principles, and how to apply them in product design and philosophy of life."
   },
+  "tech/design-of-software-architecture": {
+    "title": "Design of Software Architecture",
+    "emojiIcon": "🏗️",
+    "desc": "An elegant visual guide to software architecture as strategic decision-making: drivers, views, principles, and the architect's role in managing complexity."
+  },
   "wealth/intrinsic-value": {
     "title": "Intrinsic Value",
     "emojiIcon": "📈",
