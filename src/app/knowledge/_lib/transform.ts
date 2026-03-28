@@ -26,7 +26,10 @@ async function initEsbuild() {
     // (e.g. React 18 StrictMode double-effect) share the same promise
     // instead of each racing to call initialize().
     globalThis.__esbuildInitPromise = import('esbuild-wasm').then((esbuild) =>
-      esbuild.initialize({ wasmURL: '/esbuild.wasm', worker: true })
+      esbuild.initialize({
+        wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.27.4/bin/esbuild.wasm',
+        worker: true
+      })
     )
   }
   await globalThis.__esbuildInitPromise
