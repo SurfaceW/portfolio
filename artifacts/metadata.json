@@ -19,6 +19,11 @@
     "emojiIcon": "📋",
     "desc": "An interactive guide to the Lean Canvas concept and standard operating procedures (SOPs)."
   },
+  "business/edots-lean-canvas": {
+    "title": "eDots Lean Canvas",
+    "emojiIcon": "🔵",
+    "desc": "Lean Canvas for eDots — a beautiful Apple-native app for logging, randomizing, and sharing personal collections."
+  },
   "wisdom/dao": {
     "title": "Dao of Dao",
     "emojiIcon": "☯️",
