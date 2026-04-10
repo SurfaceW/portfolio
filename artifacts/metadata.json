@@ -71,7 +71,12 @@
   },
   "wealth/ai-investment-view-points": {
     "title": "AI Investment View Points",
-    "emojiIcon": "🧠",
+    "emojiIcon": "📈",
     "desc": "A visual brief of 2026 AI investing signals, company theses, winners, and risk exposure."
+  },
+  "health/brain-health": {
+    "title": "Brain Health",
+    "emojiIcon": "🧠",
+    "desc": "A visual guide to brain health, its principles, and how to apply them in daily life."
   }
 }
