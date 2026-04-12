@@ -386,7 +386,7 @@ function Chart({ data, freedomYear, targetPortfolio, currency, usdToCny }) {
   );
 }
 
-function SensitivityBar({ label, years, maxYears, color, highlight }) {
+function SensitivityBar({ label, years, maxYears, color, highlight = false }) {
   const pct = years === null ? 100 : Math.min((years / maxYears) * 100, 100);
   return (
     <div className="flex items-center gap-3">
@@ -451,12 +451,10 @@ export default function FinancialFreedomSimulator() {
   const [withdrawalRate, setWithdrawalRate] = useState(4);
   const [annualSpending, setAnnualSpending] = useState(600_000);
 
-  const simulation = useMemo(
+  const { data, freedomYear, targetPortfolio } = useMemo(
     () => simulate(startingPortfolio, annualSavings, returnRate, withdrawalRate, annualSpending),
     [startingPortfolio, annualSavings, returnRate, withdrawalRate, annualSpending]
   );
-
-  const { data, freedomYear, targetPortfolio } = simulation;
 
   const returnSensitivity = useMemo(() => {
     const run = (rate) =>
