@@ -78,5 +78,10 @@
     "title": "Brain Health",
     "emojiIcon": "🧠",
     "desc": "A visual guide to brain health, its principles, and how to apply them in daily life."
+  },
+  "wealth/financial-freedom-simulator": {
+    "title": "Financial Freedom Simulator",
+    "emojiIcon": "🏖️",
+    "desc": "Interactive calculator to simulate when passive income covers your lifestyle — adjust capital, savings, returns, and expenses to see the timeline shift."
   }
 }
