@@ -122,9 +122,9 @@ export default function RootPage() {
           </div>
 
           {/* Manifesto Card - Full width on mobile */}
-          <div className="col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2 row-span-1 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-800/30">
+          {/* <div className="col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2 row-span-1 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-800/30">
             <ManifestoCard manifestoItems={["ETIWTT", "ORDERIFY", "3E (Efficiency, Effectiveness, Elegance)"]} />
-          </div>
+          </div> */}
 
           {/* Career Journey - Full width on mobile */}
           <div className="col-span-1 sm:col-span-2 row-span-1 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/30 dark:hover:to-orange-800/30">
