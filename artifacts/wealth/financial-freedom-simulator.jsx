@@ -266,6 +266,45 @@ function MetricCard({ icon: Icon, label, value, sub, color }) {
   );
 }
 
+function EditableMetricCard({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  color,
+  min,
+  max,
+  step,
+  onChange,
+}) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5"
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <div className="p-1.5 rounded-lg" style={{ background: `${color}20` }}>
+          <Icon size={14} style={{ color }} />
+        </div>
+        <span className="text-xs text-white/40">{label}</span>
+      </div>
+      <label className="flex items-center gap-2 text-2xl font-bold text-white">
+        <input
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-full min-w-0 bg-transparent text-white outline-none tabular-nums [appearance:textfield]"
+        />
+        <span className="shrink-0 text-lg text-white/60">万</span>
+      </label>
+      {sub && <div className="text-xs text-white/40 mt-1">{sub}</div>}
+    </motion.div>
+  );
+}
+
 function Legend() {
   const items = [
     { color: COLORS.portfolio, label: "Portfolio Value" },
@@ -302,8 +341,18 @@ export default function FinancialFreedomSimulator() {
   const [returnRate, setReturnRate] = useState(6);
   const [withdrawRate, setWithdrawRate] = useState(4);
   const [annualExpense, setAnnualExpense] = useState(60);
+  const target = annualExpense / (withdrawRate / 100);
 
-  const { data, freedomYear, target } = useMemo(
+  const handleTargetChange = useCallback(
+    (nextTarget) => {
+      if (!Number.isFinite(nextTarget)) return;
+      const clampedTarget = Math.min(10000, Math.max(100, nextTarget));
+      setAnnualExpense(Number((clampedTarget * (withdrawRate / 100)).toFixed(2)));
+    },
+    [withdrawRate]
+  );
+
+  const { data, freedomYear } = useMemo(
     () => simulate(p0, annualSave, returnRate, withdrawRate, annualExpense),
     [p0, annualSave, returnRate, withdrawRate, annualExpense]
   );
@@ -371,12 +420,16 @@ export default function FinancialFreedomSimulator() {
               sub={freedomYear !== null ? `Around ${new Date().getFullYear() + freedomYear}` : "Not within 40 years"}
               color={COLORS.savings}
             />
-            <MetricCard
+            <EditableMetricCard
               icon={Target}
               label="Target Portfolio"
-              value={`${Math.round(target)}万`}
-              sub={`= ${annualExpense}万 ÷ ${withdrawRate}%`}
+              value={Math.round(target)}
+              sub={`Edits annual expense to match ${withdrawRate}% withdrawal rate`}
               color={COLORS.freedom}
+              min={100}
+              max={10000}
+              step={10}
+              onChange={handleTargetChange}
             />
             <MetricCard
               icon={Gauge}
@@ -417,7 +470,7 @@ export default function FinancialFreedomSimulator() {
               Control Panel
             </h2>
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-6">
-              <Slider label="Starting Capital" value={p0} onChange={setP0} min={0} max={2000} step={10} unit="万" icon={PiggyBank} color={COLORS.portfolio} />
+              <Slider label="Starting Capital" value={p0} onChange={setP0} min={0} max={2000} step={100} unit="万" icon={PiggyBank} color={COLORS.portfolio} />
               <Slider label="Annual Savings (salary only)" value={annualSave} onChange={setAnnualSave} min={0} max={100} step={1} unit="万" icon={Wallet} color={COLORS.savings} />
               <Slider label="Portfolio Return" value={returnRate} onChange={setReturnRate} min={1} max={15} step={0.5} unit="%" icon={TrendingUp} color={COLORS.accent} />
               <Slider label="Annual Living Expense" value={annualExpense} onChange={setAnnualExpense} min={10} max={200} step={5} unit="万" icon={Target} color={COLORS.freedom} />
