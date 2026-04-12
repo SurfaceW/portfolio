@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { transformJSX, buildHTMLDoc, buildJSXDoc } from '../_lib/transform'
+import { transformJSX } from '../_lib/transform'
+import { buildHTMLDoc, buildJSXDoc } from '../_lib/doc'
 
 type Mode = 'html' | 'jsx'
 

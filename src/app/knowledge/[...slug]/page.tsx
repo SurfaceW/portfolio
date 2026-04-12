@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { scanArtifacts, resolveArtifact, readArtifact, readMetadata } from '../_lib/artifacts'
+import { transformJSXAtBuild } from '../_lib/transform-server'
+import { buildHTMLDoc, buildJSXDoc } from '../_lib/doc'
 import ArtifactPreview from '../_components/artifact-preview'
 
 export const dynamic = 'force-static'
@@ -38,7 +40,7 @@ export function generateMetadata({
   }
 }
 
-export default function ArtifactPage({
+export default async function ArtifactPage({
   params,
 }: {
   params: { slug: string[] }
@@ -47,6 +49,17 @@ export default function ArtifactPage({
   if (!artifact) notFound()
 
   const code = readArtifact(artifact.filePath)
+  let srcDoc = ''
+  let error: string | null = null
 
-  return <ArtifactPreview code={code} mode={artifact.mode} slug={params.slug} />
+  try {
+    srcDoc =
+      artifact.mode === 'html'
+        ? buildHTMLDoc(code)
+        : buildJSXDoc(await transformJSXAtBuild(code))
+  } catch (e: any) {
+    error = (e?.message ?? String(e)).replace(/\[esbuild-wasm\]?\s*/gi, '').trim()
+  }
+
+  return <ArtifactPreview srcDoc={srcDoc} mode={artifact.mode} slug={params.slug} error={error} />
 }

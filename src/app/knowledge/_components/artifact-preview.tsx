@@ -1,46 +1,13 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { transformJSX, buildHTMLDoc, buildJSXDoc } from '../_lib/transform'
 import type { ArtifactMode } from '../_lib/artifacts'
 
 interface Props {
-  code: string
+  srcDoc: string
   mode: ArtifactMode
   slug: string[]
+  error?: string | null
 }
 
-export default function ArtifactPreview({ code, mode, slug }: Props) {
-  const [srcDoc, setSrcDoc] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function compile() {
-      setLoading(true)
-      setError(null)
-      try {
-        const doc =
-          mode === 'html'
-            ? buildHTMLDoc(code)
-            : buildJSXDoc(await transformJSX(code))
-        if (!cancelled) setSrcDoc(doc)
-      } catch (e: any) {
-        if (!cancelled)
-          setError((e?.message ?? String(e)).replace(/\[esbuild-wasm\]?\s*/gi, '').trim())
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    compile()
-    return () => {
-      cancelled = true
-    }
-  }, [code, mode])
-
+export default function ArtifactPreview({ srcDoc, mode, slug, error }: Props) {
   const pathStr = slug.join('/')
 
   return (
@@ -69,17 +36,11 @@ export default function ArtifactPreview({ code, mode, slug }: Props) {
           {mode}
         </span>
         <div className="ml-auto shrink-0">
-          {loading && (
-            <span className="text-[10px] text-white/15 tracking-widest uppercase">
-              compiling
-            </span>
-          )}
-          {!loading && error && (
+          {error ? (
             <span className="text-[11px] text-red-400/60 truncate max-w-xs">{error}</span>
-          )}
-          {!loading && !error && (
+          ) : (
             <span className="text-[10px] text-emerald-500/30 tracking-widest uppercase">
-              ready
+              prebuilt
             </span>
           )}
         </div>
@@ -95,7 +56,7 @@ export default function ArtifactPreview({ code, mode, slug }: Props) {
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-[#fafafa] text-slate-300 text-sm select-none">
-            {loading ? 'compiling…' : error ? 'compile error' : 'empty'}
+            {error ? 'compile error' : 'empty'}
           </div>
         )}
       </div>
