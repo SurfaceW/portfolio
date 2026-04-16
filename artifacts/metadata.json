@@ -83,5 +83,10 @@
     "title": "Financial Freedom Simulator",
     "emojiIcon": "🏖️",
     "desc": "Interactive calculator to simulate when passive income covers your lifestyle — adjust capital, savings, returns, and expenses to see the timeline shift."
+  },
+  "references/openclaw-cheatsheet": {
+    "title": "OpenClaw Command Line Interface Cheatsheet",
+    "emojiIcon": "🔧",
+    "desc": "A comprehensive guide to OpenClaw command line interface."
   }
 }
