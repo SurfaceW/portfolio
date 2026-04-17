@@ -5,7 +5,10 @@ import { NextResponse } from 'next/server'
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: 'Read my thoughts on software development, design, and more.'
+  description: 'Read my thoughts on software development, design, and more.',
+  alternates: {
+    canonical: '/posts/topics',
+  },
 }
 
 export default async function PostPageServer({

@@ -5,6 +5,9 @@ import { getArtifactsWithMeta } from './_lib/artifacts'
 export const metadata: Metadata = {
   title: 'Knowledge',
   description: "Arno's interactive knowledge base — visual guides, demos, and living documents built with HTML and JSX.",
+  alternates: {
+    canonical: '/knowledge',
+  },
   openGraph: {
     title: 'Knowledge | Arno',
     description: 'Interactive knowledge base — visual guides, demos, and living documents.',
