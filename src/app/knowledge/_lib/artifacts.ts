@@ -59,12 +59,30 @@ export function getArtifactsWithMeta(): ArtifactEntry[] {
       slug,
       key,
       meta: metadata[key] ?? {
-        title: slug[slug.length - 1].replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        title: slug[slug.length - 1]
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase()),
         emojiIcon: '📄',
-        desc: '',
-      },
+        desc: ''
+      }
     }
   })
+}
+
+export function getArtifactLastModified(slug: string[]): string {
+  const artifact = resolveArtifact(slug)
+  const metaPath = path.join(ARTIFACTS_DIR, 'metadata.json')
+
+  const timestamps: number[] = []
+  if (artifact && fs.existsSync(artifact.filePath)) {
+    timestamps.push(fs.statSync(artifact.filePath).mtimeMs)
+  }
+  if (fs.existsSync(metaPath)) {
+    timestamps.push(fs.statSync(metaPath).mtimeMs)
+  }
+
+  const latest = timestamps.length > 0 ? Math.max(...timestamps) : Date.now()
+  return new Date(latest).toISOString()
 }
 
 export function resolveArtifact(
