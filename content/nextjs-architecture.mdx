@@ -1,28 +1,35 @@
 ---
 title: '🪐 Comprehensive Next.js Full Stack App Architecture Guide'
 publishedAt: '2025-05-13'
-summary: "A comprehensive guide to designing scalable and maintainable Next.js full stack web applications, based on Arno's best practices for complex projects."
+summary: "A principles-first guide to designing scalable and maintainable Next.js full-stack applications — twelve universal backend architecture concerns translated into concrete Next.js patterns, plus framework-specific best practices."
 image: 'https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20250526164830-wyxK0U7FPmPVfkNCdbXytJ2YOFTwnu.jpg'
 tags: ['Frontend', 'Backend', 'Fullstack', 'en', 'Next.js', 'Web Development']
 ---
 
-> Arno shares his best practices for designing robust Next.js full stack applications, drawing from experience with large-scale projects like Alibaba's DingTalk and personal endeavors. This guide covers key aspects of Next.js web application design.
+> Arno shares his best practices for designing robust Next.js full-stack applications, drawing from large-scale projects, and personal indie work. This guide is organized **principles first**: every section names a universal backend architecture concern, then shows the Next.js instantiation, with optional cross-language mirrors when useful.
 
-## Server-Side Architecture in Next.js
+## Preface — How to Read This Guide
 
-### General API Design and Architectural Styles for Web Applications
+A good architecture guide should outlive a single framework. So this article is structured in four parts:
 
-- **Adaptive Architecture Design** - Architecture should evolve throughout different stages of a project's lifecycle. Don't default to complex patterns like `micro-services` for every project, especially for smaller initiatives or MVPs. Instead, embrace an evolutionary approach where architecture adapts to changing requirements and scale for your web application design.
+- **Part I — Universal Architectural Concerns**: twelve concerns that show up in every serious backend, regardless of language. Each section gives the principle, why it matters, and the Next.js mapping. When the FastAPI/Python equivalent is illuminating, it gets a one-line callout.
+- **Part II — Next.js-Specific Surface**: framework features that don't have a clean cross-language analog — Server Components, Server Actions, the cache hierarchy, the edge runtime, the React client model.
+- **Part III — Two Philosophies**: composition vs. convention — when each one pays off in a Next.js codebase.
+- **Part IV — Patterns Worth Extracting**: a transferable checklist you can lift into any new Next.js service.
 
-- **Strategic API Design for Modern Web Architectures** - Leverage [_RESTful principles_](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) and adhere to strict design guidelines. When appropriate, consider RPC frameworks like `GraphQL` or `gRPC`. Carefully evaluate communication protocols before integration—avoid unnecessary complexity unless specific requirements justify it.
+The principles map cleanly onto FastAPI, Spring Boot, Rails, NestJS, or any other modern backend framework — Next.js is just one concrete instantiation we walk through in detail.
 
-- **Prioritizing Stateless and Serverless Architecture in Next.js** - Design services to be inherently scalable and manageable by prioritizing stateless architectures and serverless deployment models. Platforms like `Vercel` provide optimized serverless environments for Next.js applications. Alternative deployment options include `Aliyun` or `CloudFlare EdgeWorker` services. This is a key consideration for modern full stack app architecture.
+---
 
-- **Robust API Management** - Implement versioning (e.g., `/api/v1/*`) to maintain backward compatibility for both public and internal APIs. Adhere to standardized specifications like [`OpenAPI`](https://swagger.io/specification/) or `Swagger` to ensure comprehensive documentation and usability. As project complexity increases, select appropriate methodologies to manage this complexity based on your specific use cases.
+## Part I — Universal Architectural Concerns
 
-- **Leveraging Next.js for Full Stack Development** - Utilize Next.js's comprehensive full-stack features to rapidly develop and validate concepts. Implement a layered architecture approach, introducing separation as complexity grows to maintain maintainability and scalability.
+### 1. Layered Architecture & the Dependency Rule
 
-The following diagram illustrates a common layered architecture pattern for Next.js full stack applications:
+**Principle.** Carve the system into a small number of layers and enforce a strict **downward dependency rule**. Higher layers may import from lower layers; lower layers must never import from higher layers. The bottom layer (`shared`) imports from nothing.
+
+**Why it matters.** Without this rule, every layer eventually imports every other layer, and the codebase collapses into a ball of mud. With it, you can replace any layer in isolation — swap the transport, swap the ORM, swap the framework.
+
+**Next.js mapping.** The classical four-layer model maps onto the framework's seams:
 
 ```
 +-----------------------------------------------------------------------------------------------+
@@ -33,66 +40,546 @@ The following diagram illustrates a common layered architecture pattern for Next
                 ↓                          ↓                           ↓
 +-----------------------------------------------------------------------------------------------+
 |                                    CONTROLLER LAYER                                           |
-|                                                                                               |
 |  +-----------------+    +------------------+    +---------------------+                       |
 |  |   Page Route    |    |    API Route     |    |    Server Action    |                       |
 |  +-----------------+    +------------------+    +---------------------+                       |
-|         |                       |                         |                                   |
-|         +--------------------------------------------------                                   |
-|                                  |                                                            |
 +-----------------------------------------------------------------------------------------------+
                                    | Call
                                    ↓
 +-----------------------------------------------------------------------------------------------+
 |                                    SERVICE LAYER                                              |
-|                                                                                               |
 |  +------------------+    +------------------+    +------------------+                         |
 |  | Domain Service A |    | Domain Service B |    | Domain Service C |                         |
 |  +------------------+    +------------------+    +------------------+                         |
-|         |                       |                        |                                    |
-|         +--------------------------------------------------                                   |
-|                                  |                                                            |
 +-----------------------------------------------------------------------------------------------+
                                    | Use
                                    ↓
 +-----------------------------------------------------------------------------------------------+
 |                                   MANAGER LAYER                                               |
-|                                                                                               |
 |  +------------------+    +------------------+    +------------------+                         |
 |  |    Manager A     |    |    Manager B     |    |    Manager C     |                         |
 |  +------------------+    +------------------+    +------------------+                         |
-|                                                                                               |
 +-----------------------------------------------------------------------------------------------+
                                    | Access
                                    ↓
 +-----------------------------------------------------------------------------------------------+
-|                             DATA PERSISTENCE LAYER                                            |
+|                             DATA PERSISTENCE LAYER (foundation)                               |
++-----------------------------------------------------------------------------------------------+
+                                   ↑ uses
++-----------------------------------------------------------------------------------------------+
+|                            SHARED (types, contracts, errors) — imports nothing                |
 +-----------------------------------------------------------------------------------------------+
 ```
 
-### Next.js Application Layer (Controller / Routes)
+The arrows point one way. `shared/` (types, contracts, error classes) sits at the bottom and imports nothing. `foundation/` (db, cache, queue, logger) imports only `shared`. Services import foundation + shared. Controllers import services + shared. Never the reverse.
 
-`Controller` / `Routes`: for next.js is api-routes use `Function` programming style, it plays a role as traditional Application Layer in your Next.js project structure.
+Enforce it mechanically — humans drift:
 
-- handle the request and response in Web and Application layer
-- use private folder `_folder` start with `_` to handle the private routes and api routes, which is not exposed to the public and not be indexed by the next.js router
-- make full use of next.js' conventions of `default`, `layout`, `loading`, `error`, `not-found`, `sitemap`, `robots` etc to handle the common logic easily
-  - upcoming `forbidden`, `cache directive` convention
-- group the routes by `(groupName)` to separate the routes by different business features or modules
-- deal with the error for web or other protocol response, handle error codes and error message -> see the following error handling patterns section
-- return `unified` response or service result object to be handled by the client
-- controller can be write in global `middleware` function (similar to `koa`) or wrapped by high-order function to handle the common logic including:
-  - composable `Page Route`
-  - composable `API Route` -> can directly call from server-actions
-  - composable `Server Action`
+- `eslint-plugin-boundaries` or `dependency-cruiser` to declare and check layer rules in CI.
+- `tsconfig` `paths` to make layer imports explicit (`@app/services/*`, `@app/foundation/*`, `@shared/*`).
+- A pre-commit `dependency-cruiser` run is cheap insurance.
+
+> **Cross-language mirror.** FastAPI/Python services expressing the same rule typically use `gateway → app/core → framework → foundation → shared`. The names differ; the dependency rule is identical.
+
+### 2. Configuration as a Tiered Strategy
+
+**Principle.** Production systems need three tiers of config: **static** (compiled into the build), **composable** (assembled per-feature/per-tenant at startup), and **dynamic** (hot-reloadable at runtime without redeploy).
+
+**Why it matters.** Stuffing everything into `.env` works until you need feature flags, per-tenant LLM model overrides, or A/B test gates. Stuffing everything into a remote config service makes local dev painful. Three tiers, three responsibilities.
+
+**Next.js mapping.**
+
+- **Static (build-time).** A single `configs/env.ts` validated by `zod` at module load. Fail loudly if a required env is missing — never silently fall back.
+
+```ts
+// configs/env.ts
+import { z } from 'zod'
+
+export const env = z.object({
+  DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url(),
+  OPENAI_API_KEY: z.string().min(1),
+  NODE_ENV: z.enum(['development', 'staging', 'production'])
+}).parse(process.env)
+```
+
+- **Composable (startup-time).** Per-feature or per-tenant config objects assembled from typed building blocks. Useful for AI agents (different tools per persona), multi-brand sites, white-label deployments.
+
+```ts
+// services/agent/agent.config.ts
+export function buildAgentConfig(persona: PersonaId): AgentConfig {
+  return {
+    ...baseAgentConfig,
+    tools: toolsByPersona[persona],
+    model: modelByPersona[persona] ?? defaultModel
+  }
+}
+```
+
+- **Dynamic (runtime).** `Vercel EdgeConfig`, LaunchDarkly, Statsig, or a Redis-backed flag service. Subscribe to changes; do not poll on every request.
+
+> **Cross-language mirror.** FastAPI services often use Hydra YAML composition for tier 2 and a Nacos/Consul `DynamicConfigManager` for tier 3. The pattern is the same; the libraries differ.
+
+### 3. Application Lifecycle & Lifespan Management
+
+**Principle.** Every long-lived resource (DB pool, queue client, websocket manager, ML model) needs an explicit **start** and **stop** hook. Leaks at shutdown are a silent reliability problem.
+
+**Why it matters.** Serverless hides this until it bites you on a long-running container, an Edge function with persistent state, or a self-hosted deployment. The discipline pays back the moment you scale beyond a single Vercel function.
+
+**Next.js mapping.**
+
+- **Startup.** Next.js 14+ exposes [`instrumentation.ts`](https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation) — register OpenTelemetry, warm a DB pool, prefetch dynamic config.
+
+```ts
+// instrumentation.ts
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { initTracing } = await import('./lib/server/tracing')
+    const { warmDbPool } = await import('./lib/server/db')
+    const { startQueueConsumers } = await import('./lib/server/queue')
+
+    await initTracing()
+    await warmDbPool()
+    await startQueueConsumers()
+  }
+}
+```
+
+- **Singletons in node runtime.** Use the `globalThis` ref pattern so HMR and Next.js' multiple module copies don't create N database pools:
+
+```ts
+// lib/server/db.ts
+import { PrismaClient } from '@prisma/client'
+
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+```
+
+- **Shutdown.** When you self-host, listen for `SIGTERM` and drain gracefully. On Vercel, use [`waitUntil`](https://vercel.com/docs/functions/functions-api-reference#waituntil) and the new [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) primitive to defer non-critical work past the response.
+- **Health.** Expose a cheap `/api/health` route that pings deps with a budget — never block a health check on a slow dependency.
+
+> **Cross-language mirror.** FastAPI's `@asynccontextmanager` `lifespan` performs the same role: start clients, register loop-lag monitoring, sweep aiohttp sessions on shutdown.
+
+### 4. The Universal IO Contract
+
+**Principle.** Every entry point — page, API route, server action — speaks the **same response shape**. Errors and successes are values, not exceptions, by the time they leave the service layer.
+
+**Why it matters.** A unified contract means client code can render any response with one branch (`result.ok`), error reporting is uniform, and the controller layer becomes a thin transport adapter with no per-route branching.
+
+**Next.js mapping.** Codify a `ServiceResult<T>` discriminated union that flows from service → controller → client:
+
+```ts
+// shared/contracts/result.ts
+export type ServiceResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: BizError }
+
+export const ok = <T>(data: T): ServiceResult<T> => ({ ok: true, data })
+export const fail = (error: BizError): ServiceResult<never> => ({ ok: false, error })
+```
+
+Used everywhere:
+
+```ts
+// service
+async function getElaborator(id: string): Promise<ServiceResult<Elaborator>> {
+  const e = await repo.findById(id)
+  return e ? ok(e) : fail(new NotFoundError('elaborator', id))
+}
+
+// API route
+export const GET = composeAPIRoute([authUser, async (req, ctx) => {
+  return Response.json(await elaboratorService.getElaborator(ctx.params.id))
+}])
+
+// server action
+export async function getElaboratorAction(id: string) {
+  return elaboratorService.getElaborator(id)
+}
+```
+
+The client renders any of them with one pattern:
+
+```tsx
+const result = await getElaboratorAction(id)
+if (!result.ok) return <ErrorView error={result.error} />
+return <ElaboratorView data={result.data} />
+```
+
+> **Cross-language mirror.** Python services with an `AppRequest → AppResponse` contract (or Rust's `Result<T, E>`) are doing the same thing — values, not exceptions, at the boundary.
+
+### 5. Entity Lifecycle Hooks, Optimistic Locking & State Machines
+
+**Principle.** CRUD is rarely just CRUD. Every entity has **lifecycle hooks** (before/after create, update, delete), needs **optimistic locking** to handle concurrent writes, and often a **state machine** for valid transitions. Encode all three once, reuse everywhere.
+
+**Why it matters.** Without this, every service file re-invents validation, audit logging, lock checks, and status guards. With it, a new resource is one file of hook overrides.
+
+**Next.js mapping.** Sketch a `BaseEntityHandler<T>` that resources extend:
+
+```ts
+// lib/server/entity/base-handler.ts
+export abstract class BaseEntityHandler<T extends { id: string; version: number }> {
+  async beforeCreate(data: Partial<T>, ctx: UserContext): Promise<Partial<T>> { return data }
+  async afterCreate(entity: T, ctx: UserContext): Promise<void> {}
+  async beforeUpdate(curr: T, patch: Partial<T>, ctx: UserContext): Promise<Partial<T>> { return patch }
+  async afterUpdate(prev: T, next: T, ctx: UserContext): Promise<void> {}
+  async beforeDelete(entity: T, ctx: UserContext): Promise<void> {}
+  async afterDelete(entity: T, ctx: UserContext): Promise<void> {}
+  async onTransition(entity: T, action: string, target: string, ctx: UserContext): Promise<void> {}
+}
+```
+
+Optimistic locking with Prisma — a `version` column checked in the `WHERE` clause:
+
+```ts
+async update(entity: T, patch: Partial<T>) {
+  const result = await prisma.$transaction(async (tx) => {
+    const updated = await tx.entity.updateMany({
+      where: { id: entity.id, version: entity.version },
+      data: { ...patch, version: { increment: 1 } }
+    })
+    if (updated.count === 0) throw new ConflictError('optimistic-lock', entity.id)
+    return tx.entity.findUniqueOrThrow({ where: { id: entity.id } })
+  })
+  return result
+}
+```
+
+State machine as a typed transition table — no string-typing, no boolean soup:
+
+```ts
+type Status = 'draft' | 'pending' | 'approved' | 'published' | 'archived'
+type Action = 'submit' | 'approve' | 'reject' | 'publish' | 'archive' | 'rollback'
+
+const transitions: Record<Status, Partial<Record<Action, Status>>> = {
+  draft:     { submit: 'pending' },
+  pending:   { approve: 'approved', reject: 'draft' },
+  approved:  { publish: 'published' },
+  published: { archive: 'archived', rollback: 'approved' },
+  archived:  {}
+}
+```
+
+> **Cross-language mirror.** Python platforms typically have an `EntityHandler` with the same hook surface and a `ResourceStateMachine` class — the discipline transfers wholesale.
+
+### 6. Per-Resource Module Convention
+
+**Principle.** When you have many similar resources (CRUD-heavy admin platforms, multi-entity SaaS), adopt a **formulaic per-resource module structure**. Adding a resource becomes a copy-paste-fill exercise, not an architectural debate.
+
+**Why it matters.** Conventions remove decisions. A team scaling fast benefits more from "no choice" than from "the right choice for this case."
+
+**Next.js mapping.**
+
+```
+services/
+└── elaborator/
+    ├── elaborator.service.ts      ← orchestration; returns ServiceResult<T>
+    ├── elaborator.handler.ts      ← BaseEntityHandler subclass; lifecycle hooks
+    ├── elaborator.repository.ts   ← BaseRepository subclass; data access
+    ├── elaborator.validator.ts    ← zod schemas for input
+    ├── elaborator.types.ts        ← entity + DTO types
+    └── elaborator.route.ts        ← thin re-exports for /app/api/v1/elaborators/*
+```
+
+The service is a thin coordinator:
+
+```ts
+async create(input: CreateInput, ctx: UserContext): Promise<ServiceResult<Elaborator>> {
+  const data = await this.validator.parseCreate(input)
+  const prepared = await this.handler.beforeCreate(data, ctx)
+  const entity = await this.repo.insert(prepared, ctx.tenantId)
+  await this.handler.afterCreate(entity, ctx)
+  return ok(entity)
+}
+```
+
+The convention pays off most when you have 10+ resources. For 2-3 resources, it's overkill — go composition (see §11 / Part III).
+
+> **Cross-language mirror.** FastAPI platform services with 30+ resources use exactly this 4-file pattern (`*_service.py`, `*_handler.py`, `*_repository.py`, `*_validator.py`).
+
+### 7. Generic Typed Repository
+
+**Principle.** Encapsulate persistence behind a **generic typed repository**. The data layer should be the only place that knows about your storage technology.
+
+**Why it matters.** Swap Postgres for an Elasticsearch read model, add tenant routing, add caching — all in one place, transparently to services.
+
+**Next.js mapping.** Sketch a `BaseRepository<T>` over Prisma with tenant scoping baked in:
+
+```ts
+// lib/server/repository/base.ts
+export abstract class BaseRepository<T extends { id: string }> {
+  protected abstract model: any
+  protected abstract serialize(entity: T): Record<string, unknown>
+  protected abstract deserialize(row: Record<string, unknown>): T
+
+  async findById(id: string, tenantId: string): Promise<T | null> {
+    const row = await this.model.findFirst({ where: { id, tenantId } })
+    return row ? this.deserialize(row) : null
+  }
+
+  async insert(entity: T, tenantId: string): Promise<T> {
+    const row = await this.model.create({ data: { ...this.serialize(entity), tenantId } })
+    return this.deserialize(row)
+  }
+
+  async search(query: QueryBuilder<T>, tenantId: string): Promise<T[]> {
+    const rows = await this.model.findMany({ where: { ...query.toPrisma(), tenantId } })
+    return rows.map((r: Record<string, unknown>) => this.deserialize(r))
+  }
+}
+```
+
+A small fluent `QueryBuilder` makes call sites readable without leaking Prisma's syntax into services. Tenant routing is enforced at the base — services cannot accidentally cross tenants.
+
+> **Cross-language mirror.** Python's `ESRepository[TEntity: BaseModel]` is the same pattern with TypeVar bounds and `account_routing` instead of `tenantId`.
+
+### 8. Typed Exception Hierarchy → Transport Mapping
+
+**Principle.** Business code throws (or returns) **typed business errors**. The transport layer (HTTP/SSE) maps them to wire codes. Business code never touches HTTP status codes.
+
+**Why it matters.** Services become testable without HTTP infrastructure, errors are exhaustively documentable, and changing the transport (REST → tRPC → SSE) doesn't ripple into business code.
+
+**Next.js mapping.** A small hierarchy in `shared/`:
+
+```ts
+// shared/errors/biz-error.ts
+export class BizError extends Error {
+  constructor(public code: string, message: string, public meta?: unknown) {
+    super(message)
+  }
+}
+export class ValidationError    extends BizError {} // → 400
+export class AuthError          extends BizError {} // → 401
+export class PermissionError    extends BizError {} // → 403
+export class NotFoundError      extends BizError {} // → 404
+export class ConflictError      extends BizError {} // → 409
+export class RateLimitError     extends BizError {} // → 429
+export class ExternalSvcError   extends BizError {} // → 502
+```
+
+A single mapper composed into every route:
+
+```ts
+// lib/server/route/map-errors.ts
+const STATUS: Record<string, number> = {
+  ValidationError: 400, AuthError: 401, PermissionError: 403,
+  NotFoundError: 404, ConflictError: 409, RateLimitError: 429,
+  ExternalSvcError: 502
+}
+
+export const mapErrors: Middleware = async (req, ctx, next) => {
+  try {
+    return await next()
+  } catch (e) {
+    if (e instanceof BizError) {
+      return Response.json(
+        { ok: false, error: { code: e.code, message: e.message } },
+        { status: STATUS[e.constructor.name] ?? 500 }
+      )
+    }
+    logger.error('[unhandled]', e)
+    return Response.json({ ok: false, error: { code: 'INTERNAL' } }, { status: 500 })
+  }
+}
+
+export const POST = composeAPIRoute([mapErrors, authUser, handler])
+```
+
+The discipline: **services return `ServiceResult` for expected outcomes, throw `BizError` only for truly exceptional flows**. Mixing both is a code smell.
+
+> **Cross-language mirror.** Python's `@map_platform_exceptions` decorator does the identical job — typed `PlatformException` hierarchy mapped to HTTP at the gateway.
+
+### 9. Layered Authentication & Authorization
+
+**Principle.** Auth is **three independent layers**: **authentication** (who is this), **identity hydration** (load profile + permissions), **authorization** (can they do this). Each layer should be a separate, testable component.
+
+**Why it matters.** Conflating them produces middleware soup that's impossible to test or reason about. Separated, you can mock identity in tests and add new permission rules without touching JWT parsing.
+
+**Next.js mapping.**
+
+- **Layer 1 — Authentication.** `middleware.ts` validates the JWT/session cookie, attaches a minimal claim to a request header for downstream handlers.
+
+```ts
+// middleware.ts
+export async function middleware(req: NextRequest) {
+  const claim = await verifyToken(req.cookies.get('token')?.value)
+  if (!claim && requiresAuth(req.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
+  const headers = new Headers(req.headers)
+  if (claim) headers.set('x-user-id', claim.sub)
+  return NextResponse.next({ request: { headers } })
+}
+```
+
+- **Layer 2 — Identity hydration.** A server util that resolves the full `UserContext`. The Next.js analog of FastAPI's `Depends(get_user_context)`.
+
+```ts
+// lib/server/auth/get-user-context.ts
+import { cache } from 'react'
+import { headers } from 'next/headers'
+
+export const getUserContext = cache(async (): Promise<UserContext> => {
+  const userId = headers().get('x-user-id')
+  if (!userId) throw new AuthError('unauthenticated', 'no token')
+  const user = await userRepo.findById(userId)
+  const perms = await permissionService.loadFor(userId)
+  return { id: user.id, externalId: user.externalId, tenantId: user.tenantId, perms }
+})
+```
+
+`React.cache` deduplicates the call within one request — call it freely from any server component or route handler.
+
+- **Layer 3 — Authorization.** A composable check that merges role-based, resource-level, and project-level permissions:
+
+```ts
+export function can(ctx: UserContext, action: string, resource?: { ownerId: string; projectId?: string }) {
+  if (ctx.perms.has('*:*')) return true
+  if (ctx.perms.has(action)) return true
+  if (resource?.ownerId === ctx.id) return true
+  if (resource?.projectId && ctx.perms.has(`project:${resource.projectId}:${action}`)) return true
+  return false
+}
+```
+
+**Dual-ID pitfall.** If your system has both an internal user id and an external id from an upstream IDP, name them explicitly (`id` vs `externalId`) and document which one each table foreign-keys to. This is a common source of silent multi-tenant bugs.
+
+> **Cross-language mirror.** FastAPI uses `AuthMiddleware` (Starlette) → `get_token_claim()` (Depends) → `ProfileHelper`. Same three layers, different glue.
+
+### 10. Cross-Cutting Concerns via AOP
+
+**Principle.** Tracing, metrics, usage tracking, rate limiting, and PII-safe logging are **cross-cutting** — they apply to every request and shouldn't pollute business code. Use composition (HOFs / decorators / middleware) to weave them in transparently.
+
+**Why it matters.** Without AOP, "add tracing to every endpoint" is a 200-file PR and a permanent source of drift. With it, it's one composition rule.
+
+**Next.js mapping.**
+
+- **HOF wrappers** for routes and server actions. Stack them like middleware:
+
+```ts
+// lib/server/route/compose.ts
+export const POST = composeAPIRoute([
+  withTracing('elaborator.create'),
+  withRateLimit({ key: 'tenant', limit: 100, window: '1m' }),
+  mapErrors,
+  authUser,
+  withUsage('elaborator.create'),
+  async (req, ctx) => { /* business */ }
+])
+```
+
+- **Tracing.** Initialize OpenTelemetry once in `instrumentation.ts`. Use `@opentelemetry/sdk-node` or Vercel's built-in OTel integration. Span names should be **business-meaningful**, not URL paths.
+- **Metrics.** Prefer well-known instrumentation (Datadog, Prometheus, New Relic) over a homegrown metrics layer. Wrap the recording call in a typed enum so spelling drift doesn't silently lose dashboards.
+- **Logging.** A prefixed logger with PII protection:
+
+```ts
+// lib/server/logging.ts
+export function getPrefixedLogger(scope: string) {
+  return {
+    info: (msg: string, meta?: object) => log('info', `[${scope}] ${msg}`, meta),
+    warn: (msg: string, meta?: object) => log('warn', `[${scope}] ${msg}`, meta),
+    error: (msg: string, err?: unknown) => log('error', `[${scope}] ${msg}`, { err })
+  }
+}
+// Convention: never log raw user_id/email/account_id — pass them via a sanitizing helper.
+const safeUser = (id: string) => process.env.NODE_ENV === 'production' ? hash(id).slice(0, 8) : id
+```
+
+> **Cross-language mirror.** Python's `BaseAppMeta` metaclass auto-wraps `run()` with `track_stream_app_usage` and `stream_span_tracker` — the same goal, achieved with a metaclass instead of HOFs.
+
+### 11. Async Patterns & Background Work
+
+**Principle.** Make the lifecycle of async work **explicit**: what blocks the response, what runs in the background, what's queued for later, what's offloaded to a worker.
+
+**Why it matters.** Implicit `Promise`s that nobody awaits leak request context, swallow errors, and quietly bill you for orphaned compute on serverless. Explicit lifecycle = predictable behavior.
+
+**Next.js mapping.**
+
+- **Defer past response.** Use `after()` (App Router) for analytics, audit logs, cache warming — anything the user doesn't need to wait for:
+
+```ts
+import { after } from 'next/server'
+
+export async function POST(req: Request) {
+  const result = await elaboratorService.create(...)
+  after(async () => {
+    await analytics.track('elaborator.created', { id: result.data.id })
+    await cache.warm(`elaborator:${result.data.id}`)
+  })
+  return Response.json(result)
+}
+```
+
+- **Edge deferred work.** `waitUntil(promise)` from the runtime — the platform keeps the function alive long enough for the promise to resolve.
+- **Fire-and-forget hooks.** When you do need to launch many background tasks, gather them with `Promise.allSettled` so one failure doesn't poison the rest. **Never** drop a bare promise.
+
+```ts
+const results = await Promise.allSettled(hooks.map((h) => h.run(event)))
+results.forEach((r, i) => {
+  if (r.status === 'rejected') logger.error(`hook[${i}] failed`, r.reason)
+})
+```
+
+- **CPU offload.** Heavy work (token counting, large JSON parsing, image processing) → `worker_threads` on node, `Web Worker` on client, WASM for hot paths (`tiktoken-wasm`, `image-rs`).
+- **Queues.** For long-running jobs that outlive a request — BullMQ (self-hosted Redis), QStash (managed), or your platform's queue. The producer is in your service layer; the consumer runs in a separate process.
+
+> **Cross-language mirror.** FastAPI services use `asyncio.create_task()` + `gather(return_exceptions=True)` for fire-and-forget, and `loop.run_in_executor()` for CPU offload. Same patterns.
+
+### 12. Multi-Tenancy & State Isolation
+
+**Principle.** If your system serves multiple customers, **tenant context is part of every operation**. Bake it into the bottom layers (repository, cache, queue) so that forgetting it at the call site fails closed, not open.
+
+**Why it matters.** Multi-tenancy bugs are the worst class of bug — silent data leakage across customers. Defense in depth: validate at auth, enforce at repository, namespace at cache.
+
+**Next.js mapping.**
+
+- **Propagate via `AsyncLocalStorage`.** A request-scoped store carries `tenantId` so deep call sites don't need to pass it explicitly:
+
+```ts
+// lib/server/context/request-context.ts
+import { AsyncLocalStorage } from 'node:async_hooks'
+
+type RequestContext = { tenantId: string; userId: string; requestId: string }
+const storage = new AsyncLocalStorage<RequestContext>()
+
+export const runWithContext = <T>(ctx: RequestContext, fn: () => T) => storage.run(ctx, fn)
+export const getContext = (): RequestContext => {
+  const ctx = storage.getStore()
+  if (!ctx) throw new Error('request context missing — wrap in runWithContext')
+  return ctx
+}
+```
+
+- **Repository enforcement.** The base repo always reads `tenantId` from context and adds it to every query. A test that tries to read across tenants should fail loudly.
+- **Cache namespacing.** All Redis keys prefixed with `tenant:{id}:` — never share a flat keyspace.
+- **Per-tenant rate limits.** Identity for rate limit key = `tenant:{id}` (not user) for fairness across a tenant's users.
+- **Per-tenant overrides.** Feature flags keyed on tenant id flow naturally from §2's dynamic tier.
+
+> **Cross-language mirror.** FastAPI platform services use ES `account_routing` for index isolation and pass `UserContext` explicitly; the discipline is identical even when the mechanism differs.
+
+---
+
+## Part II — The Next.js-Specific Surface
+
+The 12 concerns above transfer between languages. The rest of this part covers what's specific to Next.js — features without a clean cross-language analog.
+
+### Controller Layer (Routes / Server Actions / Pages)
+
+The Controller is a thin transport adapter — its job is composition, not business logic. With the IO contract from §4 and the AOP wrappers from §10, controllers stay short:
 
 ```ts
 // API Route
 export const POST = composeAPIRoute([
+  mapErrors,
+  withTracing('elaborator.create'),
   authUser,
   authBizLogic,
-  async (req, res, ctx) => {}
+  async (req, res, ctx) => {
+    return Response.json(await elaboratorService.create(await req.json(), ctx.user))
+  }
 ])
+
 // Page Server
 export const getServerSideProps = composePageServer(
   function (params, ctx) {
@@ -100,31 +587,28 @@ export const getServerSideProps = composePageServer(
   },
   [authUserInPage, authBizLogicInPage]
 )
+
 // Server Action
-export const serverAction = composeServerAction([
+export const updateElaborator = composeServerAction([
   authUserAction,
   authBizLogicAction,
-  async (req, res, ctx) => {}
+  async (input, ctx) => elaboratorService.update(input, ctx.user)
 ])
 ```
 
-> Sample Code Here: [https://github.com/SurfaceW/arno-packages/tree/main/server/next](https://github.com/SurfaceW/arno-packages/tree/main/server/next)
+Reference implementation: [arno-packages/server/next](https://github.com/SurfaceW/arno-packages/tree/main/server/next).
 
-- better with 0 business logic in this layer
+Conventions worth adopting:
 
-### Service Layer in Next.js Full Stack Architecture
+- Private folders prefixed with `_` (e.g. `_components/`) are not routed — perfect for co-located components and helpers.
+- Group routes with `(groupName)` to slice by feature/module without affecting URLs.
+- Use Next.js conventions: `default`, `layout`, `loading`, `error`, `not-found`, `sitemap`, `robots`, and the upcoming `forbidden` and `cache directive` conventions.
+- Version public APIs (`/api/v1/*`) and document with [OpenAPI](https://swagger.io/specification/)/Swagger.
+- **Zero business logic at this layer.** If the controller has more than a few lines of orchestration, push it into the service.
 
-`Service`: module to handle the business logic with encapsulated domain service & managers in OO style, crucial for a clean Next.js full stack architecture.
+### Service & Manager Layers in Detail
 
-- try to use **Domain Driven Design** principle to provide domain service to handle the business logic, persist data and other domain related tasks
-- can not throw error and should deal with the error in the service layer
-- return `unified` response or service result object to be handled by the controller
-- use Swagger or other **formal API Specs** to integrate with third-party services vendor, make sure the API is well documented in code and use tool to generate those API client code
-- try **Interface Oriented** design for various kinds of similar services, e.g. `*.service.impl.ts`
-- obey the **Rules of OO BP**, such as SOLID, DRY, KISS, etc.
-  - use DI style to inject the dependency and build DI driven service dependency and instance management
-
-example of this layer code can be:
+The Service layer is where domain logic lives. A typical service:
 
 ```ts
 export class ElaboratorService {
@@ -132,118 +616,58 @@ export class ElaboratorService {
 
   constructor() {}
 
-  // handle error and unified response
   @WithServiceResult()
   async updateElaborator(data: Prisma.ElaboratorUpdateInput) {
     return (await this.prisma.elaborator.update({
-      where: {
-        id: data.id as bigint
-      },
+      where: { id: data.id as bigint },
       data: data
     })) as any as ServiceResult<Elaborator>
   }
 }
 ```
 
-### Manager Layer for Reusable Business Logic in Next.js
+- Apply Domain-Driven Design where the domain warrants it — for CRUD-heavy admin, the module convention from §6 is enough.
+- Services **return `ServiceResult`**; they do not throw for expected outcomes (see §4 + §8).
+- Use **interface-oriented design** for swappable implementations (`*.service.impl.ts`).
+- Apply DI for testability — a small DI container (`tsyringe`, `inversify`) or a factory module is enough; you rarely need a heavyweight framework.
 
-`Manager`: module to manage the business logic as the reusable code, in OO style, enhancing the maintainability of Next.js applications.
+The Manager layer holds reusable business logic that's narrower than a service — think calculators, formatters, event-pub/sub, log managers. Managers may throw; services catch. Place `utils/` and `helpers/` as a sub-category of manager.
 
-- can throw error and deal with the error in the service layer, or higher level
-- can be used in the service layer or other manager layer, also in the controller layer (server actions, routes, etc), but not recommended in the higher layer
-- optional DI(Dependency Injection) provided for service layer
-- make it more atomic and modular to encapsulate the business logic
-- `utils` and `helper` functions can be put here as a sub-category of manager
+### Data Persistence Strategies
 
-### Data Persistence Strategies for Next.js Applications
+- Pick SQL or NoSQL deliberately based on access patterns. Most products start fine with Postgres + Prisma.
+- Plan for scale before you need it — at >1M rows think about indexing + query plans, at >10M think about sharding/partitioning, at >100M consider a different storage entirely.
+- Serverless DBs ([PlanetScale](https://planetscale.com/), Neon, Turso) reduce ops burden for most teams.
+- [Supabase](https://supabase.com/) is great for prototyping; evaluate carefully before relying on it in production.
+- Always: transactions for invariants, replication for durability, backups you've actually restored from, and indexes guided by the slow query log — not guessed.
 
-- Precisely choose SQL or NoSQL DB type for your business features; selecting appropriate data persistence solutions is key for building scalable Next.js applications. Don't forget to add redundancy and backup for the data.
-- pick ORM or other DB service vendor to handle the data persistence like `Prisma` or `TypeORM` with migration and schema management
-- always start design your db considering the data scaling and data consistency, distributed db and sharding, etc, when you truly need it. e.g. your data-records is over 1M or 10M or 100M in 3 year, etc, they should plan to use different type of db technology and design the data model and data structure in the different ways.
-  - consider use `Serverless` DB to handle the data scaling and management, e.g. `[PlanetScale](https://planetscale.com/)`
-  - in the recent days, quick prototyping by using [Supabase](https://supabase.com/) is a good choice, but do not use it in the production environment.
-- carefully design the data model and data structure in the DB, make full use of the DB index and query optimization, but do not over optimize the db query.
-- follow the Community's SQL, table-creating, index-creating, query-optimization, etc, best practice guide. -> e.g. Alibaba's Java Developer Guide show some best practice guide for MySQL and DB.
-- Make full use of DB design and optimization strategies, such as:
-  - use _transaction_ and _isolation_ to handle the data consistency and integrity for sensitive data and operations
-  - use _sharding_ and _partition_ to handle the data scaling and performance
-  - use _replication_ and _backup_ to handle the data redundancy and backup
-  - use _index_ and _query_ optimization to handle the data query and performance
-  - use _schema_ and _migration_ to handle the data schema and data structure
-  - use _replication_ and _backup_ to handle the data redundancy and backup
+### Next.js Framework Best Practices
 
-### Next.js Framework: Best Practices
-
-- use **turbopack** first for faster development
-- **git-submodules** + **npm packages** to handle different level of code share and the monorepo and multi-repo, for AI Era, choose simple repo with shared code is better than npm dependency, which is more flexible and easy to maintain.
-- make full use of Next.js' **layered cache system** in page / routes, `React.cache`, fetch cache, client cache, more with external redis-cache, etc.
-  - ✨ [Next.js Cache System](https://nextjs.org/docs/app/building-your-application/caching) read carefully and use it wisely 😎
+- **Turbopack** for faster dev.
+- **Layered cache system** — read [Next.js Cache](https://nextjs.org/docs/app/building-your-application/caching) carefully and combine `React.cache`, fetch cache, route cache, client cache, and external Redis intentionally.
 
 ![layered-cache-of-nextjs](https://nextjs.org/_next/image?url=https%3A%2F%2Fh8DxKfmAPhn8O0p3.public.blob.vercel-storage.com%2Fdocs%2Fdark%2Fcaching-overview.png&w=3840&q=75)
 
-- use _EdgeRuntime_ for handling the static content and fetch related simple tasks, such as middleware, etc.
-- use _Rust_ built _WASM_ for high-performance computing tasks, e.g. calculate tokens of large data via _tiktoken_
-- separate the `ServerComponentData` / `ClientComponentData`, use it to handle the server-side rendering and client-side rendering cleverly (key aspects of Next.js server components and client components).
-  - ServerComponent are fit for fast loading and content first page, which is good for SEO and SNS sharing and also be very fast for user interaction
-  - ClientComponent are fit for dynamic and interactive page, which is good for user interaction, for app like web-app, mobile-app, etc.
-  - combine with Client and Server component together is **progressive enhancement** way ~
-- use library internal impl of basic component:
-  - use CDN for static files and contents
-  - use `next/image` etc. for resource optimizations
-  - use `next/script` for script optimizations
-  - use `next/link` for link optimizations
-  - use `next/font` for font optimizations
-  - ... see the next.js official doc for more details
-- make use add `metadata` ability inset next.js pages for SEO and SNS sharing
-  - add `robots.txt` and `sitemap.ts` for SEO and SNS sharing, including open graph, twitter card, etc.
-  - integrate service to Google Analytics, Google Search Console, Google Tag Manager, etc. for SEO optimization
-- use `web-vitals` to monitor the performance of the Next.js app page rendering
-- boost performance with Next.js `dynamic/import` with `Suspense` and `React.lazy` mechanism for async components loading on demand
-- use `server` / `client` / `shared` folder to separate the code for different runtime
-- Check every possible config in `next.config.js` for optimizing Next.js app performance and security before you go to production.
-- **use `sever-action`** to avoid duplicated API route declare and seamlessly handle the server-side logic and client-side logic together (a powerful feature of the Next.js framework).
-- next.js middleware is good for i18n, auth, analytics, redirect, CORS, etc. scenarios, but do not overuse it, use it wisely for targeted routes and limited scenarios
-  - next.js > 15 middleware can run both edge and node runtime, handle common request logic in `middleware` and use `next/server` to handle the request and response
+- **Edge runtime** for static + simple fetch + middleware-style work; **Node runtime** for heavy deps and long-lived clients.
+- **WASM** (e.g. `tiktoken-wasm`) for performance-critical computation.
+- **Server Components vs Client Components** is a progressive enhancement axis:
+  - Server Components: fast first paint, SEO-friendly, content-first pages.
+  - Client Components: interactive surfaces, web-app shells.
+  - Combine deliberately — most pages are mostly server with interactive islands.
+- Use the framework's built-in optimizers: `next/image`, `next/script`, `next/link`, `next/font`.
+- SEO: metadata API, `robots.ts`, `sitemap.ts`, Open Graph + Twitter cards, integrations with Search Console / Analytics / Tag Manager.
+- Performance monitoring with `web-vitals`.
+- `dynamic()` + `Suspense` + `React.lazy` for on-demand chunks.
+- Separate `server/` / `client/` / `shared/` folders so the runtime is obvious from the import path.
+- Audit `next.config.js` end-to-end before production.
+- **Server Actions first** — avoid duplicate API route declarations when client and server can speak directly.
+- Use middleware sparingly — i18n, auth, analytics, redirects, CORS — but don't make it your whole controller layer.
 
 > Server Actions FIRST!
 
-Other [official recommendations](https://nextjs.org/docs/app/guides) guides you must know:
+Other [official guides](https://nextjs.org/docs/app/guides) worth knowing: auth, analytics, ci-building, i18n.
 
-- auth
-- analytics
-- ci-building
-- i18n
-
-### Make full use of libs, tools, services, platforms
-
-> Avoid reinventing the wheel, use the best tools and libs in the Node / JavaScript Ecology.
-
-> `Supabase` in the recent years is a good example of using the best tools and libs in the Node / JavaScript Ecology to build a full-stack app.
-
-- [ai-sdk](https://ai-sdk.dev/docs/introduction) is great way to handle the AI related tasks (llm, reAct, agentic app creator, etc)
-- DB layer can be presented by `Prisma` ORM or other db service vendor
-- use [Jest](https://nextjs.org/docs/app/guides/testing/jest) or other testing service to handle the unit test and integration test
-  - `Playwright` is a good choice for end-to-end testing
-- error / request trace with trace API & tools, such as `Sentry` / `Raygun`
-- logs with log API & tools including SLS / ELK for logging and debugging
-- consider use `GlobalRef` for long-time existed node-runtime instead of serverless runtime
-- add unit tests to cover basic lib / tools and key business logic
-- use config middleware such as `EdgeConfigs` for app configs sync and sync to different server instances
-- use `Redis` or other memory shared to handle the cache and session shared by different server instances (vercel kv, redis, etc)
-- consider use the AB Test service or Gray Release service to handle the feature release
-- consider use right choice of message queue middlewares to handle the async tasks and event-driven tasks, for larger traffic
-
-### DevOPS
-
-- consider **serverless** first deployment and scaling, without the need of K8S or other container service to reduce the complexity and cost, unless you have a very complex and large scale application
-- use Github Actions to handle the CI/CD pipeline and production process for small and medium scale application in light-weight and simple way
-- for MVP and PMF, the _Vercel_ is the best choice for the starter, for its really easy to use and deploy without extra considerations
-
-> Next.js official doc given the choices that support deploy Next.js in different [platforms and scenarios](https://nextjs.org/docs/app/getting-started/deploying).
-
-### Recommended Directory Structure for Next.js Projects
-
-A well-organized directory structure is vital for maintaining large Next.js projects. Here’s a recommended structure for your next.js full stack app:
+### Recommended Directory Structure
 
 ```
 .
@@ -259,29 +683,18 @@ A well-organized directory structure is vital for maintaining large Next.js proj
 ├── services
 ├── tailwind.config.ts
 ├── tsconfig.json
-├── .context             -> AI Era, use .context to handle the context of the app, system instructions for prd, tech, product, project, etc.
+├── docs             -> AI Era: system instructions for prd, tech, product, project
 └── types
 ```
 
-The dependency of the directory structure:
+Layered by purpose:
 
-- base functionality
-  - `public`: the public static files
-  - `prisma`: the prisma db schema and model
-  - ...
-- global shared
-  - `tools`: global tools for the app (scripts are also included here)
-  - `types`: global type use for external lib or low-level common shared types
-  - `configs`: global configs for the app
-  - `i18n`: global i18n for the app
-- share logic
-  - `lib`: the shared lib and tools, is the basic blocks shared for upper layers, such as `utils`, `helpers`, `constants`, `bizTypes`, `manager`, etc.
-  - `services`: the shared services
-  - `components`: the shared components
-- application logic
-  - `app`: the main app entry of next.js app
+- **Base functionality**: `public`, `prisma`
+- **Global shared**: `tools`, `types`, `configs`, `i18n`
+- **Shared logic**: `lib`, `services`, `components`
+- **Application logic**: `app`
 
-more detail:
+Detailed structure:
 
 ```markdown
 - `app`: the main app entry of next.js app
@@ -294,222 +707,246 @@ more detail:
     - `/v1`: the versioned api routes for public use
       - `*.ts`: the api routes
 - `components`: the shared components
-  - `server`: the server-side components
-  - `client`: the client-side components
-  - `shared`: the shared components
-- `configs`: the app shared configs
+  - `server` / `client` / `shared`
 - `lib`: the shared lib and tools
-  - `server`: the server-side lib and tools
-  - `client`: the client-side lib and tools
-  - `shared`: the shared lib and tools
+  - `server` / `client` / `shared`
     - `*.manager.ts`: the biz manager that can be shared
 - `services`: the shared services
-  - `server`: the server-side services
-  - `client`: the client-side services
-  - `shared`: the shared services
+  - `server` / `client` / `shared`
     - `*.service.ts`: the biz service that can be shared
 - `public`: the public static files
 ```
 
-Or for unified business logic module, you can group file within a module folder for more clear and easy to maintain:
-
-```markdown
-- `module-name`
-  - `*.client.ts(x)`
-  - `*.server.ts(x)`
-  - `*.shared.ts(x)`
-```
-
-Full example could be:
+Or — combining with the **module convention from §6** — group by business module:
 
 ```
-├── elaborator
-│   ├── client
-│   │   ├── flow.manager.ts
-│   │   └── position.manager.tsx
-│   ├── server
-│   │   └── elaborator.base.task.ts
-│   ├── shared
-│   │   ├── elaborator.diagram.manager.ts
-│   │   ├── elaborator.enum.ts
-│   │   └── elaborator.type.ts
-│   └── tasks
-│       ├── edoc-generator
-│       │   └── doc-generator.server.ts
-│       ├── mental-framework-generator
-│       │   └── mental-framework-generator.server.ts
-│       └── problem-outline-generator
-│           ├── problem-outline-generator.server.ts
-│           └── problem-outline.node.client.tsx
+elaborator/
+├── client/
+│   ├── flow.manager.ts
+│   └── position.manager.tsx
+├── server/
+│   └── elaborator.base.task.ts
+├── shared/
+│   ├── elaborator.diagram.manager.ts
+│   ├── elaborator.enum.ts
+│   └── elaborator.type.ts
+└── tasks/
+    ├── edoc-generator/
+    │   └── doc-generator.server.ts
+    ├── mental-framework-generator/
+    │   └── mental-framework-generator.server.ts
+    └── problem-outline-generator/
+        ├── problem-outline-generator.server.ts
+        └── problem-outline.node.client.tsx
 ```
 
-- control the naming length of your file, use `path` as the context, do not make file name too long
+Keep file names tight — the path is the context.
 
-My Practicing:
+Reference: [arno-packages](https://github.com/SurfaceW/arno-packages).
 
-- [🌟 Github - arno packages](https://github.com/SurfaceW/arno-packages): my basic packages which work and follow the principles above.
+### Web Client Architecture
 
-## Web Client Architecture with React and Next.js
+Companion guides: [React Best Practice](/posts/react-bp), [React State Management](/posts/react-state-management).
 
-### React Best Practices for Next.js Frontend Development
+**Separate logic and view.**
 
-Arno used to summary the React Best Practice Guide in the past 👇🏻
+- JSX/components stay functional and presentational.
+- No business logic chunks (handlers, callbacks, hooks) inline in JSX — call into a client manager or service.
+- Prefer Server Actions to thread server logic in cleanly.
 
-- [React Best Practice Guide of Arno](/posts/react-bp)
-- [React State Management Best Practice of Arno](/posts/react-state-management)
+**Layer your state.**
+
+- **Server state**: URL params, pathname, route — and remote data via `SWR` / `TanStack Query`, or fetched directly in Server Components.
+- **Shared context** (rarely mutates): `React.Context` for theme, locale, user.
+- **Shared state** (mutates often, cross-component): `redux` / `zustand` / `recoil` with logger + middleware.
+- **Reactive state** (event-driven, streams): `RxJS` / `Mobx`.
+- **Local state**: `useState` / `useReducer`.
+
+**Hook-style first** — encapsulate logic in hooks, keep components small.
+
+**Design the data flow** — explicitly choose what fetches in RSC vs. client; never fetch the same thing twice.
+
+**Logic encapsulation.**
+
+- Client-side **services** mirror server services — they encapsulate APIs, swallow expected errors, return uniform results.
+- Client-side **managers** are atomic business primitives — they may throw, services catch.
+
+### Performance, Storage & Network
+
+- Web Workers for heavy compute on the main thread budget.
+- Rust/WASM for the hottest paths.
+- [Service Workers / PWA](https://nextjs.org/docs/app/guides/progressive-web-apps) for offline-capable apps.
+- IndexedDB (via Dexie / idb-keyval) wrapped in a manager for local persistence.
+- `localStorage` / `sessionStorage` for preferences and short-lived caches.
+- Native `fetch` first — avoid axios unless you genuinely need its features.
+- HTTP streams via Fetch API for AI-era data; pair with `ai-sdk` streaming and RSC streaming for end-to-end streaming UIs.
+- WebRTC / WebSockets for real-time and presence.
+
+### UI & UX
+
+- `tailwindCSS` — AI-friendly, fast iteration, no extra files.
+- `shadcn/ui`, `AntD`, or `MaterialUI` with a customized theme for components with non-trivial behavior.
+- Storybook for visual testing of components.
+- Cross-viewport and cross-version compatibility from day one.
+- Mobile-web fundamentals: responsive design, dark mode, A11Y, I18N, motion.
+- Apply the design guides from Google / Apple / Microsoft / Mozilla / W3C.
+- Tasteful animation makes the UI feel alive — but never block interaction.
+- Pick a rendering strategy per route:
+  - `SSG` for content that's stable
+  - `SSR` for personalized + SEO-required
+  - `ISR` for content that updates on a schedule
+  - `CSR` for app shells
+
+### Domain-Specific Technology
+
+Don't reinvent — use the canonical libraries:
+
+- Text/code editors, formatters, linters
+- Charts, graphs, data visualization
+- Maps, geo
+- Real-time collaboration
+- 3D / 2D rendering, animation
+- Audio / video / media
+- WebXR / VR / AR
+
+Ask AI for the current best-of-breed in your domain — these change yearly.
+
+### Make Full Use of Libraries, Tools, Services, Platforms
+
+> Avoid reinventing the wheel. Use the best of the Node / JavaScript ecosystem.
+
+- [`ai-sdk`](https://ai-sdk.dev/docs/introduction) for LLM, tools, agents.
+- `Prisma` for the DB layer; or a vendor SDK for managed services.
+- [Jest](https://nextjs.org/docs/app/guides/testing/jest) for unit/integration; `Playwright` for E2E.
+- `Sentry` / `Raygun` for error tracking and traces.
+- SLS / ELK for centralized logs.
+- `GlobalRef` for long-lived node-runtime singletons (see §3).
+- Tests on basic libs and key business logic — not on every line.
+- `EdgeConfig` (or equivalent) for synced config across instances (see §2).
+- `Redis` / Vercel KV for shared cache and session.
+- A/B testing or gray-release service for feature rollouts.
+- Message queues for async at scale.
+
+### DevOps & Deployment
+
+- **Serverless first** — skip K8s until you have a real reason. Lower complexity, lower cost, faster iteration.
+- GitHub Actions for CI/CD on small/medium scale.
+- Vercel is the obvious default for Next.js — especially for MVP/PMF.
+- Other supported [platforms and scenarios](https://nextjs.org/docs/app/getting-started/deploying) when you need them.
 
 ---
 
-- Separate the **Logic** and **View** in different layers, a core principle for maintainable frontend architecture in Next.js.
-  - JSX / Component should be purely use Functional way
-  - DO NOT write chunks of business logic such as handler / callbacks / hooks in the JSX / Component use a function from a client manager or service
-  - try _Server Actions_ if possible to handle the server-side logic and client-side logic together in a more simple and clear way
-- separate the `State` of client in different layers
-  - `ServerState`: state managed by server
-    - use hooks for location / url pathname / search-params / next-params, etc, as state of server ...
-    - use `SWR` or `ReactQuery` to handle the server state and cache or directly handle it by page in server component to reduce the complexity in client
-  - `SharedContext` usually do not mutate that often, use `React.Context` to handle the shared state and context, such as Theme, Locale, User, etc as Global shared context.
-  - `SharedState` use `redux`, `zustand` or `recoil` with logger and middleware to handle the shared better immutable state among components which can be easily visualized, traced, logged and debugged.
-  - `ReactiveState` consider to use `RxJS` or `Mobx` to handle the reactive state and event-driven state
-  - `LocalComponentState` try to use `useState` and `useReducer` to handle the local state of the component
-- **Hook-Style First** to encapsulate the logic and make it more reusable among components and reduce the code in JSX component body, which make the code more clear and easy to maintain
-- **Carefully Design the Data Flow** from server to client, avoid duplicated data fetching with cache and state management, by clearly use client fetch and server fetch (RSC) together.
+## Part III — Two Philosophies: Composition vs. Convention
 
-### Logic Encapsulation
+A mature Next.js codebase tends to split internally between two distinct styles. Recognizing the split — and choosing deliberately — is more useful than picking one.
 
-Encapsulating client-side logic is one of the Next.js frontend best practices for building modular and testable web applications.
+### Composition over Convention — when openness wins
 
-- **Service** similar to the server service, client service and encapsulated apis to invoke by `useSwr` or `useQuery` or other API client.
-  - some typical examples are:
-    - the db-service of local
-    - the local-data-cache service
-    - the Restful API service
-  - service can encapsulate the logic and handle the error and response elegantly, which should not emit exceptions or errors
-  - service can coordinate the different services or manager to handle the complex logic
-  - service can directly invoke _server-action_ to handle the server-side logic and client-side logic together in a more simple and clear way
-  - ...
-- **Manager** similar to the server manager, client manager and encapsulated business logic to be invoked by the service or component
-  - some typical examples are:
-    - the business logic manager
-    - the logs manager
-    - the event-pub-sub manager
-    - ...
-  - manager are the basic building blocks of the business logic and can be reused by different services
-  - manager can throw error without extra handling process which shall delegate to the service to handle it properly
+Use composition when the domain is **open-ended** and growing in unpredictable directions.
 
-### Tips for Performance & Storage
+- **AI agents** — tools, prompts, models, guardrails composed per persona.
+- **Server Actions + AI SDK** — assembling streaming pipelines per feature.
+- **Marketing site** — every page is bespoke, no shared shape.
+- **Indie / MVP** — you don't yet know which patterns will repeat.
 
-- use web worker to handle the heavy computing tasks, running in a background thread
-- use _Rust_ / _WASM_ to handle the heavy computing tasks
-- use [Service Worker (PWA)](https://nextjs.org/docs/app/guides/progressive-web-apps) to handle the offline and cache data and requests
-- use local-db such as `IndexedDB` to handle the local storage and cache, use encapsulated manager to handle the local-db operations
-- use `localStorage` / `sessionStorage` to handle the local storage and cache for use preference and temporary data cache
+Each new capability is its own composition. The cost: every new feature is an architectural micro-decision. The benefit: maximum flexibility, no Procrustean fit.
 
-### Network and Communication
+### Convention over Composition — when scale wins
 
-- use WebRTC / Websocket for more real-time and interactive tasks
-- use native `fetch` API first other than ajax or other network communication mechanism
-- use HTTP stream with Fetch API to handle the large data transfer and stream data for AI Era streaming data, consider use ai-sdk's streaming data / UI RSC(React Server Component) to handle the streaming data and UI renderings
+Use convention when the domain has **many similar things** and you want to remove decisions.
 
-### Tips for UI & UX
+- **CRUD-heavy admin platforms** — 30+ resources that all need the same lifecycle, validation, audit trail.
+- **Multi-tenant SaaS** — every entity needs the same tenant scoping, locking, permissions.
+- **Internal tools at a company** — consistency across teams matters more than per-team optimization.
 
-- use `tailwindCSS` for css framework, it is truly good for **AI** and with VSCode extension, it is lightweight and easy to use without add extra files and complexity to existed codebase.
-- use `shadcn/ui` (shadcn/ui.com) or `AntD` (lobeUI) or `MaterialUI` with highly _customizable theme_ and _complex logic and functionality encapsulated_
-- use `Storybook` or other UI testing service to handle the UI testing and visual testing for UI components
-- consider _compatibility_ in different viewport, size, versions and more
-- follow the BP of Mobile Web App development principles, such as _Responsive Design_, _Dark Scheme Compatibility_, _A11Y and I18N_, _Animation and Transition_, etc.
-- follow and apply some web dev guides of Google / Apple / Microsoft / Mozilla / W3C ...
-- consider obey the A11Y and I18N principles
-- add some reasonable animation and transition to make the UI more vivid and interactive
-- Responsive Design FIRST
-- Dark Scheme Compatibility
-- use `SSG` / `SSR` / `ISR` / `CSR` to handle the different rendering strategy to boost the performance and user experience, use hybrid approach to handle the complex and dynamic page rendering.
-  - `SSG`: Static Site Generation, generate the static html files at build time, and serve the static html files at runtime
-  - `SSR`: Server Side Rendering, render the html on the server side, and send the html to the client side
-  - `ISR`: Incremental Static Regeneration, regenerate the static html files at a certain interval
-  - `CSR`: Client Side Rendering, render the html on the client side
-- ...
+The 4-file module convention from §6, the `BaseEntityHandler` from §5, the `BaseRepository` from §7 — these are convention-heavy patterns. They pay back at 10+ resources, feel like overhead at 2-3.
 
-### Domain Specified Technology
+### Picking per slice, not per project
 
-Do not create the wheel again, use the domain specified technology to handle the domain specified tasks.
+A real codebase usually has both — a CRUD-heavy `services/platform/*` slice that uses convention, and a `services/agents/*` slice that uses composition. Don't try to force one style onto the whole codebase. Pick the style that matches the slice's shape.
 
-- TextEditor / Code Editor / Code Formatter / Linter ...
-- Chart / Graph / Data Visualization ...
-- Map / Location / Geo ...
-- Real-time Collaboration ...
-- 3D Rendering / 2D Rendering / Animation ...
-- Audio / Video / Media ...
-- Web XR / VR / AR ...
-- ...
+---
 
-> just ask AI with your scenarios to find those best options to use in your project, and do not reinvent the wheel.
+## Part IV — Patterns Worth Extracting
 
-## Native Client
+A transferable checklist for any new Next.js service:
 
-> can wait to provide the BP for the native client, such as iOS / Android / Windows / Mac / Linux / WebOS / Tizen / HarmonyOS / ... in actions.
+1. **Layered architecture** with a strict downward dependency rule, enforced by `dependency-cruiser` or `eslint-plugin-boundaries` (§1).
+2. **3-tier configuration**: zod-validated env, composable per-feature config, dynamic feature flags (§2).
+3. **Lifecycle hooks** via `instrumentation.ts` + `globalThis` singletons + `after()` / `waitUntil()` (§3).
+4. **`ServiceResult<T>` IO contract** flowing through routes, server actions, services, and the client (§4).
+5. **`BaseEntityHandler<T>` lifecycle hooks** + Prisma optimistic locking + typed state machine (§5).
+6. **Per-resource module convention**: `<resource>.{service,handler,repository,validator,types,route}.ts` (§6).
+7. **`BaseRepository<T>`** with tenant routing baked in and overridable serialize/deserialize (§7).
+8. **Typed `BizError` hierarchy** + `mapErrors` middleware mapping to HTTP at the transport edge (§8).
+9. **Three-layer auth**: `middleware.ts` → `getUserContext()` → `can()` permission resolver (§9).
+10. **HOF wrappers** for tracing, rate limiting, usage, logging — composed in route/action factories (§10).
+11. **Explicit async lifecycle**: `after()`, `Promise.allSettled` for fire-and-forget, queues for long jobs (§11).
+12. **Multi-tenant defense in depth**: `AsyncLocalStorage` context, repository enforcement, cache namespacing (§12).
 
-Arno is still exploring 🧭
+---
 
-## Common Design Patterns and Conventions in Next.js Development
-
-This section outlines common design patterns and conventions crucial for effective Next.js full stack development, helping developers build consistent and maintainable web applications.
+## Conventions
 
 ### Error Handling Patterns
 
-> 0 error handling is the best error handling, but we can not avoid the error in the real world, so we need to handle the error elegantly and properly.
+> Zero error handling is the best error handling. Since we can't avoid errors, handle them in one place, elegantly.
 >
-> - low-level API should throw less error and handle the error in the high-level API
-> - use one place to handle the error and log the error, do not handle the error in different places with duplicated code
+> - Low-level APIs throw less; high-level APIs handle.
+> - One place to handle, one place to log — no duplicate handlers.
 
-- use Native `Error` object both in `Server` and `Client`, and do not extend it to add complexity, use unified error msg format like:
+- Use the native `Error` (or `BizError` subclass from §8) on both server and client. Don't grow a parallel error model.
+- Unified log format:
 
 ```log
 [2024-03-12 12:00:00] [ERROR level] [ServiceName] [ErrorTypeCode] [ErrorMsg]
 [?ErrorStack] if necessary
 ```
 
-- for server response in HTTP Protocol in common, the error should make full use of HTTP status, code, message to describe the error in the response, other RPC protocol should follow their own error handling format pattern
-- use the `warn` / `error` and `fatal` to handle the different level of error, for level of error and fatal, we should use `log` service to report for stability and reliability
-- use `try` / `catch` to handle the error in the service / manager layer, and try-catch phrase block scope should be as less as possible to avoid the performance and ambiguity of the code
-- use `ErrorBoundary` to handle the error in the component client layer for display `fallback` info and error info both from client and server
-  - like [`error-boundary.tsx`](https://github.com/SurfaceW/arno-packages/blob/main/ui/client/error-boundary/index.tsx) implementation
+- HTTP responses use status + body code + body message — not 200-with-error-in-body.
+- `warn` / `error` / `fatal` levels — fatal goes to the alerting log service.
+- `try` / `catch` at the service/manager seam — keep the catch block as small as possible.
+- `ErrorBoundary` on the client for fallback UI — see [`error-boundary.tsx`](https://github.com/SurfaceW/arno-packages/blob/main/ui/client/error-boundary/index.tsx).
 
 ### File Types and Conventions
 
-- `*.type.ts`: the typescript language type that can be shared
-- `*.constant.ts`: the constant that can be shared
-- `*.util.ts`: the utility functions that can be shared
-- `*.manager.ts`: the biz manager that can be shared
-- `*.manager.impl.ts`: the implementation of an abstract manager
-- `*.service.ts`: the biz service that can be shared
-- `*.service.impl.ts` the implementation of an abstract service
-- `*.store.ts`: the biz store of zustand or any other react-state manage units that can be shared
-- `*.hook.ts`: the biz hook that can be shared
-- `*.client.tsx`: the client-side component that can be shared
-- `*.server.tsx`: the server-side component that can be shared
-- `*.server.action.ts`: the Next.js' server action that can be shared among server and client
-- `*.shared.tsx`: the shared component that can be shared
-- `*.[designPatterName].*.ts`: the design pattern implementation in the code
-  - `account.adapter.impl.ts` the adapter pattern implementation of specific service
+- `*.type.ts` — shared TS types
+- `*.constant.ts` — shared constants
+- `*.util.ts` — shared utilities
+- `*.manager.ts` — shared business manager
+- `*.manager.impl.ts` — abstract manager implementation
+- `*.service.ts` — shared business service
+- `*.service.impl.ts` — abstract service implementation
+- `*.handler.ts` — entity lifecycle handler (§5)
+- `*.repository.ts` — data access (§7)
+- `*.validator.ts` — input validation
+- `*.store.ts` — zustand or other client state store
+- `*.hook.ts` — shared business hook
+- `*.client.tsx` — client component
+- `*.server.tsx` — server component
+- `*.server.action.ts` — server action shared across server and client
+- `*.shared.tsx` — runtime-agnostic shared component
+- `*.[designPatternName].*.ts` — design pattern implementation, e.g. `account.adapter.impl.ts`
 
-### Class methods naming conventions
+### Class & Method Naming
 
-- use verb first and noun second for the method name, e.g. `createUser`, `getUser`, `updateUser`, `deleteUser`
-- for `CRUD` operations of a service, use `create`, `get / list`, `update`, `delete` as the method name prefix
-- for common operations like `search` `fetch` `count` `aggregate` ... as the method name prefix
-- for common state-trans operations like `init` `start` `stop` `pause` `resume` ... as the method name prefix
-- use `batch` `bulk` `multi` as the method name prefix for batch operations
+- Verb first, noun second: `createUser`, `getUser`, `updateUser`, `deleteUser`.
+- CRUD prefixes: `create`, `get` / `list`, `update`, `delete`.
+- Common operations: `search`, `fetch`, `count`, `aggregate`.
+- State transitions: `init`, `start`, `stop`, `pause`, `resume`.
+- Batch ops: `batch`, `bulk`, `multi`.
+
+---
 
 ## Reference
 
-My Related Articles:
+Related articles:
 
 - [Effective Full Stack Dev](https://arno.surfacew.com/posts/effective-fullstack-dev)
-- [AI Driven front-end development](https://arno.surfacew.com/posts/ai-driven-front-end)
+- [AI-Driven Front-End Development](https://arno.surfacew.com/posts/ai-driven-front-end)
 - [Cursor BP](/posts/cursor.bp)
 
-### notes on this article
+### Notes
 
 - 2024-02-02: initial version
 - 2024-03-12: bugfix and add more details for some topics, add `db` related topics guide
@@ -517,8 +954,9 @@ My Related Articles:
 - 2024-10-21: upgrade recent server-action bp and add more details for the recent experience accumulated
 - 2025-05-13: keep updated with latest knowledge and version of next.js and other related technologies
 - 2025-05-29: database related topics and best practices updated, add more practical experience in AI Era
+- 2026-04-17: major restructure — reorganized as a principles-first guide around twelve universal architecture concerns (dependency rule, tiered config, lifecycle, IO contract, entity hooks, module convention, generic repository, typed exceptions, layered auth, AOP, async patterns, multi-tenancy), translated from cross-language backend best practices into concrete Next.js mappings; added composition-vs-convention philosophy and a transferable patterns checklist.
 
-crafting:
+Crafting:
 
 - [Partial-rendering BP](https://nextjs.org/docs/app/getting-started/partial-prerendering) for performance optimization
-- [mdx](https://nextjs.org/docs/app/guides/mdx) now use mdx to write
+- [mdx](https://nextjs.org/docs/app/guides/mdx) now used to author this guide
