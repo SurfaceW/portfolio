@@ -1,6 +1,6 @@
 ---
 title: '🪐 Comprehensive Next.js Full Stack App Architecture Guide'
-publishedAt: '2025-05-13'
+publishedAt: '2026-04-17'
 summary: "A principles-first guide to designing scalable and maintainable Next.js full-stack applications — twelve universal backend architecture concerns translated into concrete Next.js patterns, plus framework-specific best practices."
 image: 'https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20250526164830-wyxK0U7FPmPVfkNCdbXytJ2YOFTwnu.jpg'
 tags: ['Frontend', 'Backend', 'Fullstack', 'en', 'Next.js', 'Web Development']
@@ -431,62 +431,318 @@ export const getUserContext = cache(async (): Promise<UserContext> => {
 
 `React.cache` deduplicates the call within one request — call it freely from any server component or route handler.
 
-- **Layer 3 — Authorization.** A composable check that merges role-based, resource-level, and project-level permissions:
+- **Layer 3 — Authorization.** Authorization itself decomposes into **three permission planes** that must be checked together. Treating them as one boolean is how leaks happen.
+
+#### The three permission planes
+
+| Plane | Question it answers | Where it lives | Resolves from |
+| --- | --- | --- | --- |
+| **1. Operation (RBAC)** | "Can this user perform this action at all?" | User's role/policy | `user.permissions: Set<string>` of `resource:operation` strings, with wildcard support (`agent:*`, `*:*`) |
+| **2. Resource** | "Can this user touch *this specific* object?" | The object itself | Ownership, visibility (`private` / `org` / `public`), tenant/org isolation |
+| **3. Project / Workspace** | "Within this project, what can this user do?" | Project membership | Per-project role merged with user-level perms via **union strategy** |
+
+A request must clear **all three planes** to proceed. The planes are independent — RBAC alone doesn't grant access to someone else's private resource; project membership alone doesn't grant operations the user's role forbids.
 
 ```ts
-export function can(ctx: UserContext, action: string, resource?: { ownerId: string; projectId?: string }) {
-  if (ctx.perms.has('*:*')) return true
-  if (ctx.perms.has(action)) return true
-  if (resource?.ownerId === ctx.id) return true
-  if (resource?.projectId && ctx.perms.has(`project:${resource.projectId}:${action}`)) return true
-  return false
+// shared/contracts/permission.ts
+export type Action = `${string}:${string}` // e.g. 'agent:read', 'project:write'
+
+export type Resource = {
+  id: string
+  ownerId: string
+  visibility: 'private' | 'org' | 'public'
+  orgId: string
+  projectId?: string
+}
+
+export type ProjectMembership = {
+  projectId: string
+  role: 'viewer' | 'editor' | 'admin'
+  perms: Set<Action>
+}
+
+export type UserContext = {
+  id: string
+  externalId: string
+  orgId: string
+  perms: Set<Action>                 // plane 1 — RBAC
+  projects: Map<string, ProjectMembership> // plane 3 — per-project memberships
 }
 ```
 
-**Dual-ID pitfall.** If your system has both an internal user id and an external id from an upstream IDP, name them explicitly (`id` vs `externalId`) and document which one each table foreign-keys to. This is a common source of silent multi-tenant bugs.
+```ts
+// lib/server/auth/can.ts
 
-> **Cross-language mirror.** FastAPI uses `AuthMiddleware` (Starlette) → `get_token_claim()` (Depends) → `ProfileHelper`. Same three layers, different glue.
+// Plane 1 — operation (RBAC) with wildcard support
+function hasOperation(perms: Set<Action>, action: Action): boolean {
+  if (perms.has('*:*')) return true
+  if (perms.has(action)) return true
+  const [resource] = action.split(':')
+  return perms.has(`${resource}:*` as Action)
+}
+
+// Plane 2 — resource (ownership / visibility / org isolation)
+function canAccessResource(ctx: UserContext, res: Resource): boolean {
+  if (res.orgId !== ctx.orgId) return false                 // org isolation first
+  if (res.ownerId === ctx.id) return true                   // owner always passes
+  if (res.visibility === 'public') return true
+  if (res.visibility === 'org') return res.orgId === ctx.orgId
+  return false                                              // private + not owner
+}
+
+// Plane 3 — project membership (UNION with user-level perms)
+function projectGrants(ctx: UserContext, res: Resource, action: Action): boolean {
+  if (!res.projectId) return false
+  const m = ctx.projects.get(res.projectId)
+  if (!m) return false
+  return hasOperation(m.perms, action) // membership perms unioned via the same wildcard rules
+}
+
+// Composed gate — all three planes evaluated together
+export function can(ctx: UserContext, action: Action, res?: Resource): boolean {
+  if (!res) return hasOperation(ctx.perms, action)
+  if (!canAccessResource(ctx, res)) return false           // plane 2 hard-blocks
+  return hasOperation(ctx.perms, action) || projectGrants(ctx, res, action) // plane 1 ∪ plane 3
+}
+
+// Throwing variant for service-layer use
+export function authorize(ctx: UserContext, action: Action, res?: Resource): void {
+  if (!can(ctx, action, res)) throw new PermissionError('forbidden', `${action} denied`)
+}
+```
+
+```ts
+// service-layer usage — the three planes are invisible to business code
+async function publishAgent(id: string, ctx: UserContext): Promise<ServiceResult<Agent>> {
+  const agent = await agentRepo.findById(id, ctx.orgId)
+  if (!agent) return fail(new NotFoundError('agent', id))
+
+  authorize(ctx, 'agent:publish', toResource(agent)) // one call, all three planes
+
+  const published = await agentService.publish(agent)
+  return ok(published)
+}
+```
+
+**Why the union strategy on plane 3.** A user who is normally a `viewer` in the org may be an `editor` in a specific project — their effective perms inside that project are the **union** of org-level and project-level perms. Intersection (the conservative choice) breaks legitimate collaboration patterns; union with explicit deny rules is the practical default.
+
+**Where to enforce each plane:**
+
+- **Plane 1 (RBAC)** can be checked in middleware/route wrappers for coarse gating (`withPermission('agent:read')`).
+- **Plane 2 (resource)** must be checked **after** loading the entity — it requires the entity's `ownerId` / `visibility` / `orgId`. Always in the service layer.
+- **Plane 3 (project)** is checked alongside plane 1 inside the service layer for project-scoped resources.
+
+**Pitfalls to avoid:**
+
+- **Don't check plane 1 alone** when an entity is involved — always pair with plane 2.
+- **Don't return 404 for "exists but forbidden"** unless leaking existence is itself a problem (it often is — prefer 404 for private resources, 403 for org-visible resources).
+- **Wildcard discipline.** `*:*` should only ever belong to system/admin tokens, never to regular users. Audit who holds it.
+- **Dual-ID pitfall.** If your system has both an internal user id and an external id from an upstream IDP, name them explicitly (`id` vs `externalId`) and document which one each table foreign-keys to. Project membership and resource ownership often disagree on which id they store — one of the most common silent multi-tenant bugs.
 
 ### 10. Cross-Cutting Concerns via AOP
 
-**Principle.** Tracing, metrics, usage tracking, rate limiting, and PII-safe logging are **cross-cutting** — they apply to every request and shouldn't pollute business code. Use composition (HOFs / decorators / middleware) to weave them in transparently.
+**Principle.** Tracing, metrics, usage, rate limiting, logging, and health monitoring are **cross-cutting** — they apply to every request and must not pollute business code. Compose them transparently via HOFs / decorators / middleware, and treat **what you can see** as a first-class architectural concern, not a post-hoc add-on.
 
-**Why it matters.** Without AOP, "add tracing to every endpoint" is a 200-file PR and a permanent source of drift. With it, it's one composition rule.
+**Why it matters.** "Add tracing to every endpoint" without AOP is a 200-file PR and a permanent source of drift. More importantly: an architecture you can't observe is an architecture you can't operate. Logging, tracing, metrics, and health signals are how production tells you the truth.
 
 **Next.js mapping.**
 
-- **HOF wrappers** for routes and server actions. Stack them like middleware:
+#### Composition mechanism
+
+HOF wrappers stack like middleware around routes and server actions. The order matters — outer wrappers see the request first and the response last:
 
 ```ts
 // lib/server/route/compose.ts
 export const POST = composeAPIRoute([
-  withTracing('elaborator.create'),
+  withRequestId(),                                          // generates / propagates request_id
+  withTracing('elaborator.create'),                         // opens a span around everything inside
   withRateLimit({ key: 'tenant', limit: 100, window: '1m' }),
-  mapErrors,
-  authUser,
-  withUsage('elaborator.create'),
+  mapErrors,                                                // converts BizError → HTTP (see §8)
+  authUser,                                                 // attaches UserContext (see §9)
+  withUsage('elaborator.create'),                           // emits a usage measure on success
   async (req, ctx) => { /* business */ }
 ])
 ```
 
-- **Tracing.** Initialize OpenTelemetry once in `instrumentation.ts`. Use `@opentelemetry/sdk-node` or Vercel's built-in OTel integration. Span names should be **business-meaningful**, not URL paths.
-- **Metrics.** Prefer well-known instrumentation (Datadog, Prometheus, New Relic) over a homegrown metrics layer. Wrap the recording call in a typed enum so spelling drift doesn't silently lose dashboards.
-- **Logging.** A prefixed logger with PII protection:
+#### Logging — prefixed, structured, PII-safe
+
+Three rules, in order of importance:
+
+1. **Structured.** Logs are key-value JSON, never free-text strings to be regexed later. Search, alerting, and aggregation depend on it.
+2. **Prefixed by scope.** Every logger carries a `[Scope]` prefix derived from the module — instantly readable in tail/grep, and machine-filterable in log search.
+3. **PII-safe.** User identifiers, emails, account ids, names are **never** logged raw in production. Pass them through a sanitizer that hashes/truncates outside dev.
 
 ```ts
 // lib/server/logging.ts
+import pino from 'pino'
+
+const base = pino({
+  level: process.env.LOG_LEVEL ?? 'info',
+  redact: {
+    paths: ['*.email', '*.password', '*.token', '*.authorization'],
+    censor: '[redacted]'
+  }
+})
+
 export function getPrefixedLogger(scope: string) {
+  const child = base.child({ scope })
+  const fmt = (msg: string) => `[${scope}] ${msg}`
   return {
-    info: (msg: string, meta?: object) => log('info', `[${scope}] ${msg}`, meta),
-    warn: (msg: string, meta?: object) => log('warn', `[${scope}] ${msg}`, meta),
-    error: (msg: string, err?: unknown) => log('error', `[${scope}] ${msg}`, { err })
+    info:  (msg: string, meta?: object) => child.info(meta ?? {}, fmt(msg)),
+    warn:  (msg: string, meta?: object) => child.warn(meta ?? {}, fmt(msg)),
+    error: (msg: string, err?: unknown) => child.error({ err }, fmt(msg)),
+    debug: (msg: string, meta?: object) => child.debug(meta ?? {}, fmt(msg))
   }
 }
-// Convention: never log raw user_id/email/account_id — pass them via a sanitizing helper.
-const safeUser = (id: string) => process.env.NODE_ENV === 'production' ? hash(id).slice(0, 8) : id
+
+// PII helper — mirrors the Python `%p` placeholder convention.
+// In dev: pass-through for debuggability. In production: hash + truncate.
+export const safe = {
+  user:    (id: string) => process.env.NODE_ENV === 'production' ? hash(id).slice(0, 8) : id,
+  email:   (e: string)  => process.env.NODE_ENV === 'production' ? e.replace(/(.).+(@.+)/, '$1***$2') : e,
+  account: (id: string) => process.env.NODE_ENV === 'production' ? hash(id).slice(0, 8) : id
+}
+
+// Usage
+const logger = getPrefixedLogger('AuthMiddleware')
+logger.info(`Token validated successfully for user: ${safe.user(userId)}`, { requestId })
+// → [AuthMiddleware] Token validated successfully for user: a3f9c1b2  {"scope":"AuthMiddleware","requestId":"..."}
 ```
 
-> **Cross-language mirror.** Python's `BaseAppMeta` metaclass auto-wraps `run()` with `track_stream_app_usage` and `stream_span_tracker` — the same goal, achieved with a metaclass instead of HOFs.
+**Conventions worth enforcing:**
+
+- One logger per module, named by scope: `getPrefixedLogger('AgentService')`, `getPrefixedLogger('ElasticsearchClient')`.
+- Always include `requestId` and `tenantId` in log meta — propagated via `AsyncLocalStorage` (see §12).
+- Standardized levels: `debug` for development tracing, `info` for normal events, `warn` for recoverable anomalies, `error` for handled exceptions, `fatal` for service-level failures that page on-call.
+- Unified format documented in CONVENTIONS:
+
+  ```log
+  [2026-04-17T12:00:00Z] [INFO] [AgentService] [request_id=...] message body { ...meta }
+  ```
+
+- An `eslint-plugin` rule (or PR review checklist) flagging `console.log` in `app/` and `services/` — the prefixed logger is the only allowed surface.
+
+#### Tracing — distributed spans around business operations
+
+Initialize OpenTelemetry **once** in `instrumentation.ts` (see §3). Span names are **business-meaningful**, not URL paths — `agent.publish`, `elaborator.search`, `llm.completion`, not `POST /api/v1/agents/:id/publish`.
+
+A `withSpan` decorator wraps any async function with a span, captures key inputs, and records exceptions:
+
+```ts
+// lib/server/observability/tracing.ts
+import { trace, SpanStatusCode, type SpanOptions } from '@opentelemetry/api'
+
+const tracer = trace.getTracer('app')
+
+export function withSpan<A extends unknown[], R>(
+  name: string,
+  fn: (...args: A) => Promise<R>,
+  opts: { attrs?: (args: A) => Record<string, string | number | boolean> } = {}
+): (...args: A) => Promise<R> {
+  return async (...args: A) =>
+    tracer.startActiveSpan(name, async (span) => {
+      try {
+        if (opts.attrs) span.setAttributes(opts.attrs(args))
+        const result = await fn(...args)
+        span.setStatus({ code: SpanStatusCode.OK })
+        return result
+      } catch (err) {
+        span.recordException(err as Error)
+        span.setStatus({ code: SpanStatusCode.ERROR, message: (err as Error).message })
+        throw err
+      } finally {
+        span.end()
+      }
+    })
+}
+
+// Usage — wrap a service method with a span and a small set of attributes
+export const publishAgent = withSpan(
+  'agent.publish',
+  async (id: string, ctx: UserContext) => { /* ... */ },
+  { attrs: ([id, ctx]) => ({ 'agent.id': id, 'tenant.id': ctx.orgId }) }
+)
+```
+
+Discipline:
+
+- **Span names** form a stable taxonomy — treat them like an enum (typed `SpanName` union).
+- **Attributes** are low-cardinality (`tenant.id` ok; raw email NOT ok — also a PII issue).
+- Wrap **service-layer methods**, not utility functions — spans should mean something to a person reading a trace.
+- Propagate `traceparent` headers through outbound `fetch` automatically via the OTel HTTP instrumentation.
+
+#### Metrics — typed enum, never free-form strings
+
+Metrics drift kills dashboards. A typo in the metric name silently produces zero data points and an empty graph. Make the metric name a typed enum and the recording function reject anything else:
+
+```ts
+// lib/server/observability/metrics.ts
+export const Metric = {
+  AgentRunDurationMs:     'agent.run.duration_ms',
+  AgentRunErrors:         'agent.run.errors',
+  LlmTokensIn:            'llm.tokens.in',
+  LlmTokensOut:           'llm.tokens.out',
+  RateLimitRejects:       'ratelimit.rejects',
+  EventLoopLagMs:         'eventloop.lag_ms'
+} as const
+export type MetricName = typeof Metric[keyof typeof Metric]
+
+export function record(name: MetricName, value: number, tags?: Record<string, string>) {
+  // Datadog / Prometheus / OTel meter — pick one, hide it here
+  meter.histogram(name, value, tags)
+}
+
+export function increment(name: MetricName, tags?: Record<string, string>) {
+  meter.counter(name, 1, tags)
+}
+```
+
+**Tag discipline.** Tags are low-cardinality (`tenant_tier`, `route`, `model`) — never high-cardinality values like raw user ids or full URLs. Each unique tag combination becomes a billed time series.
+
+#### Health & event-loop monitoring
+
+Async services have a critical health signal that traditional metrics miss: **event-loop lag**. When the loop is starved (sync CPU work, synchronous fs reads, JSON.parse on huge payloads), every request slows down silently. Monitor it explicitly:
+
+```ts
+// lib/server/observability/event-loop.ts
+import { monitorEventLoopDelay } from 'node:perf_hooks'
+import { Metric, record } from './metrics'
+
+export function startEventLoopMonitoring(intervalMs = 10_000) {
+  const histogram = monitorEventLoopDelay({ resolution: 20 })
+  histogram.enable()
+  const interval = setInterval(() => {
+    const p99 = histogram.percentile(99) / 1e6 // ns → ms
+    record(Metric.EventLoopLagMs, p99)
+    if (p99 > 200) logger.warn('event loop lag p99 > 200ms', { p99 })
+    histogram.reset()
+  }, intervalMs)
+  interval.unref()
+  return () => { histogram.disable(); clearInterval(interval) }
+}
+```
+
+Wire it in `instrumentation.ts` (§3). Alert when p99 exceeds your SLO budget — it's the earliest, cheapest signal that something is wrong on the server.
+
+Other health signals worth wiring at the same time:
+
+- **Active handles / requests** count (`process._getActiveHandles().length`) — leaks show as monotonic growth.
+- **Heap usage** sampled every minute (`process.memoryUsage().heapUsed`).
+- **Outbound dependency** latency p50/p95/p99 (DB, cache, LLM provider).
+
+#### Usage tracking
+
+Domain-meaningful counters that bill, throttle, or analytics-track an action — emit them as their own primitive, not buried in logs:
+
+```ts
+export function withUsage(action: string) {
+  return async (req: Request, ctx: RouteCtx, next: () => Promise<Response>) => {
+    const res = await next()
+    if (res.ok) increment(Metric.AgentRunDurationMs, { action, tenant: ctx.user.orgId })
+    return res
+  }
+}
+```
 
 ### 11. Async Patterns & Background Work
 
@@ -524,7 +780,7 @@ results.forEach((r, i) => {
 - **CPU offload.** Heavy work (token counting, large JSON parsing, image processing) → `worker_threads` on node, `Web Worker` on client, WASM for hot paths (`tiktoken-wasm`, `image-rs`).
 - **Queues.** For long-running jobs that outlive a request — BullMQ (self-hosted Redis), QStash (managed), or your platform's queue. The producer is in your service layer; the consumer runs in a separate process.
 
-> **Cross-language mirror.** FastAPI services use `asyncio.create_task()` + `gather(return_exceptions=True)` for fire-and-forget, and `loop.run_in_executor()` for CPU offload. Same patterns.
+> **Cross-language mirror.** FastAPI services use `asyncio.create_task()` + `gather(return_exceptions=True)` for fire-and-forget, and `loop.run_in_loop()` for CPU offload. Same patterns.
 
 ### 12. Multi-Tenancy & State Isolation
 
@@ -892,8 +1148,8 @@ A transferable checklist for any new Next.js service:
 6. **Per-resource module convention**: `<resource>.{service,handler,repository,validator,types,route}.ts` (§6).
 7. **`BaseRepository<T>`** with tenant routing baked in and overridable serialize/deserialize (§7).
 8. **Typed `BizError` hierarchy** + `mapErrors` middleware mapping to HTTP at the transport edge (§8).
-9. **Three-layer auth**: `middleware.ts` → `getUserContext()` → `can()` permission resolver (§9).
-10. **HOF wrappers** for tracing, rate limiting, usage, logging — composed in route/action factories (§10).
+9. **Three-layer auth + three-plane permissions**: `middleware.ts` (authn) → `getUserContext()` (identity) → `can()` resolver evaluating **operation (RBAC) ∧ resource (ownership/visibility/org) ∧ project (membership union)** (§9).
+10. **Observable by construction**: HOF-composed `withSpan` / `withUsage` / `withRateLimit`, `getPrefixedLogger(scope)` with PII redaction + `safe.*` helpers, typed `Metric` enum, and event-loop lag (`monitorEventLoopDelay`) as a first-class health signal (§10).
 11. **Explicit async lifecycle**: `after()`, `Promise.allSettled` for fire-and-forget, queues for long jobs (§11).
 12. **Multi-tenant defense in depth**: `AsyncLocalStorage` context, repository enforcement, cache namespacing (§12).
 
