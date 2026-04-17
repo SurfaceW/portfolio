@@ -564,6 +564,8 @@ export const getContext = (): RequestContext => {
 
 The 12 concerns above transfer between languages. The rest of this part covers what's specific to Next.js — features without a clean cross-language analog.
 
+> You can install [next.js BP skill](https://skills.sh/vercel-labs/next-skills/next-best-practices) from Vercel Official Skills Hub to instruct AI for BP. 🗞️
+
 ### Controller Layer (Routes / Server Actions / Pages)
 
 The Controller is a thin transport adapter — its job is composition, not business logic. With the IO contract from §4 and the AOP wrappers from §10, controllers stay short:
@@ -604,6 +606,8 @@ Conventions worth adopting:
 - Group routes with `(groupName)` to slice by feature/module without affecting URLs.
 - Use Next.js conventions: `default`, `layout`, `loading`, `error`, `not-found`, `sitemap`, `robots`, and the upcoming `forbidden` and `cache directive` conventions.
 - Version public APIs (`/api/v1/*`) and document with [OpenAPI](https://swagger.io/specification/)/Swagger.
+- Prefer Restful API or GraphQL API over RPC API.
+- Use `gRPC` or protobuf based for dedicated scenarios for simple app, it's not a good choice.
 - **Zero business logic at this layer.** If the controller has more than a few lines of orchestration, push it into the service.
 
 ### Service & Manager Layers in Detail
@@ -626,7 +630,7 @@ export class ElaboratorService {
 }
 ```
 
-- Apply Domain-Driven Design where the domain warrants it — for CRUD-heavy admin, the module convention from §6 is enough.
+- Apply **Domain-Driven Design** where the domain warrants it — for CRUD-heavy admin, the module convention from §6 is enough.
 - Services **return `ServiceResult`**; they do not throw for expected outcomes (see §4 + §8).
 - Use **interface-oriented design** for swappable implementations (`*.service.impl.ts`).
 - Apply DI for testability — a small DI container (`tsyringe`, `inversify`) or a factory module is enough; you rarely need a heavyweight framework.
@@ -640,6 +644,15 @@ The Manager layer holds reusable business logic that's narrower than a service �
 - Serverless DBs ([PlanetScale](https://planetscale.com/), Neon, Turso) reduce ops burden for most teams.
 - [Supabase](https://supabase.com/) is great for prototyping; evaluate carefully before relying on it in production.
 - Always: transactions for invariants, replication for durability, backups you've actually restored from, and indexes guided by the slow query log — not guessed.
+
+Make full use of DB design and optimization strategies, such as:
+
+- use transaction and isolation to handle the data consistency and integrity for sensitive data and operations
+use sharding and partition to handle the data scaling and performance
+- use replication and backup to handle the data redundancy and backup
+- use index and query optimization to handle the data query and performance
+- use schema and migration to handle the data schema and data structure
+- use replication and backup to handle the data redundancy and backup
 
 ### Next.js Framework Best Practices
 
@@ -885,6 +898,10 @@ A transferable checklist for any new Next.js service:
 12. **Multi-tenant defense in depth**: `AsyncLocalStorage` context, repository enforcement, cache namespacing (§12).
 
 ---
+
+1. **stateless** architecture for serverless deployment.
+2. **OO design principles** for some scenarios where it's more appropriate. Apply the Rules of OO BP, such as SOLID, DRY, KISS, etc. if necessary.
+3. **design patterns** is recommended to Next.js too, with IoC, AOP, Facade, etc.
 
 ## Conventions
 
