@@ -25,6 +25,9 @@ export function generateMetadata({
   return {
     title,
     description,
+    alternates: {
+      canonical: `/knowledge/${key}`,
+    },
     openGraph: {
       title: `${title} | Knowledge | Arno`,
       description,
