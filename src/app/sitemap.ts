@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next'
 import { allBlogs } from 'contentlayer/generated'
-import { quotes } from '@/data/quotes'
 import {
   getArtifactLastModified,
   getArtifactsWithMeta
@@ -22,20 +21,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8
   }))
 
-  const quotePages = quotes.map((quote) => ({
-    url: withSiteUrl(`/quotes/${quote.id}`),
-    lastModified: quote.date || todayIso,
-    changeFrequency: 'yearly' as const,
-    priority: 0.5
-  }))
-
   const routes = [
     '',
     '/posts/topics',
     '/rss',
     '/idea',
     '/about',
-    '/quotes',
     '/knowledge',
     '/knowledge/playground'
   ].map((route) => ({
@@ -95,7 +86,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...routes,
     ...blogs,
-    ...quotePages,
     ...tagLangRoutes,
     ...knowledgeArtifacts
   ]

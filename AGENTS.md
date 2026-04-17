@@ -11,7 +11,7 @@ Built with Next.js 13 (App Router), Contentlayer, Tailwind CSS, and deployed on 
 | `content/` | MDX blog posts (processed by Contentlayer) |
 | `src/app/` | Next.js App Router pages & API routes |
 | `src/components/` | Shared React components |
-| `src/data/` | Static data (quotes, etc.) |
+| `src/data/` | Static data |
 | `artifacts/` | Standalone JSX/HTML knowledge pages served at `/knowledge` |
 | `public/` | Static assets (fonts, images, favicon) |
 | `scripts/` | Build-time utilities (RSS generation) |
@@ -40,7 +40,6 @@ Built with Next.js 13 (App Router), Contentlayer, Tailwind CSS, and deployed on 
 | `/posts/topics` | Tag-based post listing |
 | `/knowledge` | Artifact gallery |
 | `/knowledge/[...slug]` | Single artifact viewer |
-| `/quotes` | Curated quotes page |
 | `/idea` | Idea page |
 
 ## Requirements

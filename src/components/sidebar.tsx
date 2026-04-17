@@ -15,9 +15,6 @@ const navItems = {
   '/idea': {
     name: 'IDEA',
   },
-  '/quotes': {
-    name: 'QUOTES',
-  },
   '/knowledge': {
     name: 'KNOWLEDGE',
   },
