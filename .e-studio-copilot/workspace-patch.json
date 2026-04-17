@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "appliedAt": "2026-04-17T14:45:59.730Z",
+  "tool": "codex",
+  "suite": {
+    "id": "04ec91fe-a3bd-41b5-9766-19082136b481",
+    "name": "Front End Dev Skills"
+  },
+  "paths": [
+    ".agents/skills/dev/web-design/adapt",
+    ".agents/skills/dev/web-design/animate",
+    ".agents/skills/dev/web-design/arrange",
+    ".agents/skills/dev/web-design/audit",
+    ".agents/skills/dev/web-design/bolder",
+    ".agents/skills/dev/web-design/clarify",
+    ".agents/skills/dev/web-design/colorize",
+    ".agents/skills/dev/web-design/critique",
+    ".agents/skills/dev/web-design/delight",
+    ".agents/skills/dev/web-design/distill",
+    ".agents/skills/dev/web-design/extract",
+    ".agents/skills/dev/web-design/frontend-design",
+    ".agents/skills/dev/web-design/harden",
+    ".agents/skills/dev/web-design/normalize",
+    ".agents/skills/dev/web-design/onboard",
+    ".agents/skills/dev/web-design/optimize",
+    ".agents/skills/dev/web-design/overdrive",
+    ".agents/skills/dev/web-design/polish",
+    ".agents/skills/dev/web-design/quieter",
+    ".agents/skills/dev/web-design/teach-impeccable",
+    ".agents/skills/dev/web-design/typeset",
+    ".agents/skills/dev/web-dev/agent-browser",
+    ".agents/skills/dev/web-dev/seo-audit",
+    ".agents/skills/dev/web-dev/web-design-guidelines",
+    "AGENTS.md::managed-section"
+  ]
+}

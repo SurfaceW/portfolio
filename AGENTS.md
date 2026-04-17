@@ -47,3 +47,51 @@ Built with Next.js 13 (App Router), Contentlayer, Tailwind CSS, and deployed on 
 - We **simplify**, we perfect. Simple and elegant words / output.
 - Keep posts bilingual-friendly (English and Chinese).
 - Preserve existing Contentlayer schema when adding new MDX fields.
+
+<!-- e-studio-agentic-rules:start -->
+## E-Studio Managed Rules
+
+This section is managed by E-Studio Copilot. Edit rule selections in the Agentic Capability Manager instead of editing these blocks by hand.
+
+### coding/se.bp.mdc
+
+Source: `/Users/ArnoYe/.agentic-arno/rules/coding/se.bp.mdc`
+Source hash: `2792d1dba27b0501a9af226ca41c3578b806270bf30dd75d9211fe1083c2134f`
+
+# SE Best Practices
+
+## Philosophy
+
+1. **Simplicity first** — clarity over cleverness; readability over abstraction
+2. **Explicit over implicit**
+3. **Single responsibility** — one component, one purpose
+4. **Composition over inheritance** — reusable, composable components
+5. **Colocation** — logic lives where it's used; minimize prop drilling
+6. **Plugin architecture** — self-contained features, registration-only contracts
+7. **Clean code, no patches** — no backward-compat baggage (mono-repo); refactor, don't hack
+8. **Error boundaries** — graceful handling in both data and UI layers
+
+## Patterns (priority order by context)
+
+| Pattern              | Meaning                                     |
+| -------------------- | ------------------------------------------- |
+| **First Principles** | Core requirements & system boundaries       |
+| **YAGNI**            | Build only what's needed now                |
+| **KISS**             | Simplest viable design                      |
+| **SOLID**            | SRP, OCP, etc. for modular design           |
+| **DRY**              | Extract common logic, eliminate duplication |
+
+Priority rotation:
+
+- **Kickoff / architecture**: First Principles → YAGNI → KISS → SOLID → DRY
+- **Feature iteration**: YAGNI → KISS → SOLID → DRY → First Principles
+- **Utilities / libraries**: KISS → DRY → YAGNI → SOLID → First Principles
+- **Complex domain modeling**: First Principles → SOLID → YAGNI → KISS → DRY
+
+## Implementation
+
+- Low-level code: _testable_ and _reusable_
+- High-level code: clean `interfaces` and `APIs`
+- Design for _performance_
+- Max **600 lines** per file (VibeCoding complexity cap)
+<!-- e-studio-agentic-rules:end -->
