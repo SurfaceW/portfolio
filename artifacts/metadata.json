@@ -84,6 +84,11 @@
     "emojiIcon": "🏖️",
     "desc": "Interactive calculator to simulate when passive income covers your lifestyle — adjust capital, savings, returns, and expenses to see the timeline shift."
   },
+  "wealth/value-of-company": {
+    "title": "Value of Company",
+    "emojiIcon": "💰",
+    "desc": "A business is worth the cash it can give its owners, adjusted for time, risk, and durability."
+  },
   "references/openclaw-cheatsheet": {
     "title": "OpenClaw Command Line Interface Cheatsheet",
     "emojiIcon": "🔧",
