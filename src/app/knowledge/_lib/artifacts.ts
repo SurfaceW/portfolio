@@ -13,6 +13,12 @@ export type ArtifactEntry = {
   slug: string[]
   key: string
   meta: ArtifactMeta
+  /**
+   * True only when this artifact has an explicit entry in `metadata.json`.
+   * Unlisted artifacts stay accessible via direct URL but are hidden from
+   * the public `/knowledge` index — soft-private by convention.
+   */
+  listed: boolean
 }
 
 const ARTIFACTS_DIR = path.join(process.cwd(), 'artifacts')
@@ -55,10 +61,12 @@ export function getArtifactsWithMeta(): ArtifactEntry[] {
   const metadata = readMetadata()
   return artifacts.map(({ slug }) => {
     const key = slug.join('/')
+    const explicit = metadata[key]
     return {
       slug,
       key,
-      meta: metadata[key] ?? {
+      listed: Boolean(explicit),
+      meta: explicit ?? {
         title: slug[slug.length - 1]
           .replace(/-/g, ' ')
           .replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -67,6 +75,10 @@ export function getArtifactsWithMeta(): ArtifactEntry[] {
       }
     }
   })
+}
+
+export function getListedArtifacts(): ArtifactEntry[] {
+  return getArtifactsWithMeta().filter((a) => a.listed)
 }
 
 export function getArtifactLastModified(slug: string[]): string {

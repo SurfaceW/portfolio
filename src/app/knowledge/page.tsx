@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { getArtifactsWithMeta } from './_lib/artifacts'
+import { getListedArtifacts } from './_lib/artifacts'
 
 export const metadata: Metadata = {
   title: 'Knowledge',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 }
 
 export default function KnowledgeDashboard() {
-  const artifacts = getArtifactsWithMeta()
+  const artifacts = getListedArtifacts()
 
   const sections = new Map<string, typeof artifacts>()
   for (const artifact of artifacts) {

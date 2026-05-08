@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { allBlogs } from 'contentlayer/generated'
 import {
   getArtifactLastModified,
-  getArtifactsWithMeta
+  getListedArtifacts
 } from './knowledge/_lib/artifacts'
 
 const SITE_URL = 'https://arno.surfacew.com'
@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1 : route === '/knowledge' ? 0.9 : 0.6
   }))
 
-  const knowledgeArtifacts = getArtifactsWithMeta().map((artifact) => ({
+  const knowledgeArtifacts = getListedArtifacts().map((artifact) => ({
     url: withSiteUrl(`/knowledge/${artifact.key}`),
     lastModified: getArtifactLastModified(artifact.slug),
     changeFrequency: 'monthly' as const,

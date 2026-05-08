@@ -1,6 +1,7 @@
 const REMOTE_PACKAGE_VERSIONS = {
   'framer-motion': '10.16.4',
-  'lucide-react': '0.542.0'
+  'lucide-react': '0.542.0',
+  recharts: '2.13.3'
 } as const
 
 const SUPPORTED_BARE_IMPORTS = new Set([
@@ -36,7 +37,7 @@ export function detectUnsupportedImports(code: string) {
 
   if (unsupported.size > 0) {
     throw new Error(
-      `Unsupported imports: ${Array.from(unsupported).join(', ')}. Supported packages in JSX mode: react, framer-motion, lucide-react.`
+      `Unsupported imports: ${Array.from(unsupported).join(', ')}. Supported packages in JSX mode: react, framer-motion, lucide-react, recharts.`
     )
   }
 }
@@ -61,21 +62,39 @@ function preprocessJSX(code: string): { code: string; name: string } {
       'class $1'
     )
   } else {
-    const arrowMatch = code.match(
-      /(?:export\s+default\s+)?(?:const|let|var)\s+(\w+)\s*=.*?(?:=>|\bfunction\b)/s
+    // `export default <Identifier>` is the most reliable signal — check it
+    // first. The arrowMatch fallback below is a loose heuristic that picks
+    // the FIRST `const X = ...` in the file and is only safe when no plain
+    // `export default <id>` is present.
+    const defaultExportKeywords = new Set([
+      'function',
+      'class',
+      'async',
+      'const',
+      'let',
+      'var'
+    ])
+    const idMatch = code.match(/export\s+default\s+(\w+)\s*;?/)
+    const exportArrowMatch = code.match(
+      /export\s+default\s+(?:const|let|var)\s+(\w+)\s*=/
     )
-    if (arrowMatch) {
-      name = arrowMatch[1]
+
+    if (exportArrowMatch) {
+      name = exportArrowMatch[1]
       processed = processed.replace(/export\s+default\s+/, '')
+    } else if (idMatch && !defaultExportKeywords.has(idMatch[1])) {
+      name = idMatch[1]
+      processed = processed.replace(
+        /export\s+default\s+(\w+)\s*;?/,
+        `const __PlaygroundDefault__ = ${idMatch[1]};`
+      )
+      name = '__PlaygroundDefault__'
     } else {
-      const idMatch = code.match(/export\s+default\s+(\w+)/)
-      if (idMatch) {
-        name = idMatch[1]
-        processed = processed.replace(
-          /export\s+default\s+(\w+)/,
-          'const __PlaygroundDefault__ = $1'
-        )
-        name = '__PlaygroundDefault__'
+      const arrowMatch = code.match(
+        /(?:const|let|var)\s+(\w+)\s*=.*?(?:=>|\bfunction\b)/s
+      )
+      if (arrowMatch) {
+        name = arrowMatch[1]
       }
     }
   }
@@ -92,9 +111,21 @@ ReactDOM.createRoot(__playgroundRoot).render(React.createElement(${name}, null))
   return { code: processed, name }
 }
 
+// `target=es2018` triggers esm.sh transform failures (HTTP 500) for some
+// packages (e.g. recharts). Drop the target on those — modern browsers handle
+// the default ES2022 output fine.
+const REMOTE_PACKAGE_QUERY: Record<
+  keyof typeof REMOTE_PACKAGE_VERSIONS,
+  string
+> = {
+  'framer-motion': 'bundle&target=es2018&external=react,react-dom',
+  'lucide-react': 'bundle&target=es2018&external=react,react-dom',
+  recharts: 'bundle&external=react,react-dom'
+}
+
 function buildRemoteUrl(specifier: keyof typeof REMOTE_PACKAGE_VERSIONS) {
   const version = REMOTE_PACKAGE_VERSIONS[specifier]
-  return `https://esm.sh/${specifier}@${version}?bundle&target=es2018&external=react,react-dom`
+  return `https://esm.sh/${specifier}@${version}?${REMOTE_PACKAGE_QUERY[specifier]}`
 }
 
 function createEsbuildPlugins(esbuild: Awaited<typeof import('esbuild-wasm')>) {
@@ -124,7 +155,7 @@ function createEsbuildPlugins(esbuild: Awaited<typeof import('esbuild-wasm')>) {
         }))
 
         build.onResolve(
-          { filter: /^(framer-motion|lucide-react)$/ },
+          { filter: /^(framer-motion|lucide-react|recharts)$/ },
           (args: any) => ({
             path: buildRemoteUrl(args.path),
             namespace: 'http-url'
