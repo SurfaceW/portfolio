@@ -1,19 +1,31 @@
 import React from 'react';
 
 interface WorkCardProps {
-  icon: string; // Emoji string
+  icon?: string;
+  iconUrl?: string;
   title: string;
   description: string;
   link: string;
 }
 
-const WorkCard: React.FC<WorkCardProps> = ({ icon, title, description, link }) => {
+const WorkCard: React.FC<WorkCardProps> = ({ icon, iconUrl, title, description, link }) => {
   return (
     <div className="h-full flex flex-col justify-center p-4">
       {/* Icon container with animated glow effect */}
       <div className="relative flex items-center justify-center mb-3">
         <div className="absolute w-12 h-12 bg-rose-400/10 dark:bg-rose-300/5 rounded-full animate-pulse"></div>
-        <div className="text-3xl z-10">{icon}</div>
+        {iconUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={iconUrl}
+            alt={`${title} app icon`}
+            width={48}
+            height={48}
+            className="relative z-10 h-12 w-12 rounded-2xl object-cover shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+          />
+        ) : (
+          <div className="text-3xl z-10">{icon}</div>
+        )}
       </div>
       
       {/* Title */}

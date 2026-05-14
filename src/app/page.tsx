@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import AvatarCard from '../components/AvatarCard/AvatarCard';
 import ManifestoCard from '../components/ManifestoCard/ManifestoCard';
 import WorkCard from '../components/WorkCard/WorkCard';
-import CareerCard from '../components/CareerCard/CareerCard';
 import BlogPostCard from '../components/BlogPostCard/BlogPostCard';
 import SocialMediaCard from '../components/SocialMediaCard/SocialMediaCard';
 // For animations and effects (optional - can be implemented later)
@@ -110,17 +109,17 @@ export default function RootPage() {
         {/* Hero section with title */}
         <div className="mb-5">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Arno&apos;s Portfolio</h1>
-          <p className="mt-1 text-base text-gray-600 dark:text-gray-400">AI Developer, Engineer, Product Designer</p>
+          <p className="mt-1 text-base text-gray-600 dark:text-gray-400">AI Product Engineer</p>
         </div>
 
         {/* Bento grid layout - Updated for mobile responsiveness (grid-cols-1) */}
         <div className="grid  auto-rows-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {/* Profile Card - Full width on mobile */}
-          <div className="col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-1 row-span-1 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-900/30 dark:hover:to-purple-800/30">
+          <div className="col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1 row-span-1 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-900/30 dark:hover:to-purple-800/30">
             <AvatarCard
               imageUrl="https://avatars.githubusercontent.com/u/5323168?v=4"
               name="Arno"
-              title="AI Developer, Engineer, Product Designer"
+              title="AI Product Engineer"
             />
           </div>
 
@@ -135,7 +134,7 @@ export default function RootPage() {
           </div> */}
 
           {/* Social Media Hub - Full width on mobile */}
-          <div className="col-span-1 md:col-span-1 sm:col-span-2 row-span-1 bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-emerald-100 hover:to-cyan-100 dark:hover:from-emerald-900/30 dark:hover:to-cyan-800/30">
+          <div className="col-span-1 sm:col-span-2 md:col-span-2 row-span-1 bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-emerald-100 hover:to-cyan-100 dark:hover:from-emerald-900/30 dark:hover:to-cyan-800/30">
             <SocialMediaCard
               socialLinks={[
                 { name: 'X / Twitter', url: 'https://x.com/yeqingnan' },
@@ -145,23 +144,15 @@ export default function RootPage() {
             />
           </div>
 
-          {/* Featured Articles Section - Full width on all screen sizes */}
-          <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl p-4 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-white hover:to-slate-100 dark:hover:from-gray-900/60 dark:hover:to-gray-800/60">
-            <h2 className="text-xl md:text-xl font-medium mb-4 text-gray-900 dark:text-gray-50">Featured Articles</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {blogPosts.map((post, i) => (
-                <div key={`blog-${i}`} className="group relative transition-all duration-300 hover:translate-y-[-2px]">
-                  <BlogPostCard
-                    title={post.title}
-                    description={post.description}
-                    slug={post.slug}
-                  />
-                </div>
-              ))}
-            </div>
+          {/* Work Cards — above Featured Articles; md: pairs with Social row */}
+          <div className="col-span-1 md:col-span-1 row-span-1 bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/25 dark:to-blue-900/25 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-sky-100 hover:to-indigo-100 dark:hover:from-sky-900/35 dark:hover:to-blue-900/35">
+            <WorkCard
+              iconUrl="https://dots.e-studio.ai/_next/image?url=%2Fdots-icon.png&w=3840&q=75"
+              title="eDots"
+              description="First iOS product — native dots & collections across iPhone, iPad, and Mac."
+              link="https://dots.e-studio.ai/"
+            />
           </div>
-
-          {/* Work Cards - Each full width on mobile */}
           <div className="col-span-1 row-span-1 bg-gradient-to-br from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-800/30">
             <WorkCard
               icon="✨"
@@ -185,6 +176,22 @@ export default function RootPage() {
               description="Collection of AI prompts of Arno's daily works & life."
               link="https://github.com/SurfaceW/arno-prompts"
             />
+          </div>
+
+          {/* Featured Articles Section - Full width on all screen sizes */}
+          <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl p-4 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-white hover:to-slate-100 dark:hover:from-gray-900/60 dark:hover:to-gray-800/60">
+            <h2 className="text-xl md:text-xl font-medium mb-4 text-gray-900 dark:text-gray-50">Featured Articles</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {blogPosts.map((post, i) => (
+                <div key={`blog-${i}`} className="group relative transition-all duration-300 hover:translate-y-[-2px]">
+                  <BlogPostCard
+                    title={post.title}
+                    description={post.description}
+                    slug={post.slug}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

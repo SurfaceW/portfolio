@@ -1,5 +1,5 @@
 import { Mdx } from '@/components/mdx'
-import { UVCardElaborationStudio } from '@/components/uv-card/uv-card'
+import { UVCardEDots } from '@/components/uv-card/uv-card'
 import { allBlogs } from 'contentlayer/generated'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -141,8 +141,8 @@ export default async function BlogPost({ params }) {
       <Mdx code={post.body.code} />
       <br />
       <div className="arno-recommendation mt-8">
-        <h2 className="pb-4">Arno Crafting Apps</h2>
-        <UVCardElaborationStudio />
+        <h2 className="pb-4">eDots</h2>
+        <UVCardEDots />
       </div>
       <div className="giscus">
 
