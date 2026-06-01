@@ -14,6 +14,14 @@ optional — log them when they change how a contributor works.
 - `ARCHITECTURE.md` — system blueprint for the portfolio + knowledge artifacts.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.
 
+### Fixed
+- `ARCHITECTURE.md` — corrected the knowledge-artifact flow: published JSX is
+  compiled **server-side at build time** (`force-static` →
+  `transformJSXAtBuild` → `buildJSXDoc` → sandboxed iframe), not in the
+  reader's browser. Browser-side `esbuild-wasm` runs only in the playground.
+  Updated the diagram, system overview, components, flows, CSP rationale,
+  security sandbox, and failure modes to match.
+
 ## [0.1.0] — 2026-06-01
 
 Baseline release. Snapshot of the site as it shipped to `arno.surfacew.com`
