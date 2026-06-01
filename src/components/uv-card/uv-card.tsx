@@ -1,28 +1,8 @@
 "use client";
 
-import { Lumiflex, Novatrix, Zenitho } from "uvcanvas";
+import { Zenitho } from "uvcanvas";
 
 import "./uv-card.css";
-
-export const UVCardPromptStudio: React.FC<{
-  height?: number;
-}> = ({ height = 200 }) => {
-  return (
-    <div
-      className="uv-card relative w-full overflow-hidden rounded-2xl cursor-pointer"
-      style={{ height }}
-      onClick={() => window.open("https://github.com/SurfaceW/arno-prompts", "_blank")}
-    >
-      <div className="absolute inset-0 opacity-30 hover:opacity-40 transition-opacity">
-        <Lumiflex />
-      </div>
-      <div className="absolute inset-0 p-8 flex flex-col justify-center opacity-70 hover:opacity-100 transition-opacity">
-        <h2 className="font-bold">ARNO PROMPTS 🧙🏻‍♂️</h2>
-        <p>Arno organize his interesting prompts on Github, have a pick for your need.</p>
-      </div>
-    </div>
-  );
-}
 
 export const UVCardEDots: React.FC<{
   height?: number;
@@ -57,26 +37,6 @@ export const UVCardEDots: React.FC<{
         <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-white/90 bg-white/15 hover:bg-white/25 transition-colors rounded-full px-3 py-1 w-fit">
           Try eDots →
         </span>
-      </div>
-    </div>
-  );
-}
-
-export const UVCardElaborationStudio: React.FC<{
-  height?: number;
-}> = ({ height = 200 }) => {
-  return (
-    <div
-      className="uv-card relative w-full overflow-hidden rounded-2xl cursor-pointer"
-      style={{ height }}
-      onClick={() => window.open("https://e-studio.ai", "_blank")}
-    >
-      <div className="absolute inset-0 opacity-30 hover:opacity-40 transition-opacity">
-        <Novatrix />
-      </div>
-      <div className="absolute inset-0 p-8 flex flex-col justify-center opacity-70 hover:opacity-100 transition-opacity">
-        <h2 className="font-bold">ELABORATION STUDIO 🦄</h2>
-        <p>Elaborate your ideas and solve your problems with AI in fully boosted context way ~</p>
       </div>
     </div>
   );

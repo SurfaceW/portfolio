@@ -251,7 +251,7 @@ edits preview without a rebuild.)
 
 ```
 sitemap()  →  merges:
-   • static routes (/, /knowledge, /idea, /posts/topics, /rss …)
+   • static routes (/, /knowledge, /posts/topics, /rss …)
    • allBlogs (from Contentlayer)
    • tag × language permutations (only when posts exist)
    • listed artifacts (metadata.json gated)

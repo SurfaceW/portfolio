@@ -38,9 +38,8 @@ Built with Next.js 13 (App Router), Contentlayer, Tailwind CSS, and deployed on 
 | `/` | `src/app/page.tsx` — homepage |
 | `/posts/[slug]` | `src/app/posts/[slug]/page.tsx` |
 | `/posts/topics` | Tag-based post listing |
-| `/knowledge` | Artifact gallery |
+| `/knowledge` | Artifact gallery (front-end title search) |
 | `/knowledge/[...slug]` | Single artifact viewer |
-| `/idea` | Idea page |
 
 ## Requirements
 

@@ -10,6 +10,9 @@ optional — log them when they change how a contributor works.
 ## [Unreleased]
 
 ### Added
+- Knowledge search — a front-end, instant title filter on `/knowledge`. Type in
+  the search box to narrow the artifact gallery by title; sections re-group live
+  with no network round-trip.
 - Post outlines — a responsive "On this page" table of contents on
   `/posts/[slug]`. Headings are extracted at build time (Contentlayer
   `headings` field, slugs matching `rehype-slug`). On wide screens it shows as
@@ -37,6 +40,11 @@ optional — log them when they change how a contributor works.
   `headers()` export, so no app-level CSP / X-Frame / Referrer / Permissions
   headers are emitted (production carries only Vercel's default HSTS).
   Documented as a known gap with a wiring follow-up.
+
+### Removed
+- The `/idea` page and its nav tab. The module was no longer useful; its route,
+  sitemap entry, nav item, and the now-unused `UVCardPromptStudio` /
+  `UVCardElaborationStudio` components were removed.
 
 ## [0.1.0] — 2026-06-01
 
