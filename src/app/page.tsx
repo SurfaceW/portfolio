@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: siteUrl,
-      images: [ogImageUrl],
+      images: [{ url: ogImageUrl, alt: "Arno's Portfolio & Blog" }],
       type: 'website',
       siteName: "Arno's Portfolio & Blog",
     },
@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImageUrl],
+      images: [{ url: ogImageUrl, alt: "Arno's Portfolio & Blog" }],
     },
   };
 }
@@ -108,8 +108,8 @@ export default function RootPage() {
       <div className="w-full max-w-[800px] mx-auto">
         {/* Hero section with title */}
         <div className="mb-5">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Arno&apos;s Portfolio</h1>
-          <p className="mt-1 text-base text-gray-600 dark:text-gray-400">AI Product Engineer</p>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Arno — AI Developer, Engineer &amp; Product Designer</h1>
+          <p className="mt-1 text-base text-gray-600 dark:text-gray-400">Portfolio &amp; blog on AI, software engineering, and product design.</p>
         </div>
 
         {/* Bento grid layout - Updated for mobile responsiveness (grid-cols-1) */}

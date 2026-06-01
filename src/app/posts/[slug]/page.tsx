@@ -41,7 +41,8 @@ export async function generateMetadata({
       url: `https://arno.surfacew.com/posts/${slug}`,
       images: [
         {
-          url: ogImage
+          url: ogImage,
+          alt: title
         }
       ]
     },
@@ -49,7 +50,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImage]
+      images: [{ url: ogImage, alt: title }]
     }
   }
 }
@@ -115,8 +116,11 @@ export default async function BlogPost({ params }) {
     ]
   };
 
+  const isChinese =
+    post.tags?.includes('zh') || /[\u4e00-\u9fff]/.test(post.title)
+
   return (
-    <section>
+    <section lang={isChinese ? 'zh' : 'en'}>
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -140,6 +144,7 @@ export default async function BlogPost({ params }) {
           {formatDate(post.publishedAt)}
         </p>
       </div>
+      <Toc headings={post.headings as Heading[]} />
       <Mdx code={post.body.code} />
       <br />
       <div className="arno-recommendation mt-8">

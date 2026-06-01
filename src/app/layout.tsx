@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     "google-site-verification": "D9VbrMjUdwyaq2EQFL7yh3fT0lK4WGsgIOlO_aAxA5g"
   },
   description: 'Developer, designer, and creator.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/logo.png',
+  },
   openGraph: {
     title: 'Arno',
     description: 'Developer, designer, and creator.',
@@ -55,6 +60,8 @@ export const metadata: Metadata = {
   twitter: {
     title: 'Arno',
     card: 'summary_large_image',
+    site: '@yeqingnan',
+    creator: '@yeqingnan',
   },
   verification: {
     // google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',

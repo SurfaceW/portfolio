@@ -82,7 +82,7 @@ const computedFields = {
       tags: doc.tags,
       image: doc.image
         ? `${doc.image}`
-        : `https://arno.surfacew.com/posts/${doc.title}`,
+        : 'https://6gflxwplhijgv9h7.public.blob.vercel-storage.com/20250526164830-wyxK0U7FPmPVfkNCdbXytJ2YOFTwnu.jpg',
       url: `https://arno.surfacew.com/posts/${doc._raw.flattenedPath}`,
       author: {
         '@type': 'Person',

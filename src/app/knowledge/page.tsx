@@ -42,7 +42,7 @@ export default function KnowledgeDashboard() {
       style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
     >
       <div className="flex items-center justify-between px-5 h-10 border-b border-white/[0.06] shrink-0">
-        <span className="text-[11px] text-white/40 tracking-widest uppercase">Knowledge</span>
+        <h1 className="text-[11px] text-white/40 tracking-widest uppercase font-normal m-0">Knowledge</h1>
         <Link
           href="/knowledge/playground"
           className="text-[11px] text-white/20 hover:text-white/45 transition-colors"

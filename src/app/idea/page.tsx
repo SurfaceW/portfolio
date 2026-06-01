@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: siteUrl,
-      images: [ogImageUrl],
+      images: [{ url: ogImageUrl, alt: title }],
       type: 'website',
       siteName: "Arno's Portfolio & Blog",
     },
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImageUrl],
+      images: [{ url: ogImageUrl, alt: title }],
     },
   };
 }

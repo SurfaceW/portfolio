@@ -51,6 +51,11 @@ export default async function ArtifactPage({
   const artifact = resolveArtifact(params.slug)
   if (!artifact) notFound()
 
+  const key = params.slug.join('/')
+  const meta = readMetadata()[key]
+  const title = meta?.title ?? params.slug.join(' / ')
+  const description = meta?.desc
+
   const code = readArtifact(artifact.filePath)
   let srcDoc = ''
   let error: string | null = null
@@ -64,5 +69,14 @@ export default async function ArtifactPage({
     error = (e?.message ?? String(e)).replace(/\[esbuild-wasm\]?\s*/gi, '').trim()
   }
 
-  return <ArtifactPreview srcDoc={srcDoc} mode={artifact.mode} slug={params.slug} error={error} />
+  return (
+    <ArtifactPreview
+      srcDoc={srcDoc}
+      mode={artifact.mode}
+      slug={params.slug}
+      error={error}
+      title={title}
+      description={description}
+    />
+  )
 }

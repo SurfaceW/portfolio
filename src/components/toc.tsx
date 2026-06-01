@@ -35,47 +35,64 @@ export function Toc({ headings }: { headings: Heading[] }) {
     return () => observer.disconnect()
   }, [headings])
 
-  const handleClick = (event: React.MouseEvent, slug: string) => {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
     event.preventDefault()
     const el = document.getElementById(slug)
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     history.replaceState(null, '', `#${slug}`)
     setActiveId(slug)
+    // Collapse the mobile disclosure after navigating.
+    event.currentTarget.closest('details')?.removeAttribute('open')
   }
 
   if (headings.length === 0) return null
 
+  const list = (
+    <ul className="space-y-1.5 border-l border-neutral-200 text-xs dark:border-neutral-800">
+      {headings.map((heading) => {
+        const isActive = activeId === heading.slug
+        return (
+          <li key={heading.slug}>
+            <a
+              href={`#${heading.slug}`}
+              onClick={(event) => handleClick(event, heading.slug)}
+              className={clsx(
+                '-ml-px block border-l py-0.5 leading-snug transition-colors',
+                isActive
+                  ? 'border-neutral-900 text-neutral-900 dark:border-neutral-100 dark:text-neutral-100'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
+              )}
+              style={{ paddingLeft: `${(heading.level - 2) * 0.75 + 0.75}rem` }}
+            >
+              {heading.text}
+            </a>
+          </li>
+        )
+      })}
+    </ul>
+  )
+
   return (
-    <nav
-      aria-label="Table of contents"
-      className="hidden xl:block fixed top-32 w-40 max-h-[70vh] overflow-y-auto left-[max(1rem,calc(50%-39.5rem))]"
-    >
-      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-        On this page
-      </p>
-      <ul className="space-y-2 text-sm border-l border-neutral-200 dark:border-neutral-800">
-        {headings.map((heading) => {
-          const isActive = activeId === heading.slug
-          return (
-            <li key={heading.slug}>
-              <a
-                href={`#${heading.slug}`}
-                onClick={(event) => handleClick(event, heading.slug)}
-                className={clsx(
-                  '-ml-px block border-l py-0.5 leading-snug transition-colors',
-                  isActive
-                    ? 'border-neutral-900 text-neutral-900 dark:border-neutral-100 dark:text-neutral-100'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
-                )}
-                style={{ paddingLeft: `${(heading.level - 2) * 0.75 + 0.75}rem` }}
-              >
-                {heading.text}
-              </a>
-            </li>
-          )
-        })}
-      </ul>
-    </nav>
+    <>
+      {/* Desktop: fixed rail in the left gutter. Wider + larger on 2xl. */}
+      <nav
+        aria-label="Table of contents"
+        className="fixed top-32 hidden max-h-[78vh] overflow-y-auto xl:block xl:w-40 xl:left-[max(1rem,calc(50%-39.5rem))] 2xl:w-64 2xl:left-[max(1rem,calc(50%-45.5rem))]"
+      >
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+          On this page
+        </p>
+        {list}
+      </nav>
+
+      {/* Mobile / tablet: collapsible disclosure above the article. */}
+      <details className="mb-8 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 dark:border-neutral-800 dark:bg-neutral-900 xl:hidden">
+        <summary className="cursor-pointer select-none list-none text-xs font-semibold uppercase tracking-wider text-neutral-500 marker:content-none dark:text-neutral-400">
+          On this page
+        </summary>
+        <div className="mt-3 max-h-[50vh] overflow-y-auto">{list}</div>
+      </details>
+    </>
   )
 }

@@ -208,9 +208,10 @@ schema.org BlogPosting payload. A sibling `headings` computed field extracts
 the post's h2/h3 outline at build time — slugs are produced with the same
 `github-slugger` that `rehype-slug` uses, so the table-of-contents anchors
 match the rendered heading ids exactly. The `Toc` client component
-(`src/components/toc.tsx`) renders that outline in the left gutter on wide
-screens with IntersectionObserver scroll-spy; it ships zero extra build cost
-and degrades to nothing on narrow viewports.
+(`src/components/toc.tsx`) renders that outline as a fixed left-gutter rail on
+wide screens (IntersectionObserver scroll-spy, wider on 2xl) and as a
+collapsible disclosure above the article below `xl`, so it ships zero extra
+build cost and stays usable on mobile.
 
 ### Render a knowledge artifact
 
