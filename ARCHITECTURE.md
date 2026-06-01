@@ -119,15 +119,21 @@ primitives. Portability is sacrificed for zero ops. If we ever leave Vercel,
 `@vercel/blob` and `@vercel/edge-config` are the two coupling points to
 replace.
 
-### CSP allows `unsafe-eval`
+### CSP is authored but not yet enforced
 
-Required by two browser-side consumers in the knowledge pipeline: the Tailwind
-Play CDN (`cdn.tailwindcss.com`) used inside artifact iframes, and the live
-playground's `esbuild-wasm` (WebAssembly instantiation). Published artifacts
-themselves run only precompiled JS, but they inherit the parent CSP through the
-`srcdoc` iframe, so the policy has to permit it. This is a deliberate trade for
-the pipeline's authoring model. The rest of the CSP stays tight (frame-ancestors
-none, X-Frame DENY, HSTS, referrer policy).
+`next.config.js` defines a `securityHeaders` array — CSP with `unsafe-eval`,
+X-Frame-Options DENY, HSTS, Referrer-Policy, Permissions-Policy. **It is not
+wired:** there is no `headers()` export, so Next never emits these headers. In
+production only Vercel's default HSTS is present; there is effectively no
+app-level CSP today.
+
+The `unsafe-eval` allowance exists in the authored policy because two
+browser-side consumers need it: the Tailwind Play CDN (`cdn.tailwindcss.com`)
+inside artifact iframes, and the live playground's `esbuild-wasm`. Published
+artifacts run only precompiled JS but would inherit the parent CSP through the
+`srcdoc` iframe, so the policy has to permit it. Activating the headers is a
+tracked follow-up (see Open questions) — it must be verified against the
+knowledge pipeline before shipping so artifacts don't break.
 
 ### Auto-deploy on push to `main`
 
@@ -296,10 +302,16 @@ Access patterns:
   var.
 - **Secrets:** managed in Vercel Project Settings. `.env` in the repo is
   development-only and contains no production credentials.
-- **CSP:** custom in `next.config.js`. `unsafe-eval` is allowed (Tailwind Play
-  CDN + the playground's `esbuild-wasm`; see the CSP decision above).
-  `frame-ancestors` is `DENY` via X-Frame-Options. Connect-src is `*` because
-  artifacts may fetch arbitrary CDNs by design.
+- **CSP / security headers:** authored in `next.config.js` but **not emitted**
+  — there is no `headers()` export, so the CSP, X-Frame-Options, Referrer-
+  Policy, and Permissions-Policy are inert. Production carries only Vercel's
+  default HSTS. This is a known gap (see the CSP decision and Open questions),
+  not an active control. The authored policy would allow `unsafe-eval`
+  (Tailwind Play CDN + playground wasm) and `connect-src *` (artifacts fetch
+  arbitrary CDNs by design).
+- **Clickjacking:** the artifact iframe sandbox below is enforced (DOM
+  attribute), but page-level frame protection (`X-Frame-Options` /
+  `frame-ancestors`) is currently absent until the headers are wired.
 - **Artifact sandbox:** artifacts execute inside an `<iframe
   sandbox="allow-scripts">`. Without `allow-same-origin`, the iframe runs in an
   opaque origin — it cannot read the host page's DOM, cookies, or storage. No
@@ -350,6 +362,11 @@ Access patterns:
 
 ## Open questions
 
+- **Security headers are dead code.** `securityHeaders` in `next.config.js` is
+  defined but never exported via `headers()`, so CSP / X-Frame / Referrer /
+  Permissions headers are not emitted. Wire an `async headers()` returning the
+  array, then verify `/knowledge/*` artifacts still render under the CSP before
+  shipping.
 - **Edge Config currently unused.** Decide whether to wire it into a feature
   flag scheme or drop the dependency.
 - **`scripts/gen-rss.js` is stale** (references `pages/posts`). The live RSS

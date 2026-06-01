@@ -70,10 +70,15 @@ Node version follows what Vercel ships for Next 13 — no `.nvmrc` enforced.
 - **Contentlayer build step.** Build will fail if any MDX frontmatter is
   missing a required field (`title`, `publishedAt`, `summary`). Validate
   before pushing.
-- **Custom CSP** in `next.config.js` allows `unsafe-eval` (needed by
-  `esbuild-wasm` for runtime JSX artifacts) and `cdn.tailwindcss.com` (runtime
-  Tailwind in artifacts). Tightening CSP requires updating the knowledge
-  artifact pipeline first.
+- **Security headers are authored but NOT wired.** `next.config.js` defines a
+  `securityHeaders` array (CSP, X-Frame-Options, Referrer-Policy, etc.) but
+  never exports a `headers()` function, so Next does not emit them. In
+  production only Vercel's default `Strict-Transport-Security` header is
+  present — there is currently **no app-level CSP**. Treat the CSP in the
+  config as intent, not enforcement. To activate it, add an `async headers()`
+  returning `securityHeaders`, then verify `/knowledge/*` artifacts still
+  render (the CSP must keep allowing `unsafe-eval` for the Tailwind Play CDN +
+  playground wasm, `cdn.tailwindcss.com`, `unpkg.com`, and `esm.sh`).
 - **TypeScript / ESLint errors are ignored at build time** (`next.config.js`).
   Catch them locally — Vercel will not block on them.
 
