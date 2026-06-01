@@ -21,6 +21,11 @@ optional — log them when they change how a contributor works.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.
 
 ### Fixed
+- Article pages no longer scroll horizontally. `html` now uses `overflow-x: clip`
+  (a hard guarantee that's safe with the sticky sidebar and fixed TOC since
+  `clip` creates no scroll container), and `.prose` wraps long unbreakable
+  tokens (`overflow-wrap: break-word`). Wide tables / code still scroll inside
+  their own box.
 - `ARCHITECTURE.md` — corrected the knowledge-artifact flow: published JSX is
   compiled **server-side at build time** (`force-static` →
   `transformJSXAtBuild` → `buildJSXDoc` → sandboxed iframe), not in the

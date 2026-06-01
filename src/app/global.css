@@ -9,6 +9,10 @@
 
 html {
   min-width: 360px;
+  /* Guarantee no page-level horizontal scroll. `clip` (not `hidden`) avoids
+     creating a scroll container, so the sticky sidebar and fixed TOC still
+     work. Wide blocks (tables, code) still scroll inside their own box. */
+  overflow-x: clip;
 }
 
 /* General FontSize config */
@@ -19,6 +23,7 @@ body {
 
 .prose {
   max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .prose .anchor {

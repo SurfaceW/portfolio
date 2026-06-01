@@ -5,16 +5,24 @@ interface Props {
   mode: ArtifactMode
   slug: string[]
   error?: string | null
+  title?: string
+  description?: string
 }
 
-export default function ArtifactPreview({ srcDoc, mode, slug, error }: Props) {
+export default function ArtifactPreview({ srcDoc, mode, slug, error, title, description }: Props) {
   const pathStr = slug.join('/')
+  const heading = title ?? pathStr
 
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col bg-[#0e0e0e]"
       style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}
     >
+      {/* Crawlable text layer — interactive view lives in the sandboxed iframe below */}
+      <div className="sr-only">
+        <h1>{heading}</h1>
+        {description && <p>{description}</p>}
+      </div>
       <div className="flex items-center gap-3 px-4 h-10 border-b border-white/[0.06] shrink-0">
         <a
           href="/knowledge"
@@ -23,8 +31,8 @@ export default function ArtifactPreview({ srcDoc, mode, slug, error }: Props) {
           ← knowledge
         </a>
         <div className="h-3.5 w-px bg-white/[0.06] shrink-0" />
-        <span className="text-[11px] text-white/20 truncate min-w-0">
-          artifacts/{pathStr}
+        <span className="text-[11px] text-white/45 truncate min-w-0" title={`artifacts/${pathStr}`}>
+          {heading}
         </span>
         <span
           className={`text-[9px] px-1.5 py-0.5 rounded uppercase tracking-widest shrink-0 ${

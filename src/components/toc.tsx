@@ -78,7 +78,7 @@ export function Toc({ headings }: { headings: Heading[] }) {
       {/* Desktop: fixed rail in the left gutter. Wider + larger on 2xl. */}
       <nav
         aria-label="Table of contents"
-        className="fixed top-32 block max-h-[78vh] overflow-y-auto w-40 left-[max(1rem,calc(50%-39.5rem))]"
+        className="fixed top-32 hidden max-h-[78vh] overflow-y-auto xl:block xl:w-40 xl:left-[max(1rem,calc(50%-39.5rem))] 2xl:w-64 2xl:left-[max(1rem,calc(50%-45.5rem))]"
       >
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
           On this page
