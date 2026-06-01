@@ -19,6 +19,7 @@ body {
 
 .prose {
   max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .prose .anchor {
@@ -105,7 +106,8 @@ input[type='email'] {
 
 table {
   display: block;
-  max-width: fit-content;
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   white-space: nowrap;
 }

@@ -15,6 +15,9 @@ optional — log them when they change how a contributor works.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.
 
 ### Fixed
+- fix(posts): article pages no longer scroll horizontally — wide tables now
+  cap at the content column and scroll within their own box, and long
+  unbreakable tokens (inline code, URLs) wrap instead of overflowing the page.
 - `ARCHITECTURE.md` — corrected the knowledge-artifact flow: published JSX is
   compiled **server-side at build time** (`force-static` →
   `transformJSXAtBuild` → `buildJSXDoc` → sandboxed iframe), not in the
