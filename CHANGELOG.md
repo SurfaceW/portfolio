@@ -10,10 +10,12 @@ optional — log them when they change how a contributor works.
 ## [Unreleased]
 
 ### Added
-- Post outlines — a sticky "On this page" table of contents on `/posts/[slug]`.
-  Headings are extracted at build time (Contentlayer `headings` field, slugs
-  matching `rehype-slug`) and rendered in the left gutter on wide screens with
-  scroll-spy and smooth-scroll.
+- Post outlines — a responsive "On this page" table of contents on
+  `/posts/[slug]`. Headings are extracted at build time (Contentlayer
+  `headings` field, slugs matching `rehype-slug`). On wide screens it shows as
+  a small-font fixed rail in the left gutter (wider on 2xl) with scroll-spy and
+  smooth-scroll; below `xl` it collapses into a compact disclosure above the
+  article so mobile reading flow stays clean.
 - `DEPLOYMENT.md` — formal deploy contract for Vercel.
 - `ARCHITECTURE.md` — system blueprint for the portfolio + knowledge artifacts.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.
