@@ -21,6 +21,10 @@ optional — log them when they change how a contributor works.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.
 
 ### Fixed
+- Post outline rendered twice on `/posts/[slug]` — a branch merge re-introduced
+  the `<Toc>` that an earlier commit had relocated, so each page showed two
+  overlapping fixed rails on desktop and two "On this page" disclosures on
+  mobile. Removed the duplicate, keeping the single outline above the article.
 - Article pages no longer scroll horizontally. `html` now uses `overflow-x: clip`
   (a hard guarantee that's safe with the sticky sidebar and fixed TOC since
   `clip` creates no scroll container), and `.prose` wraps long unbreakable

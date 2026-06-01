@@ -135,7 +135,6 @@ export default async function BlogPost({ params }) {
           __html: JSON.stringify(breadcrumbData)
         }}
       ></script>
-      <Toc headings={post.headings as Heading[]} />
       <h1 className="font-bold text-2xl tracking-tighter">
         <Balancer>{post.title}</Balancer>
       </h1>
