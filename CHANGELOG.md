@@ -21,6 +21,11 @@ optional — log them when they change how a contributor works.
   reader's browser. Browser-side `esbuild-wasm` runs only in the playground.
   Updated the diagram, system overview, components, flows, CSP rationale,
   security sandbox, and failure modes to match.
+- `ARCHITECTURE.md` + `DEPLOYMENT.md` — corrected the security-headers claim:
+  `securityHeaders` in `next.config.js` is defined but never wired via a
+  `headers()` export, so no app-level CSP / X-Frame / Referrer / Permissions
+  headers are emitted (production carries only Vercel's default HSTS).
+  Documented as a known gap with a wiring follow-up.
 
 ## [0.1.0] — 2026-06-01
 
