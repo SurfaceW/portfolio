@@ -27,7 +27,7 @@ weight; the repo stays a content-first codebase.
    │   │  content/*.mdx  │    │  artifacts/<cat>/*.jsx|html│    │
    │   │       │         │    │       │                    │    │
    │   │  Contentlayer   │    │  metadata.json (index)     │    │
-   │   │  (build-time)   │    │  esbuild-wasm (runtime)    │    │
+   │   │  (build-time)   │    │  esbuild-wasm (build-time) │    │
    │   │       ▼         │    │       ▼                    │    │
    │   │  /posts/[slug]  │    │  /knowledge/[...slug]      │    │
    │   └─────────────────┘    └────────────────────────────┘    │
@@ -42,20 +42,24 @@ weight; the repo stays a content-first codebase.
 ## System overview
 
 A reader's browser hits Vercel; Vercel serves the prebuilt Next.js app. The
-homepage, posts, knowledge index, and sitemap are statically generated at
-build time. The blog reads from compiled Contentlayer output; the knowledge
-gallery reads from the filesystem (`artifacts/`) at request/build time and
-transforms `.jsx` artifacts in the browser using `esbuild-wasm`. The only
-runtime write path is `/api/images`, which proxies authenticated uploads into
-Vercel Blob.
+homepage, posts, knowledge index, sitemap, and artifact pages are all
+statically generated at build time. The blog reads from compiled Contentlayer
+output; the knowledge gallery reads `.jsx`/`.html` files from the filesystem
+(`artifacts/`) and, for `.jsx`, compiles them to a self-contained HTML document
+**at build time** on the server via `esbuild-wasm`. That prebuilt HTML is then
+served inside a sandboxed `<iframe>`. The only runtime write path is
+`/api/images`, which proxies authenticated uploads into Vercel Blob.
 
 External surfaces:
 
 - **Vercel platform** — hosting, edge cache, preview deploys, Blob, Edge Config.
 - **GitHub** — source of truth; push to `main` triggers a production deploy.
 - **Google Analytics** — page-level traffic only.
-- **CDN packages** — `esbuild-wasm`, `cdn.tailwindcss.com`, and unpkg-hosted
-  React/framer-motion/lucide/recharts for runtime artifact rendering.
+- **CDN packages (browser, inside artifact iframes)** — `cdn.tailwindcss.com`
+  and unpkg-hosted React / ReactDOM, plus `esm.sh`-resolved
+  framer-motion / lucide-react / recharts. `esbuild-wasm` itself runs at build
+  time, not in the reader's browser (the only browser-side esbuild path is the
+  live playground).
 
 ## Components and responsibilities
 
@@ -65,7 +69,10 @@ External surfaces:
 | Home | `src/app/page.tsx` | Landing page composition (avatar, cards, manifesto, social) |
 | Blog pipeline | `contentlayer.config.js`, `content/*.mdx`, `src/app/posts/**` | MDX → typed `Blog` documents → `/posts/[slug]` + `/posts/topics` |
 | Knowledge pipeline | `artifacts/`, `src/app/knowledge/**` | File-scanned artifacts → listing + viewer + playground |
-| Runtime transform | `src/app/knowledge/_lib/transform-core.ts` | Validate imports, compile JSX in the browser via `esbuild-wasm`, resolve a small allow-list of bare packages |
+| JSX transform (shared core) | `src/app/knowledge/_lib/transform-core.ts` | Validate imports, compile JSX via `esbuild-wasm`, resolve a small allow-list of bare packages to CDN URLs |
+| Build-time transform | `src/app/knowledge/_lib/transform-server.ts` | `transformJSXAtBuild` — runs the core on the server during static generation (esbuild `worker: false`) |
+| Browser transform | `src/app/knowledge/_lib/transform.ts` | `transformJSX` — runs the core in the browser; used **only** by the playground editor |
+| Doc builder | `src/app/knowledge/_lib/doc.ts` | Wraps compiled JS / raw HTML into a standalone iframe document (`buildJSXDoc` / `buildHTMLDoc`) |
 | Image upload API | `src/app/api/images/route.ts` | `POST /api/images?filename=...&sk=...` → Vercel Blob |
 | Sitemap / RSS | `src/app/sitemap.ts`, `src/app/posts/rss/route.ts` | SEO surface |
 | Build-time bridge | `next.config.js`, `withContentlayer` | Wraps Next with Contentlayer, installs CSP/security headers |
@@ -78,7 +85,7 @@ Splitting blog and knowledge into separate repos was rejected. They share the
 shell, the sitemap, and the deploy. The split is logical (filesystem + URL
 namespace), not physical.
 
-### MDX builds, JSX renders at runtime
+### Both content streams compile at build time
 
 Blog posts are MDX with frontmatter → typed at build by Contentlayer → static
 pages. This optimizes for SEO, archive-ability, and zero runtime cost.
@@ -86,10 +93,18 @@ pages. This optimizes for SEO, archive-ability, and zero runtime cost.
 Knowledge artifacts are different by intent: each is an *interactive* page
 (charts, animations, custom layouts). Forcing them through Contentlayer would
 demand a unified component schema. Instead, each artifact is a self-contained
-`.jsx` or `.html` file with its own imports, compiled in the user's browser via
-`esbuild-wasm`. The trade-off: each artifact incurs a one-time wasm + package
-download in the browser, but authoring is dead simple ("drop a file in
-`artifacts/<cat>/`, add a row to `metadata.json`, push").
+`.jsx` or `.html` file with its own imports. The artifact page is
+`force-static`, so at build time the server compiles each `.jsx` with
+`esbuild-wasm` (`transformJSXAtBuild`) and wraps the output in a standalone
+HTML document (`buildJSXDoc`). That prebuilt document is served inside a
+sandboxed `<iframe>` — the badge in the viewer literally reads `prebuilt`. The
+reader's browser only runs the already-compiled JS plus React / Tailwind from
+CDN; it never downloads or runs `esbuild-wasm`. Authoring stays dead simple:
+"drop a file in `artifacts/<cat>/`, add a row to `metadata.json`, push."
+
+The one place JSX is compiled in the browser is the live **playground**
+(`/knowledge/playground`), which runs the same core via `transformJSX` so edits
+preview instantly without a rebuild.
 
 ### Soft-private artifacts
 
@@ -106,10 +121,13 @@ replace.
 
 ### CSP allows `unsafe-eval`
 
-Required so the browser-side esbuild-wasm transform can execute compiled JSX.
-This is a deliberate trade for the knowledge pipeline's authoring model. The
-rest of the CSP stays tight (frame-ancestors none, X-Frame DENY, HSTS,
-referrer policy).
+Required by two browser-side consumers in the knowledge pipeline: the Tailwind
+Play CDN (`cdn.tailwindcss.com`) used inside artifact iframes, and the live
+playground's `esbuild-wasm` (WebAssembly instantiation). Published artifacts
+themselves run only precompiled JS, but they inherit the parent CSP through the
+`srcdoc` iframe, so the policy has to permit it. This is a deliberate trade for
+the pipeline's authoring model. The rest of the CSP stays tight (frame-ancestors
+none, X-Frame DENY, HSTS, referrer policy).
 
 ### Auto-deploy on push to `main`
 
@@ -140,13 +158,17 @@ Pragmatic styling. Paired with `@tailwindcss/typography` for MDX prose.
 `cdn.tailwindcss.com` is also loaded inside knowledge artifacts so each
 artifact can use Tailwind without a build step.
 
-### esbuild-wasm for runtime JSX
+### esbuild-wasm for JSX compilation
 
 The knowledge gallery's defining choice. Lets a `.jsx` artifact ship as a
-single readable source file, compiled on-demand in the browser. Limited to
-an allow-list of bare imports (`react`, `react-dom`, `framer-motion`,
-`lucide-react`, `recharts`) — see `transform-core.ts`. Adding to the list is
-the explicit lever for what artifacts can express.
+single readable source file. The same compile core (`transform-core.ts`) runs
+in two places: on the **server at build time** for published artifacts
+(`transform-server.ts`, esbuild `worker: false`), and in the **browser** for
+the live playground (`transform.ts`). Imports are limited to an allow-list of
+bare packages (`react`, `react-dom`, `framer-motion`, `lucide-react`,
+`recharts`); React/ReactDOM are shimmed to globals and the rest are rewritten
+to `esm.sh` URLs. Adding to the list is the explicit lever for what artifacts
+can express.
 
 ### Vercel Blob + Edge Config
 
@@ -181,25 +203,36 @@ schema.org BlogPosting payload.
 ### Render a knowledge artifact
 
 ```
-GET /knowledge/<category>/<name>
-   │
-   ▼
-src/app/knowledge/[...slug]/page.tsx   (Server Component)
-   │
-   ▼
-resolveArtifact(slug)  →  fs reads .jsx or .html from artifacts/
-   │
-   ├── .html  → render inside an iframe / page shell
-   └── .jsx   → ship source to ArtifactPreview client component
-                    │
-                    ▼
-                esbuild-wasm compile (browser) → React component → mount
-                bare imports resolved against esm.sh / unpkg pins
+BUILD TIME  (force-static, runs on the server)
+   src/app/knowledge/[...slug]/page.tsx
+      │
+      ▼
+   resolveArtifact(slug) → fs reads .jsx or .html from artifacts/
+      │
+      ├── .html → buildHTMLDoc(code)
+      └── .jsx  → transformJSXAtBuild(code)         server esbuild-wasm
+                     │                                (worker: false)
+                     ▼   bare imports → React/ReactDOM globals + esm.sh URLs
+                  buildJSXDoc(compiledJS)            wraps in standalone HTML
+                                                     (React + Tailwind via CDN)
+      │
+      ▼
+   srcDoc string  →  prerendered into the static page
+
+REQUEST TIME  (reader's browser)
+   GET /knowledge/<category>/<name>
+      │
+      ▼
+   ArtifactPreview renders the prebuilt srcDoc into
+   <iframe sandbox="allow-scripts">  → browser runs precompiled JS,
+   pulls React + Tailwind from CDN. No esbuild in the reader's browser.
 ```
 
-Why this flow: the server side stays trivial (read a file, hand it down).
-The browser does the heavy lifting only when the user actually opens an
-artifact, so the rest of the site pays no cost for the gallery.
+Why this flow: compilation happens once at build time, so every reader gets a
+static, cached page and the JSX toolchain never ships to the browser. The
+sandboxed iframe isolates artifact code from the host page. (The live
+playground is the exception — it compiles in the browser via `transformJSX` so
+edits preview without a rebuild.)
 
 ### Build a sitemap
 
@@ -243,7 +276,7 @@ There is no database. Three "stores":
 | Store | Shape | Lifecycle |
 | --- | --- | --- |
 | `content/*.mdx` | Frontmatter (`title`, `publishedAt`, `summary`, `tags`, `image`) + MDX body | Edited in repo, built by Contentlayer |
-| `artifacts/<cat>/*.{jsx,html}` + `artifacts/metadata.json` | File on disk + `{ title, emojiIcon, desc }` per listed entry | Edited in repo, scanned at request/build time |
+| `artifacts/<cat>/*.{jsx,html}` + `artifacts/metadata.json` | File on disk + `{ title, emojiIcon, desc }` per listed entry | Edited in repo, scanned + compiled at build time (`force-static`) |
 | Vercel Blob | Image URL list managed by Vercel | Written via `/api/images`, read by URL |
 
 Access patterns:
@@ -263,13 +296,16 @@ Access patterns:
   var.
 - **Secrets:** managed in Vercel Project Settings. `.env` in the repo is
   development-only and contains no production credentials.
-- **CSP:** custom in `next.config.js`. `unsafe-eval` is allowed (esbuild-wasm
-  needs it). `frame-ancestors` is `DENY` via X-Frame-Options. Connect-src is
-  `*` because artifacts may fetch arbitrary CDNs by design.
-- **Artifact sandbox:** runtime artifacts execute in the user's browser with
-  the site's origin. They cannot leak server secrets (none are sent to the
-  client), but they can perform arbitrary network calls. Since every
-  artifact is author-controlled and merged via PR, this is acceptable.
+- **CSP:** custom in `next.config.js`. `unsafe-eval` is allowed (Tailwind Play
+  CDN + the playground's `esbuild-wasm`; see the CSP decision above).
+  `frame-ancestors` is `DENY` via X-Frame-Options. Connect-src is `*` because
+  artifacts may fetch arbitrary CDNs by design.
+- **Artifact sandbox:** artifacts execute inside an `<iframe
+  sandbox="allow-scripts">`. Without `allow-same-origin`, the iframe runs in an
+  opaque origin — it cannot read the host page's DOM, cookies, or storage. No
+  server secrets reach the client. Artifacts can still make arbitrary network
+  calls (connect-src is `*` by design). Since every artifact is
+  author-controlled and merged via PR, this residual capability is acceptable.
 
 ## Observability and operations
 
@@ -286,8 +322,8 @@ Access patterns:
 | Component | Failure | Impact | Recovery |
 | --- | --- | --- | --- |
 | Contentlayer build | Missing frontmatter field in any MDX | Vercel build fails, prod unchanged | Fix the file, re-push. Preview deploy catches this before merge. |
-| esbuild-wasm transform | Unsupported bare import in `.jsx` artifact | Artifact page shows error toast; site fine | Update artifact or extend `SUPPORTED_BARE_IMPORTS` in `transform-core.ts` |
-| esbuild-wasm CDN | unpkg or wasm asset unreachable | All `/knowledge/*` jsx artifacts fail to render | Wait for CDN; pin local copies as a future hardening |
+| JSX build transform | Unsupported bare import or syntax error in `.jsx` | That one artifact page renders `compile error`; build still succeeds, rest of site fine | Fix the artifact or extend `SUPPORTED_BARE_IMPORTS` in `transform-core.ts` |
+| Artifact runtime CDN | unpkg (React), `cdn.tailwindcss.com`, or `esm.sh` unreachable at request time | Affected `/knowledge/*` jsx artifacts render broken / unstyled | Wait for CDN; vendoring the deps into `public/` is the future hardening |
 | Vercel Blob | Quota / API outage | `/api/images` returns 5xx; reads continue (URLs already public) | Wait, or fall back to local-only uploads |
 | Vercel deploy | Bad merge breaks build | Auto-deploy fails, last good build remains live | Revert commit on `main`, or "Promote to Production" in Vercel UI |
 | `IMAGE_UPLOAD_SK` leak | Anyone can write to Blob | Junk uploads; storage cost | Rotate env var in Vercel, redeploy |
@@ -319,6 +355,7 @@ Access patterns:
 - **`scripts/gen-rss.js` is stale** (references `pages/posts`). The live RSS
   is at `src/app/posts/rss/route.ts`. Delete the legacy script in a future
   cleanup.
-- **Knowledge artifact CDN coupling.** Long-term, we may want to vendor
-  `esbuild-wasm` and the allow-listed packages into `public/` to remove the
-  third-party CDN dependency.
+- **Knowledge artifact CDN coupling.** Published artifacts pull React,
+  Tailwind, and `esm.sh` packages from third-party CDNs at request time.
+  Long-term, vendoring these into `public/` would remove the runtime
+  dependency and the need for `unsafe-eval` (Tailwind Play CDN).
