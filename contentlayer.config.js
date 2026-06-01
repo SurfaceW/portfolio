@@ -3,9 +3,62 @@ import remarkGfm from 'remark-gfm'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import GithubSlugger from 'github-slugger'
+
+// Strip inline markdown so heading text reads cleanly in the outline.
+function stripInlineMarkdown(text) {
+  return text
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images → alt
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links → label
+    .replace(/`([^`]+)`/g, '$1') // inline code
+    .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+    .replace(/(\*|_)(.*?)\1/g, '$2') // italic
+    .replace(/~~(.*?)~~/g, '$1') // strikethrough
+    .trim()
+}
+
+// Extract h2/h3 headings with slugs that match rehype-slug's generated ids.
+// Every heading (h1–h6) is fed through one slugger in document order so the
+// dedupe counter advances identically to rehype-slug.
+function extractHeadings(raw) {
+  const slugger = new GithubSlugger()
+  const headings = []
+  let inFence = false
+  let fenceMarker = ''
+
+  for (const line of raw.split('\n')) {
+    const fence = line.match(/^\s*(```|~~~)/)
+    if (fence) {
+      if (!inFence) {
+        inFence = true
+        fenceMarker = fence[1]
+      } else if (line.trimStart().startsWith(fenceMarker)) {
+        inFence = false
+      }
+      continue
+    }
+    if (inFence) continue
+
+    const match = line.match(/^(#{1,6})\s+(.+?)\s*#*$/)
+    if (!match) continue
+
+    const level = match[1].length
+    const text = stripInlineMarkdown(match[2])
+    const slug = slugger.slug(text)
+    if (level >= 2 && level <= 3) {
+      headings.push({ level, text, slug })
+    }
+  }
+
+  return headings
+}
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
+  headings: {
+    type: 'json',
+    resolve: (doc) => extractHeadings(doc.body.raw)
+  },
   slug: {
     type: 'string',
     resolve: (doc) => doc._raw.flattenedPath
