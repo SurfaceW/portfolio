@@ -1,0 +1,2 @@
+- Remove IDEA module: dropped the `/idea` page, nav tab, sitemap entry, and its now-unused UV cards to shed dead surface area.
+- Knowledge title search: added an instant, front-end title filter to `/knowledge` so artifacts are easy to find without a network round-trip.
