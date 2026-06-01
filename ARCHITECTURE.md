@@ -204,7 +204,13 @@ Find post by slug → render MDX → ship cached HTML
 
 Why: build-time generation means a post is free to serve and indexed cleanly.
 Contentlayer's `structuredData` computed field is what gives each post its
-schema.org BlogPosting payload.
+schema.org BlogPosting payload. A sibling `headings` computed field extracts
+the post's h2/h3 outline at build time — slugs are produced with the same
+`github-slugger` that `rehype-slug` uses, so the table-of-contents anchors
+match the rendered heading ids exactly. The `Toc` client component
+(`src/components/toc.tsx`) renders that outline in the left gutter on wide
+screens with IntersectionObserver scroll-spy; it ships zero extra build cost
+and degrades to nothing on narrow viewports.
 
 ### Render a knowledge artifact
 

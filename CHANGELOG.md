@@ -10,6 +10,10 @@ optional — log them when they change how a contributor works.
 ## [Unreleased]
 
 ### Added
+- Post outlines — a sticky "On this page" table of contents on `/posts/[slug]`.
+  Headings are extracted at build time (Contentlayer `headings` field, slugs
+  matching `rehype-slug`) and rendered in the left gutter on wide screens with
+  scroll-spy and smooth-scroll.
 - `DEPLOYMENT.md` — formal deploy contract for Vercel.
 - `ARCHITECTURE.md` — system blueprint for the portfolio + knowledge artifacts.
 - `VERSION` + this `CHANGELOG.md` — release discipline scaffolding.

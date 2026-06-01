@@ -1,4 +1,5 @@
 import { Mdx } from '@/components/mdx'
+import { Toc, type Heading } from '@/components/toc'
 import { UVCardEDots } from '@/components/uv-card/uv-card'
 import { allBlogs } from 'contentlayer/generated'
 import type { Metadata } from 'next'
@@ -130,6 +131,7 @@ export default async function BlogPost({ params }) {
           __html: JSON.stringify(breadcrumbData)
         }}
       ></script>
+      <Toc headings={post.headings as Heading[]} />
       <h1 className="font-bold text-2xl tracking-tighter">
         <Balancer>{post.title}</Balancer>
       </h1>
