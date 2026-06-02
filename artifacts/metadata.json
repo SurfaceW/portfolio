@@ -24,6 +24,11 @@
     "emojiIcon": "🔵",
     "desc": "Lean Canvas for eDots — a beautiful Apple-native app for logging, randomizing, and sharing personal collections."
   },
+  "business/ai-native-startup": {
+    "title": "The AI-Native Founder",
+    "emojiIcon": "🧬",
+    "desc": "A synthesis of the AI-native startup lifecycle and the seven seats of judgment — the founder through four stages is the team built around what no agent can hold."
+  },
   "wisdom/dao": {
     "title": "Dao of Dao",
     "emojiIcon": "☯️",
