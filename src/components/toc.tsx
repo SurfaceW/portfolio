@@ -9,11 +9,11 @@ export type Heading = {
   slug: string
 }
 
-export function Toc({ headings }: { headings: Heading[] }) {
+export function Toc({ headings = [] }: { headings?: Heading[] }) {
   const [activeId, setActiveId] = useState<string>('')
 
   useEffect(() => {
-    if (headings.length === 0) return
+    if (!headings.length) return
 
     const elements = headings
       .map((h) => document.getElementById(h.slug))
@@ -46,7 +46,7 @@ export function Toc({ headings }: { headings: Heading[] }) {
     event.currentTarget.closest('details')?.removeAttribute('open')
   }
 
-  if (headings.length === 0) return null
+  if (!headings.length) return null
 
   const list = (
     <ul className="space-y-1.5 border-l border-neutral-200 text-xs dark:border-neutral-800">
