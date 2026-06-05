@@ -1,0 +1,251 @@
+---
+title: '🆙 VibeCoding a Real App: How I Built eDots'
+publishedAt: '2026-06-06'
+summary: 'How I used agentic coding, Apple-native leverage, and product craft to build eDots, my first real iOS, iPadOS, and macOS app.'
+tags: ['AI', 'VibeCoding', 'iOS', 'Product', 'eDots']
+---
+
+I wanted to test two things.
+
+First: could I, a UX-born frontend engineer with about ten years of product engineering experience, move quickly into iOS and Swift with AI coding tools?
+
+Second: could VibeCoding, or what I now prefer to call Agentic Coding, help me finish a real app instead of another demo?
+
+eDots is my answer so far.
+
+It is a native Apple app for collecting the small things that make up a life: quotes, thoughts, travel places, recipes, habits, reading lists, memories, ideas. In eDots, each item is a "Dot." Dots live inside Collections. You can view them as lists, cards, quotes, calendars, maps, and widgets. You can randomize them, count repeated actions, add comments, export them, sync through iCloud, and share selected collections with people you trust.
+
+The product is live at [dots.e-studio.ai](https://dots.e-studio.ai/) and on the [App Store](https://apps.apple.com/cn/app/edots/id6754982386). But this essay is not only about the app. It is about how I built it, what I learned, and why I think VibeCoding is most powerful when it is tied to taste, platform leverage, and real shipping discipline.
+
+![eDots Screenshot](/posts/edots-app-store.png)
+
+## Why I Built eDots
+
+I have always collected things.
+
+Not just notes. Fragments. A sentence from a book. A place I want to visit. A manga list. A recipe. A habit I want to repeat. A small memory with Vicky. A line that feels worth returning to.
+
+The problem is that these fragments usually have no real home. They fall into Notes, Reminders, screenshots, chat messages, spreadsheets, Notion pages, and random folders. Existing tools are either too flat or too heavy. Notes is useful but lifeless. Notion is powerful but overbuilt for a quick personal collection. Pinterest is beautiful but consumption-first. Spreadsheets are flexible but joyless.
+
+My simple sentence for eDots became:
+
+> J people, collect their dots.
+
+The product idea is not "a better notes app," and it is not a chatbot notebook. That framing is wrong. eDots is a calm, native place for your personal dots. It is for people who like to organize the small pieces of their life and revisit them with some beauty.
+
+The Lean Canvas version is:
+
+> A beautiful home for your life's dots — log, randomize, and share your personal collections with the care of a native Apple app.
+
+That sentence mattered because VibeCoding without product focus quickly becomes feature soup. AI can generate endless surfaces. The hard part is saying no. eDots should stay focused: Dots, Collections, views, rediscovery, sharing. Everything else has to earn its place.
+
+## What eDots Is
+
+eDots has two core objects.
+
+A Dot is the atomic unit: a card-like record with title, Markdown content, tags, status, images, links, location, comments, counters, and visual identity.
+
+A Collection is a group of Dots: quotes, travel places, recipes, books, habits, movies, family plans, personal memories.
+
+The app then gives those collections different lenses:
+
+- a task list for things to do;
+- a plain list for fast browsing;
+- a card gallery for visual collections;
+- a calendar for time-based dots;
+- a map for places;
+- a quote view for focused reading;
+- a daily widget for rediscovery.
+
+This is important to the product philosophy. The same data can feel different when the view is different. A quote wants a quiet full-screen reading experience. Travel places want a map. Habits want counters. Memories want images. A product about "dots" should let dots take the shape of the scenario.
+
+That is also why I chose Apple platforms first. eDots should feel personal, native, and close to daily life. iPhone, iPad, Mac, widgets, notifications, haptics, share sheets, CloudKit, Shortcuts: these are not just technologies. They are parts of the user experience.
+
+## Lesson 1: Build Where AI Has Strong Priors
+
+The biggest VibeCoding mistake is asking AI to invent taste from nothing.
+
+I tried the opposite. I leaned into things AI already knows well.
+
+Apple's Human Interface Guidelines are public, mature, and deeply represented in training data. SwiftUI patterns are widely discussed. SF Symbols, native navigation, system typography, semantic colors, widgets, CloudKit, MapKit, notifications, App Intents: these all have strong existing examples.
+
+That makes the Apple ecosystem a good target for Agentic Coding. You can say: use platform navigation, keep the UI native, follow Apple HIG, use SF Symbols, guard iOS-only haptics with platform conditionals, preserve macOS behavior, avoid web-like UI. The agent has something solid to stand on.
+
+This does not mean AI magically makes great Apple software. It means the direction is clearer. When the model drifts, you can pull it back to an established platform language.
+
+For eDots, I wrote design principles like these:
+
+- start with experience, not technology;
+- focus and subtract;
+- take end-to-end responsibility;
+- make deliberate product choices;
+- remove complexity from the user, not from the system;
+- treat details as the product;
+- prefer Minimum Lovable Product over Minimum Viable Product.
+
+Those principles became product constraints. They kept the app away from becoming a generic AI-generated CRUD tool.
+
+## Lesson 2: Choose a Stack That Gives You Leverage
+
+For a solo indie builder, platform leverage matters more than architecture cleverness.
+
+eDots is built with a native Apple stack:
+
+- SwiftUI for iPhone, iPad, and Mac UI;
+- Core Data for persistence;
+- CloudKit for iCloud sync and sharing;
+- WidgetKit for daily revisit;
+- MapKit for place-based collections;
+- UserNotifications for reminders;
+- StoreKit 2 for purchases;
+- App Intents and Shortcuts for automation;
+- Xcode Cloud for delivery.
+
+This stack gave me a lot for free.
+
+I did not need to design a custom auth system just to sync personal data. iCloud is already the user's identity and sync layer. I did not need to build a custom notification backend for local reminders. I did not need a server for basic personal storage. I did not need a cross-platform UI abstraction that fights the OS.
+
+No server is also a product decision. For a starter-friendly indie app, keeping user data in iCloud reduces cost, reduces operational surface, and gives the privacy story a simpler shape: your personal dots stay under your Apple account.
+
+There are trade-offs. CloudKit is not "easy" in the abstract. Cross-device sync and sharing need careful engineering. But it is the right kind of complexity: platform complexity in service of a native experience.
+
+## Lesson 3: Give Agents a Soul File
+
+Agentic Coding works better when the agent knows what kind of product it is inside.
+
+For eDots, `AGENTS.md` became the project context. It tells agents the app's purpose, stack, directory map, commands, entry points, design principles, localization rules, persistence boundaries, and CloudKit safety requirements.
+
+If I distill it into a small "soul file," it looks like this:
+
+```md
+# eDots Soul
+
+Build native Apple experiences that stay simple in structure,
+feel polished in use, and remain practical to debug.
+
+- Apple frameworks first.
+- SwiftUI-native across iPhone, iPad, and Mac.
+- Core Data + CloudKit for persistence and sync.
+- Keep data access in services, not leaf views.
+- Keep UI adaptive and Apple-like.
+- Localize user-facing strings.
+- Guard iOS-only haptics and UIKit assumptions.
+- Preserve widget shared storage.
+- Add tests for persistence, import/export, widgets, and sync-sensitive behavior.
+- Prefer small, composable changes over broad rewrites.
+- Details are product quality: haptics, empty states, motion, defaults, copy.
+```
+
+This kind of file changes the quality of prompts. Instead of explaining the same philosophy every time, I can ask the agent to implement a feature inside an already-described world.
+
+For VibeCoding, I now think every serious project needs this layer. Not a giant document no one reads. A compact source of truth that tells agents:
+
+- what the product is;
+- what it must never break;
+- what taste means here;
+- how to build and test;
+- what not to do.
+
+Without that, agents optimize for local completion. With it, they start to preserve product direction.
+
+## Lesson 4: Run Multiple Agentic Tools, But Give Each a Job
+
+I used Cursor, Claude Code, and Codex together.
+
+Not because more tools are automatically better. They are not. But different agentic tools are good at different moments.
+
+Cursor is strong when I am inside the codebase, reading, editing, checking context, and shaping implementation details. Claude Code is useful for deep code tasks and longer reasoning passes. Codex Cloud is surprisingly good for momentum: I can catch an idea, send it remotely, let it create a branch and PR, then review locally later.
+
+My typical loop:
+
+1. Capture an idea or bug.
+2. Ask a cloud agent to explore and draft a PR.
+3. Pull it locally.
+4. Build and run in Xcode.
+5. Feel the UI on the real platform.
+6. Keep, edit, or reject the PR.
+
+This is the part many "AI coding" demos skip. The agent can write remotely. But the product still has to be experienced locally.
+
+For eDots, especially because it is an Apple app, Xcode is the court of final appeal. Does it build? Do tests pass? Does the widget work? Does navigation feel right on iPhone and Mac? Does the animation feel natural? Is the button in the right place? Does the empty state have the right tone?
+
+Agents can accelerate the path to an answer. They cannot replace the judgment that decides whether the answer belongs in the product.
+
+## Lesson 5: Use Real Shipping Infrastructure Early
+
+VibeCoding can create a dangerous illusion: because code appears quickly, the product feels close to done.
+
+It is not.
+
+Real apps need pipelines. eDots uses Xcode builds, Swift Testing, App Store packaging, and Xcode Cloud. That sounds boring compared with AI magic, but boring infrastructure is what turns a prototype into something users can install.
+
+Tests matter especially around logic that agents can easily disturb: persistence, import/export, StoreKit, app state, reminders, randomization, and CloudKit-sensitive flows. I do not think every UI detail needs heavy automated coverage at indie scale. But business logic and data flows need tests because one small mistake can lose user trust.
+
+One codebase also matters. Swift and SwiftUI let eDots serve iPhone, iPad, and Mac from the same core codebase. Platform differences still exist, so the code uses conditionals where needed. Haptics belong on iOS. Mac needs native menus and sidebar behavior. Widgets have their own constraints.
+
+This is another place AI helps. If the project context says "preserve Apple-native behavior across iPhone, iPad, and macOS," agents can usually handle platform isolation well. But only if the rule is explicit.
+
+## Lesson 6: Do Not Build a Demo. Build Something You Love.
+
+The most important difference between an AI demo and a real product is not technology.
+
+It is devotion.
+
+I have 434+ commits now. My goal is 1000+ commits with AI. Not because commits are a vanity metric, but because polish accumulates in small changes: a better default, a smoother transition, a clearer empty state, a less annoying sheet, a more natural icon, a fixed widget edge case, a safer import path.
+
+Details win.
+
+That is also why I chose Apple only. I like the taste of Apple-native software. I like simple animation, Liquid Glass, SF Symbols, native controls, haptics, widgets, share sheets, and the feeling that an app belongs on the device. If I tried to make eDots everywhere at once, I would dilute the part I care about most.
+
+As an indie developer, focus is mercy. You do not need a giant platform. You need a long-tailed domain where your own taste is an advantage.
+
+For eDots, that domain is people who collect life fragments: J-type organizers, writers, note keepers, quote collectors, couples planning trips, people who like beautiful lists, people who want a small personal system that does not feel like enterprise software.
+
+The app is scenario-driven. Quotes. Travel and places. Recipes. Life events. Reading and books. Habits. Each scenario teaches me what the product wants to become.
+
+Less is more, but only after you know what "more" is trying to do.
+
+## Lesson 7: Sometimes the Best AI Feature Is Not Inside the App
+
+At first, I thought eDots needed AI features inside the app.
+
+Some are still possible. AI dot generation exists behind development flags. Future versions may do more: photo-to-dot, chat with collections, local insights.
+
+But I found another path that feels more Apple-native: App Intents and Shortcuts.
+
+If eDots exposes create, read, update, and delete operations through Apple Intents, then agentic tools can call Shortcuts. The app does not need to become a chatbot. It can become a clean, native data tool that agents can operate through the OS.
+
+This is a quieter idea, but I like it more.
+
+Instead of forcing AI into every screen, let the app stay simple. Let automation happen through the platform. The user gets a native app. Agents get an interface. The product keeps its taste.
+
+## My VibeCoding Recipe
+
+If I had to compress this experience into a practical recipe for builders, it would be this:
+
+1. Pick a product small enough to finish, but real enough to care about.
+2. Choose a domain where AI has strong public knowledge.
+3. Stand on a platform that gives you primitives.
+4. Write a soul file before you scale agent work.
+5. Use agents for momentum, but keep local build/run/feel as truth.
+6. Add tests around data and logic.
+7. Ship through a real pipeline as early as possible.
+8. Keep saying no.
+9. Use the product yourself.
+10. Commit until the details start to feel inevitable.
+
+Agentic Coding makes software easier to craft, but it does not make product judgment free. It removes some friction from the work. It does not decide what should exist, who it is for, or whether the final feeling is good.
+
+That is still on us.
+
+## Finally
+
+AI accelerates the speed at which we can craft software.
+
+But a craftsman's work still needs personal polish, dedicated effort, and a sense of taste. The best user experience does not come from asking an agent to "make an app." It comes from having a clear product belief, choosing the right constraints, using the platform deeply, and caring enough to keep improving after the first working version.
+
+eDots is my first Apple app. It is also my proof that VibeCoding can be more than a vibe.
+
+Try eDots if you want a private, Apple-native place for your life fragments: [dots.e-studio.ai](https://dots.e-studio.ai/) · [App Store](https://apps.apple.com/cn/app/edots/id6754982386)
+
+And if you are building with AI agents, start before the code: write your product principles, your constraints, and the things the agent must never break.f
