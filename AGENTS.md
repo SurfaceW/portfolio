@@ -47,6 +47,16 @@ Built with Next.js 13 (App Router), Contentlayer, Tailwind CSS, and deployed on 
 - Keep posts bilingual-friendly (English and Chinese).
 - Preserve existing Contentlayer schema when adding new MDX fields.
 
+## Cursor Cloud specific instructions
+
+- Single Next.js 13 app, package manager is `pnpm`. Dependencies are refreshed automatically on startup.
+- Run dev: `pnpm dev` (serves `http://localhost:3000`). Build: `pnpm build` (runs Contentlayer then `next build`).
+- Lint: `pnpm exec next lint` — there is no `lint` script in `package.json`.
+- No automated test framework is configured; there are no tests to run.
+- `pnpm install` reports "Ignored build scripts" for `contentlayer`/`esbuild`/etc. This is expected and safe — Contentlayer uses `esbuild-wasm` at runtime, so build and dev work without approving those native build scripts. Do not add `pnpm approve-builds` to setup.
+- `.env` holds local-only stub values; dev and build run fine without real Vercel secrets (Blob/Edge Config features just won't have live backends).
+- Verify content changes by hitting routes directly, e.g. a new `content/<slug>.mdx` renders at `/posts/<slug>` after Contentlayer hot-reload.
+
 <!-- e-studio-agentic-rules:start -->
 ## E-Studio Managed Rules
 
