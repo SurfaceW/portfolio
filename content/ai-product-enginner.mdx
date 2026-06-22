@@ -82,6 +82,7 @@ SOP
 
 - ingest documents, chunking and embedding (structured data) with strategies
 - recall with hybrid search
+- source hierarchy and trust: rank candidates by recency · authority · permissions; separate live truth from historical context; keep inspiration-only / non-quotable sources out of cited claims
 - format, references and citations
 - re-rank, query-rewriting, multi-hop, graph or table augmentation
 - composable and modular RAG system architecture
@@ -107,7 +108,7 @@ SOP
   - **Memory**: cross-session facts (e.g. `MEMORY.md`)—retrieve, do not dump everything by default.
   - **System / hooks**: deterministic checks (linters, guards)—**not** repeated prose in the prompt.
 - **Write context**: memories · state · scratch-pad · file-backed artifacts for large tool JSON (filesystem as the context interface).
-- **Select context**: tools retrieval · docs / knowledge retrieval · memory retrieval
+- **Select context**: tools retrieval · docs / knowledge retrieval · memory retrieval—**rank by freshness + authority** (live > recent > historical), not similarity alone; *context dump ≠ retrieval*
   - [memo0](https://mem0.ai/) example for long-term memory management
 - **Compress context** (pick strategy for the failure mode):
   - sliding window (cheap, loses early decisions)
@@ -159,10 +160,12 @@ reference practical patterns:
   - **Procedural memory**: skills and SOPs—loaded on demand, not all at once.
   - **Episodic memory**: append-only session logs (e.g. JSONL)—full trace for replay and search.
   - **Semantic memory**: durable facts the agent curates (e.g. `MEMORY.md`)—injected when relevant.
+  - **Source-truth / provenance memory**: per-fact freshness, authority, and source class so the agent knows which memory *wins* on conflict—rank **live > recent > historical**, separate **quotable** from **inspiration-only**, flag **restricted vs. public**. Freshness decides, but *recent ≠ correct*—gate with evals. (More sources ≠ more truth; a storage unit isn't a brain.)
 - short-term vs. long-term memory
   - storage backends: vector store · graph DB · relational DB · file systems
   - structure: graph-based vs. tree-based
 - **Consolidation**: when summarizing or compacting, **archive originals** and only advance pointers—failed consolidation should be recoverable, not a silent loss of evidence.
+- **Correction → rule loop**: treat every human correction as a training rep, not a one-off edit. Tag by **type · source · workflow · severity**, then route it to update the right layer—retrieval ranking, source hierarchy, or semantic facts—so corrections compound instead of disappearing.
 - A-MEM: Dynamic and Self-Evolving memory
 - context-sizing control
 
@@ -208,6 +211,7 @@ reference practical patterns:
 - safety, security, compliance, governance
   - content filters · PII redaction · secure key management
   - prompt injection defenses · retrieval hygiene · tool permissioning
+  - **workflow-scoped least-privilege retrieval**: each workflow sees only what it needs—*access ≠ permission* (the right brain for the right workflow, not one big brain with no walls)
   - policy layers (allow/deny lists) · sensitive actions with human approval
   - compliance: data retention · audit trails · red-team exercises
 
@@ -369,3 +373,4 @@ trace
 - (26-03-17) provide clean structure and content for the agentic section.
 - (26-03-25) absorb agent architecture notes: loop vs workflow, harness, context layers, ACI tools, memory/consolidation, evals/traces, multi-agent protocols. [post from X](https://x.com/hitw93/status/2034627967926825175)
 - (26-06-22) absorb composable agent harness model (iii): harness as ~15 swappable workers; thin↔thick as a config slider. [iii blog](https://iii.dev/blog/how-to-build-your-own-agent-harness/)
+- (26-06-22) absorb knowledge operating stack (capture → retrieval → source truth → permissions → feedback → execution): add source-truth/provenance memory, correction→rule loop, freshness+authority ranking, and workflow-scoped least-privilege retrieval.
