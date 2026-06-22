@@ -133,6 +133,7 @@ SOP
 ### Runtime shape: loop, workflow, and control
 
 - **Minimal agent loop**: perceive → decide → act → feedback until the model stops with plain text. In mature stacks, the loop stays thin; new behavior is added via **tools + handlers**, **prompt structure**, and **externalized state** (files/DB), not by bloating the loop into a hand-written state machine. Let the model reason; let the harness own boundaries and state.
+- **Thin ↔ thick is a slider, not a fork**: thin (Anthropic-style dumb loop, model-as-brain) vs. thick (LangGraph-style logic-in-infrastructure) is a spectrum you tune, not a one-way bet. On a composable substrate the distance is a **config change** (add/remove workers), not a rewrite. When attributing cost, separate the **framework tax** (the runtime you import) from the **topology tax** (the planner/router/reflector scaffolding you layer on)—the latter usually dominates. Design scaffolding to be **temporary**: don’t encode logic a smarter model will soon handle natively. The harness, not the model, is where durable advantage lives.
 - **Workflow vs. agent**: if execution paths are **fixed in code**, you have a **workflow**; if the **LLM chooses the next step**, you have an **agent**. Labels are often blurred in products—pick the control model that fits risk and clarity, not hype.
 - **Common control patterns** (usually combined): **prompt chaining** (linear stages + optional code gates); **routing** (classify input → specialized handlers/models); **parallelization** (shard work or run multiple samples for consensus); **orchestrator–workers** (decompose, delegate, merge); **evaluator–optimizer** (generate → score → revise until a quality bar is met).
 
@@ -168,6 +169,7 @@ reference practical patterns:
 ### Harness, verification, and autonomy
 
 - **Harness** (often beats “just use a bigger model” for code-like tasks): **acceptance baselines** (what “done” means), **execution boundaries** (sandbox, paths, permissions), **feedback signals** (tests, linters, traces), and **rollback / retry** paths. Push work toward **clear goals + automatable checks**; ambiguous goals with strong automation just fail faster in the wrong direction.
+- **Composable harness** (the harness is ~15 jobs, not one block): provider router · credential vault · policy engine · approval gate · model catalog · session store · budget tracker · hook fanout · durable turn loop · context compaction · event stream · OTel tracing · skill serving · prompt assembly. A **framework** bundles these as one monolith and ships one version of each—so a year in, the layer that no longer fits (policy, approvals, secrets) forces a fork. A **composable substrate** (e.g. [iii](https://iii.dev/)) ships each job as a swappable **worker** on a shared bus, joined by one primitive (worker / trigger / function). Replacing a layer = writing a worker that registers the same function ids; the rest of the stack doesn’t change. Sane defaults travel with it: **fail-closed** policy (gate timeout → deny), auto **OTel** spans tagged by session / message / function id.
 - **Agent-first engineering habits** (OpenAI-style): keep **ground truth in the repo** (short `AGENTS.md` index + deep docs), encode rules in **CI/linters/types** instead of hoping prompts are read, aim for **end-to-end autonomous repair loops** where the agent can verify its own changes against telemetry.
 - **Long tasks**: externalize progress—structured files (JSON feature lists, progress logs), **initializer vs. coding agent** splits, **one `in_progress` task at a time**, resume from disk after crashes. **Slow I/O**: offload to background work + inject results between turns instead of blocking the core loop.
 - **Security before features**: allowlists, workspace path checks, audited shell, **prompt-injection aware design** (mark untrusted content, minimize dangerous tools, confirm sensitive sinks), provider fallbacks for outages.
@@ -254,6 +256,8 @@ reference:
 
 ### Frameworks
 
+> **Framework vs. runtime vs. harness** (LangChain's own taxonomy): a **framework** gives building blocks (loop, content blocks, middleware—LangChain); a **runtime** orchestrates long-running stateful execution (LangGraph); a **harness** is the opinionated, batteries-included assembly with defaults for your use case (Deep Agents SDK). You can build a harness on a framework or from scratch. The newer axis is **composable** substrates where every harness job is a swappable worker (iii)—see _Composable harness_ above.
+
 - ai-sdk (node / javascript)
 - LangChain (python) / LangGraph (python)
 - AutoGPT
@@ -283,6 +287,7 @@ LLM Orchestration Platforms:
 - Dify / Coze
 - n8n
 - Gumloop (AgentHub)
+- [iii](https://iii.dev/) — composable agent-harness substrate; harness jobs are swappable workers on a shared engine bus (worker / trigger / function)
 
 Observation: Monitoring real-time agent actions, including tool usage and reasoning paths.
 
@@ -363,3 +368,4 @@ trace
 - (26-02-07) add more details about LLM Ops and Infra.
 - (26-03-17) provide clean structure and content for the agentic section.
 - (26-03-25) absorb agent architecture notes: loop vs workflow, harness, context layers, ACI tools, memory/consolidation, evals/traces, multi-agent protocols. [post from X](https://x.com/hitw93/status/2034627967926825175)
+- (26-06-22) absorb composable agent harness model (iii): harness as ~15 swappable workers; thin↔thick as a config slider. [iii blog](https://iii.dev/blog/how-to-build-your-own-agent-harness/)
