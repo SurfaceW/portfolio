@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import AvatarCard from '../components/AvatarCard/AvatarCard';
 import ManifestoCard from '../components/ManifestoCard/ManifestoCard';
+import { ProductGrid } from '../components/ProductGrid/ProductGrid';
 import WorkCard from '../components/WorkCard/WorkCard';
 import BlogPostCard from '../components/BlogPostCard/BlogPostCard';
 import SocialMediaCard from '../components/SocialMediaCard/SocialMediaCard';
@@ -144,33 +145,12 @@ export default function RootPage() {
             />
           </div>
 
-          {/* Work Cards — above Featured Articles; md: pairs with Social row */}
-          <div className="col-span-1 md:col-span-1 row-span-1 bg-gradient-to-br from-sky-50 to-blue-100 dark:from-sky-900/25 dark:to-blue-900/25 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-sky-100 hover:to-indigo-100 dark:hover:from-sky-900/35 dark:hover:to-blue-900/35">
-            <WorkCard
-              iconUrl="https://dots.e-studio.ai/_next/image?url=%2Fdots-icon.png&w=3840&q=75"
-              title="eDots"
-              description="First iOS product — native dots & collections across iPhone, iPad, and Mac."
-              link="https://dots.e-studio.ai/"
-            />
-          </div>
-          <div className="col-span-1 row-span-1 bg-gradient-to-br from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-800/30">
-            <WorkCard
-              icon="✨"
-              title="e-studio.ai"
-              description="AI-powered elaborations platform to solve problems and elaborate your ideas."
-              link="https://e-studio.ai"
-            />
-          </div>
-          <div className="col-span-1 row-span-1 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-indigo-100 hover:to-violet-100 dark:hover:from-indigo-900/30 dark:hover:to-violet-800/30">
-            <WorkCard
-              icon="🚀"
-              title="horizon.ai"
-              description="AI powered RSS feeders, content curation."
-              link="https://horizon.e-studio.ai"
-            />
-          </div>
+          {/* Products — eDots, eWealth, eHub, e-studio.ai */}
+          <ProductGrid />
+
           <div className="col-span-1 row-span-1 bg-gradient-to-br from-cyan-50 to-blue-100 dark:from-cyan-900/20 dark:to-blue-800/20 rounded-2xl p-0 overflow-hidden shadow-md dark:shadow-lg border border-white/50 dark:border-white/10 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] hover:bg-gradient-to-br hover:from-cyan-100 hover:to-blue-100 dark:hover:from-cyan-900/30 dark:hover:to-blue-800/30">
             <WorkCard
+              accent="sky"
               icon="💡"
               title="Arno Prompts"
               description="Collection of AI prompts of Arno's daily works & life."
