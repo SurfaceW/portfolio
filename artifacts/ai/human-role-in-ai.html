@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Role in AI Era</title>
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --bg-soft: #fffaf0;
+      --ink: #171717;
+      --muted: #6b6257;
+      --line: rgba(23, 23, 23, 0.12);
+      --card: rgba(255, 255, 255, 0.78);
+      --orange: #ff8a3d;
+      --pink: #ff5f8f;
+      --purple: #7a5cff;
+      --blue: #3c8dff;
+      --green: #42b883;
+      --yellow: #f5c64a;
+      --shadow: 0 24px 70px rgba(28, 20, 12, 0.12);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 138, 61, 0.22), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(122, 92, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(66, 184, 131, 0.14), transparent 35%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.45;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.38) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.34) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.06));
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 34px 0 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.52);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(28,20,12,0.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 760;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: conic-gradient(from 130deg, var(--orange), var(--pink), var(--purple), var(--blue), var(--green), var(--orange));
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), 0 10px 22px rgba(122,92,255,0.18);
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.86);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: 160ms ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(23,23,23,0.06);
+      color: var(--ink);
+    }
+
+    .hero {
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: 1fr 0.92fr;
+      align-items: center;
+      gap: 44px;
+      padding: 76px 0 44px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.58);
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 22px;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 7vw, 92px);
+      line-height: 0.94;
+      letter-spacing: -0.075em;
+      max-width: 760px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #151515 0%, #6b4cff 38%, #ff6c4a 72%, #151515 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      margin: 24px 0 0;
+      max-width: 650px;
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.55;
+      color: var(--muted);
+      letter-spacing: -0.015em;
+    }
+
+    .hero-subtitle strong {
+      color: var(--ink);
+      font-weight: 760;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 720;
+      letter-spacing: -0.01em;
+      border: 1px solid var(--line);
+      transition: 180ms ease;
+    }
+
+    .button.primary {
+      background: #171717;
+      color: white;
+      box-shadow: 0 16px 34px rgba(23,23,23,0.16);
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.62);
+      color: var(--ink);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-visual {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      max-width: 560px;
+      margin-left: auto;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 8%;
+      border: 1px solid rgba(23,23,23,0.12);
+      border-radius: 50%;
+      animation: rotate 34s linear infinite;
+    }
+
+    .orbit:nth-child(2) {
+      inset: 18%;
+      animation-duration: 25s;
+      animation-direction: reverse;
+    }
+
+    .orbit:nth-child(3) {
+      inset: 29%;
+      animation-duration: 18s;
+    }
+
+    @keyframes rotate { to { transform: rotate(360deg); } }
+
+    .chip {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(23,23,23,0.12);
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 14px 34px rgba(28,20,12,0.10);
+      color: #3f3932;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .chip.one { top: 2%; left: 34%; }
+    .chip.two { top: 21%; right: -4%; }
+    .chip.three { bottom: 22%; right: -3%; }
+    .chip.four { bottom: 4%; left: 28%; }
+    .chip.five { top: 28%; left: -5%; }
+    .chip.six { bottom: 27%; left: -6%; }
+
+    .human-core {
+      position: absolute;
+      inset: 23%;
+      border-radius: 40px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.55)),
+        radial-gradient(circle at 25% 20%, rgba(255,138,61,0.22), transparent 38%),
+        radial-gradient(circle at 72% 74%, rgba(122,92,255,0.18), transparent 42%);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .human-core::before {
+      content: "";
+      position: absolute;
+      width: 160%;
+      height: 160%;
+      background: conic-gradient(from 220deg, transparent, rgba(255,138,61,0.22), transparent, rgba(122,92,255,0.18), transparent);
+      animation: rotate 18s linear infinite;
+    }
+
+    .human-core-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .human-icon {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 18px;
+      border-radius: 28px;
+      background: #171717;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 34px;
+      box-shadow: 0 24px 45px rgba(23,23,23,0.18);
+    }
+
+    .human-core h2 {
+      margin: 0;
+      font-size: clamp(26px, 3.5vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    .human-core p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-weight: 620;
+    }
+
+    .section {
+      margin-top: 34px;
+      padding: 34px;
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,0.54);
+      border: 1px solid rgba(23,23,23,0.10);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 60px rgba(28,20,12,0.08);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .section-kicker {
+      color: var(--muted);
+      font-weight: 760;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.13em;
+      margin-bottom: 8px;
+    }
+
+    h2.section-title {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -0.06em;
+    }
+
+    .section-note {
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 430px;
+      margin: 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 330px;
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      border: 1px solid rgba(23,23,23,0.10);
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(28,20,12,0.06);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 18% 14%, var(--accent), transparent 34%);
+      opacity: 0.26;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: rgba(23,23,23,0.88);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 820;
+      margin-bottom: 52px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .card .cn {
+      color: var(--muted);
+      margin-top: 8px;
+      font-weight: 720;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 18px 0 0;
+      color: #514a42;
+      line-height: 1.58;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mini-list li {
+      display: flex;
+      gap: 8px;
+      color: #3f3932;
+      line-height: 1.4;
+      font-size: 14px;
+      font-weight: 640;
+    }
+
+    .mini-list li::before {
+      content: "•";
+      color: var(--accent-strong);
+      font-weight: 900;
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: 1fr 0.92fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(23,23,23,0.10);
+      min-height: 86px;
+    }
+
+    .layer strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .layer span {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .conductor {
+      padding: 26px;
+      border-radius: 28px;
+      background: #171717;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 360px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 22px 60px rgba(23,23,23,0.16);
+    }
+
+    .conductor::before {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      background: conic-gradient(var(--orange), var(--pink), var(--purple), var(--blue), var(--green), var(--orange));
+      filter: blur(24px);
+      opacity: 0.34;
+      right: -150px;
+      top: -120px;
+      animation: rotate 22s linear infinite;
+    }
+
+    .conductor > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .conductor .emoji {
+      font-size: 46px;
+      margin-bottom: 18px;
+    }
+
+    .conductor h3 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.055em;
+    }
+
+    .conductor p {
+      margin: 18px 0 0;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.6;
+    }
+
+    .tradeoffs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .tradeoff {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(23,23,23,0.10);
+    }
+
+    .tradeoff span {
+      font-weight: 760;
+      letter-spacing: -0.02em;
+    }
+
+    .tradeoff em {
+      font-style: normal;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .statement {
+      padding: 42px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(23,23,23,0.94), rgba(41,34,30,0.94)),
+        radial-gradient(circle at 20% 0%, rgba(255,138,61,0.6), transparent 40%);
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .statement::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      right: -210px;
+      bottom: -260px;
+      border-radius: 50%;
+      background: conic-gradient(from 45deg, var(--orange), var(--pink), var(--purple), var(--blue), var(--green), var(--orange));
+      opacity: 0.34;
+      filter: blur(18px);
+    }
+
+    .statement-content {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+    }
+
+    .statement h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 70px);
+      line-height: 1;
+      letter-spacing: -0.065em;
+    }
+
+    .statement p {
+      margin: 22px 0 0;
+      color: rgba(255,255,255,0.74);
+      font-size: 19px;
+      line-height: 1.65;
+    }
+
+    .founder-edge {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .edge-card {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(23,23,23,0.10);
+    }
+
+    .edge-card h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      letter-spacing: -0.045em;
+    }
+
+    .edge-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .edge-item {
+      padding: 17px;
+      border-radius: 17px;
+      background: rgba(247,245,240,0.82);
+      border: 1px solid rgba(23,23,23,0.08);
+      min-height: 112px;
+    }
+
+    .edge-item strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .edge-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .quote {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, rgba(255,255,255,0.78), rgba(255,250,240,0.74));
+      border: 1px solid rgba(23,23,23,0.10);
+    }
+
+    .quote .mark {
+      font-size: 58px;
+      line-height: 0.8;
+      color: rgba(23,23,23,0.18);
+      font-family: Georgia, serif;
+    }
+
+    .quote p {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+      font-weight: 780;
+    }
+
+    .quote small {
+      color: var(--muted);
+      line-height: 1.5;
+      font-weight: 640;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 34px 0 4px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .founder-edge,
+      .diagram {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 58px;
+      }
+
+      .hero-visual {
+        margin: 10px auto 0;
+        width: min(100%, 560px);
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        min-height: auto;
+      }
+
+      .card-number {
+        margin-bottom: 34px;
+      }
+
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 14px;
+      }
+
+      .nav {
+        border-radius: 22px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        padding-top: 44px;
+        gap: 24px;
+      }
+
+      .hero-visual {
+        aspect-ratio: 1 / 1.1;
+      }
+
+      .chip {
+        font-size: 11px;
+        min-height: 32px;
+        padding: 0 10px;
+      }
+
+      .human-core {
+        inset: 20%;
+        border-radius: 30px;
+        padding: 18px;
+      }
+
+      .human-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 20px;
+        font-size: 25px;
+      }
+
+      .section,
+      .statement {
+        padding: 22px;
+        border-radius: 26px;
+      }
+
+      .tradeoffs,
+      .edge-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="page">
+    <nav class="nav" aria-label="Page navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>Human Role in AI Era</span>
+      </div>
+      <div class="nav-links">
+        <a href="#pillars">Pillars</a>
+        <a href="#orchestration">Orchestration</a>
+        <a href="#tradeoffs">Tradeoffs</a>
+        <a href="#edge">Founder Edge</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">✨ AI generates options. Humans choose meaning.</div>
+        <h1><span class="gradient-text">Human role</span><br />in the AI Era</h1>
+        <p class="hero-subtitle">
+          When AI can generate code, text, design drafts, summaries, plans, and analysis, the human edge moves upward:
+          <strong>taste, orchestration, judgment, and meaning.</strong>
+          <br /><br />
+          当 AI 能生成代码、文字、设计草稿、总结、计划和分析时，人类真正稀缺的价值会转向更高层：
+          <strong>品味、编排、判断与意义设定。</strong>
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#pillars">Explore the model</a>
+          <a class="button secondary" href="#edge">See founder edge</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="AI outputs orbit around human judgment">
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+        <div class="chip one">Code</div>
+        <div class="chip two">Design drafts</div>
+        <div class="chip three">Plans</div>
+        <div class="chip four">Analysis</div>
+        <div class="chip five">Summaries</div>
+        <div class="chip six">Text</div>
+        <div class="human-core">
+          <div class="human-core-inner">
+            <div class="human-icon">🧭</div>
+            <h2>Human<br />Judgment</h2>
+            <p>taste · context · responsibility<br />品味 · 语境 · 责任</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pillars" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Three Core Pillars</div>
+          <h2 class="section-title">What remains uniquely human?</h2>
+        </div>
+        <p class="section-note">AI expands the option space. Humans compress it into direction, priority, and quality.</p>
+      </div>
+
+      <div class="cards">
+        <article class="card" style="--accent: #ff8a3d; --accent-strong: #ff7a1f;">
+          <div class="card-content">
+            <div class="card-number">01</div>
+            <h3>Vibe & taste</h3>
+            <div class="cn">审美品味与领域直觉</div>
+            <p>
+              Humans decide what feels elegant, meaningful, natural, robust, and aligned with the product soul.
+              AI can generate variations, but taste chooses the right direction.
+            </p>
+            <ul class="mini-list">
+              <li>What feels beautiful?</li>
+              <li>What feels scientifically meaningful?</li>
+              <li>What experience feels natural?</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card" style="--accent: #7a5cff; --accent-strong: #6b4cff;">
+          <div class="card-content">
+            <div class="card-number">02</div>
+            <h3>Knowledge orchestration</h3>
+            <div class="cn">高层知识编排能力</div>
+            <p>
+              Humans become conductors of engineering, design, product, business, psychology, market timing, AI tools, and team execution.
+            </p>
+            <ul class="mini-list">
+              <li>Connect multiple layers</li>
+              <li>Arrange the whole system</li>
+              <li>Turn local answers into global direction</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card" style="--accent: #42b883; --accent-strong: #279c69;">
+          <div class="card-content">
+            <div class="card-number">03</div>
+            <h3>Judgment & tradeoffs</h3>
+            <div class="cn">判断、取舍与决策</div>
+            <p>
+              Real decisions are rarely purely right or wrong. They require values, context, responsibility, and conscious choice.
+            </p>
+            <ul class="mini-list">
+              <li>Speed vs quality</li>
+              <li>Automation vs human control</li>
+              <li>Short-term gain vs long-term brand</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="orchestration" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Human as Conductor</div>
+          <h2 class="section-title">From worker to system arranger</h2>
+        </div>
+        <p class="section-note">AI can solve local tasks. Humans still decide how the whole orchestra should sound.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="stack">
+          <div class="layer"><strong>Engineering</strong><span>Architecture, reliability, scalability<br />架构、稳定性、可扩展性</span></div>
+          <div class="layer"><strong>Design</strong><span>Emotion, clarity, interaction<br />情绪、清晰度、交互体验</span></div>
+          <div class="layer"><strong>Product</strong><span>User problem, workflow, value<br />用户问题、工作流、价值</span></div>
+        </div>
+
+        <div class="conductor">
+          <div class="emoji">🎼</div>
+          <h3>High-level knowledge orchestration</h3>
+          <p>
+            The human role is not to manually play every instrument, but to define the composition:
+            what matters, what connects, what should be amplified, and what should be removed.
+            <br /><br />
+            人类的角色不是亲手演奏每一种乐器，而是定义整首作品：什么重要、什么相互连接、什么应被放大、什么应该被删掉。
+          </p>
+        </div>
+
+        <div class="stack">
+          <div class="layer"><strong>Business</strong><span>Revenue, positioning, timing<br />收入、定位、时机</span></div>
+          <div class="layer"><strong>Psychology</strong><span>Trust, motivation, attention<br />信任、动机、注意力</span></div>
+          <div class="layer"><strong>AI Tools</strong><span>Generation, automation, leverage<br />生成、自动化、杠杆</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tradeoffs" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Decision Making</div>
+          <h2 class="section-title">The hard part is choosing</h2>
+        </div>
+        <p class="section-note">AI can propose. Humans must decide, own the consequences, and protect the long-term direction.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <div class="tradeoff"><span>Speed</span><span class="arrow">↔</span><em>Quality</em></div>
+        <div class="tradeoff"><span>Simple</span><span class="arrow">↔</span><em>Powerful</em></div>
+        <div class="tradeoff"><span>Automation</span><span class="arrow">↔</span><em>Human control</em></div>
+        <div class="tradeoff"><span>Technical elegance</span><span class="arrow">↔</span><em>Shipping fast</em></div>
+        <div class="tradeoff"><span>Short-term revenue</span><span class="arrow">↔</span><em>Long-term brand</em></div>
+        <div class="tradeoff"><span>Risk</span><span class="arrow">↔</span><em>Opportunity</em></div>
+      </div>
+    </section>
+
+    <section class="section statement">
+      <div class="statement-content">
+        <div class="section-kicker" style="color: rgba(255,255,255,0.62);">Core Idea</div>
+        <h2>Valuable humans become taste-makers, system thinkers, decision-makers, and meaning-setters.</h2>
+        <p>
+          In the AI era, the question is not only “Can AI do this task?” The better question is:
+          “What should exist, why should it exist, and what quality standard makes it worth existing?”
+          <br /><br />
+          在 AI 时代，关键问题不只是“AI 能不能完成这个任务？”更重要的问题是：
+          “什么东西值得被创造？为什么值得？怎样的质量标准才配得上存在？”
+        </p>
+      </div>
+    </section>
+
+    <section id="edge" class="section founder-edge">
+      <div class="edge-card">
+        <div class="section-kicker">For Founder / Product Engineer</div>
+        <h3>Your edge becomes knowing what to build, why it matters, and how to make it real.</h3>
+        <div class="edge-grid">
+          <div class="edge-item"><strong>What to build</strong><span>Choose the problem, not just the prompt.<br />选择问题，而不是只写提示词。</span></div>
+          <div class="edge-item"><strong>Why it matters</strong><span>Connect product soul with real user value.<br />把产品灵魂与真实用户价值连接起来。</span></div>
+          <div class="edge-item"><strong>What quality means</strong><span>Define the bar for elegance and trust.<br />定义优雅与可信赖的质量标准。</span></div>
+          <div class="edge-item"><strong>How to coordinate</strong><span>Use AI, tools, and people as leverage.<br />把 AI、工具和人变成杠杆。</span></div>
+        </div>
+      </div>
+
+      <aside class="quote">
+        <div class="mark">“</div>
+        <p>AI creates the possibility space. Humans create the direction.</p>
+        <small>AI 负责扩展可能性空间；人类负责定义方向、意义与责任。</small>
+      </aside>
+    </section>
+
+    <footer>
+      Designed as a visual thinking page for the AI era.<br />
+      为 AI 时代的人类角色而设计的一页视觉化思考。
+    </footer>
+  </main>
+</body>
+</html>
